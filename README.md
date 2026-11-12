@@ -32,6 +32,7 @@ The main objectives are:
 ## 🕹️ Gameplay Features
 
 ### Pet Care
+
 - Customize your hamster's name.
 - Feed your hamster.
 - Provide fresh water.
@@ -40,17 +41,20 @@ The main objectives are:
 - Monitor its health and happiness.
 
 ### Survival System
+
 - Hunger, thirst, hygiene, happiness and health.
 - Time progression.
 - Consequences for neglecting your pet.
 - Random events and unexpected situations.
 
 ### Minigames
+
 - Hamster Wheel.
 - Find the Seeds.
 - Tiny Maze.
 
 ### The End
+
 Every hamster eventually dies. Depending on the player's decisions and random events, its story can have different endings.
 
 After its death, the game generates a memorial containing its name, age, survival time and cause of death.
@@ -69,15 +73,15 @@ The game will feature simple sound effects and ambient background music to enhan
 
 ## 🛠️ Technologies
 
-| Technology | Purpose |
-|---|---|
-| React | User interface |
-| TypeScript | Game logic and type safety |
-| Vite | Development and build tooling |
-| Tailwind CSS | Styling |
-| Web Audio API | Sound effects |
-| LocalStorage | Local game persistence |
-| GitHub Pages | Web deployment |
+| Technology    | Purpose                       |
+| ------------- | ----------------------------- |
+| React         | User interface                |
+| TypeScript    | Game logic and type safety    |
+| Vite          | Development and build tooling |
+| Tailwind CSS  | Styling                       |
+| Web Audio API | Sound effects                 |
+| LocalStorage  | Local game persistence        |
+| GitHub Pages  | Web deployment                |
 
 ## 📌 Development Scope
 
@@ -91,10 +95,15 @@ The game is intended to be published through GitHub Pages, making it accessible 
 
 **Live Demo:** Coming soon.
 
+## 📚 Documentation
+
+- [Roadmap v1 (MVP)](docs/roadmap/v1.md) — milestones, scope and current status.
+
 ## 📚 Project Status
 
 - [x] Game concept and identity.
 - [x] Initial development proposal.
+- [x] Repository and project scaffolding (React + TypeScript + Vite).
 - [ ] Visual prototype.
 - [ ] Core gameplay implementation.
 - [ ] Random events and death system.
@@ -115,4 +124,4 @@ MIT License (planned).
 
 ---
 
-*Peanut is a fictional game created for entertainment purposes. Its mechanics and events are not intended to represent real hamster care.*
+_Peanut is a fictional game created for entertainment purposes. Its mechanics and events are not intended to represent real hamster care._
