@@ -17,9 +17,14 @@ const SUGGESTED_NAMES = [
 interface NamingScreenProps {
   onAdopt: (hamsterName: string) => void
   onBack: () => void
+  replacingName?: string
 }
 
-export function NamingScreen({ onAdopt, onBack }: NamingScreenProps) {
+export function NamingScreen({
+  onAdopt,
+  onBack,
+  replacingName,
+}: NamingScreenProps) {
   const [name, setName] = useState('')
   const trimmedName = name.trim()
 
@@ -50,6 +55,11 @@ export function NamingScreen({ onAdopt, onBack }: NamingScreenProps) {
           <p className="mt-3 text-lg text-cocoa-soft">
             Any name works. It won&apos;t change what happens next.
           </p>
+          {replacingName ? (
+            <p className="mt-3 border-2 border-danger/60 bg-danger/10 px-2 py-1 text-base text-danger">
+              This replaces {replacingName}. There is no way back.
+            </p>
+          ) : null}
 
           <label htmlFor="hamster-name" className="sr-only">
             Hamster name

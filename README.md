@@ -116,7 +116,7 @@ bun run preview  # preview the production build
 - [x] Visual prototype: pixel-art hamster, cage and app shell.
 - [x] Screen flow: main menu → naming → game → memorial.
 - [x] Tailwind CSS theme and GitHub Pages deployment workflow.
-- [ ] Core gameplay implementation.
+- [x] Core gameplay implementation.
 - [ ] Random events and death system.
 - [ ] Minigames.
 - [ ] Audio and animations.

@@ -2,9 +2,10 @@ import { HamsterSprite } from '../hamster/HamsterSprite'
 
 interface HamsterRoomProps {
   hamsterName: string
+  paused?: boolean
 }
 
-export function HamsterRoom({ hamsterName }: HamsterRoomProps) {
+export function HamsterRoom({ hamsterName, paused = false }: HamsterRoomProps) {
   return (
     <div
       className="pixel-grid relative aspect-[16/9] w-full overflow-hidden border-4 border-cocoa bg-[#fdf1d8]"
@@ -33,7 +34,9 @@ export function HamsterRoom({ hamsterName }: HamsterRoomProps) {
 
       {/* hamster */}
       <div className="absolute bottom-[25%] left-1/2 -translate-x-1/2">
-        <HamsterSprite className="h-24 w-24 animate-hamster-idle sm:h-32 sm:w-32" />
+        <HamsterSprite
+          className={`h-24 w-24 sm:h-32 sm:w-32 ${paused ? '' : 'animate-hamster-idle'}`}
+        />
       </div>
     </div>
   )
