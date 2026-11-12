@@ -1,13 +1,16 @@
+import { useEffect, useState } from 'react'
 import { HamsterRoom } from '../../components/room/HamsterRoom'
 import { Button } from '../../components/ui/Button'
 import { NeedBar } from '../../components/ui/NeedBar'
 import { Screen } from '../../components/ui/Screen'
 import { CARE_ACTION_LIST } from '../../game/data/careActions'
+import { findEasterEgg, getDisplayName } from '../../game/easterEggs'
 import {
   formatGameClock,
   getCriticalWarning,
   getHamsterMood,
 } from '../../game/rules'
+import { SKINS } from '../../game/skins'
 import type { CareAction, GameState, HamsterMood } from '../../types/game'
 
 const MOOD_BADGES: Record<HamsterMood, { label: string; className: string }> = {
@@ -44,6 +47,33 @@ export function GameScreen({
   const mood = getHamsterMood(run.hamster.needs)
   const moodBadge = MOOD_BADGES[mood]
   const warning = getCriticalWarning(run.hamster.needs)
+  const displayName = getDisplayName(run.hamster.name)
+  const skin = SKINS[run.hamster.skinId]
+  const egg = findEasterEgg(run.hamster.name)
+  const showSkinName = skin.name.toLowerCase() !== displayName.toLowerCase()
+  const [vanished, setVanished] = useState(false)
+
+  useEffect(() => {
+    if (egg?.id !== '404') {
+      return
+    }
+    let hideId = 0
+    let showId = 0
+    const cycle = () => {
+      hideId = window.setTimeout(() => {
+        setVanished(true)
+        showId = window.setTimeout(() => {
+          setVanished(false)
+          cycle()
+        }, 4000)
+      }, 12000)
+    }
+    cycle()
+    return () => {
+      window.clearTimeout(hideId)
+      window.clearTimeout(showId)
+    }
+  }, [egg?.id])
 
   return (
     <Screen>
@@ -54,8 +84,18 @@ export function GameScreen({
               Day {day} · {time}
             </p>
             <h1 className="mt-2 font-pixel text-xl sm:text-2xl">
-              {run.hamster.name}
+              {displayName}
             </h1>
+            {showSkinName || (egg && egg.id !== 'null') ? (
+              <p className="mt-1 flex flex-wrap items-center gap-2 text-base text-cocoa-soft">
+                {showSkinName ? skin.name : null}
+                {egg && egg.id !== 'null' ? (
+                  <span className="border-2 border-cocoa/30 px-1 font-pixel text-[7px] uppercase">
+                    {egg.label}
+                  </span>
+                ) : null}
+              </p>
+            ) : null}
           </div>
           <div className="flex items-center gap-2">
             <span
@@ -79,14 +119,27 @@ export function GameScreen({
             className="mb-3 border-2 border-danger bg-danger/10 px-3 py-2 text-lg text-danger"
           >
             <strong className="font-pixel text-[9px] uppercase">
-              {run.hamster.name}
+              {displayName}
             </strong>{' '}
             {warning}
           </p>
         ) : null}
 
+        {egg?.id === 'segfault' ? (
+          <p className="mb-3 border-2 border-cocoa bg-cocoa px-3 py-1 font-pixel text-[8px] uppercase tracking-widest text-mint">
+            segmentation fault · core dumped
+          </p>
+        ) : null}
+
         <div className="pixel-frame relative bg-paper p-3 sm:p-4">
-          <HamsterRoom hamsterName={run.hamster.name} paused={run.paused} />
+          <HamsterRoom
+            hamsterName={displayName}
+            skinId={run.hamster.skinId}
+            accessoryId={run.hamster.accessoryId}
+            paused={run.paused}
+            vanished={vanished}
+            serverDecor={egg?.id === 'localhost'}
+          />
           {run.paused ? (
             <div className="absolute inset-3 flex items-center justify-center bg-paper/85 sm:inset-4">
               <span className="pixel-frame-sm bg-paper px-4 py-3 font-pixel text-sm uppercase tracking-widest">

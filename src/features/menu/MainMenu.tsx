@@ -1,10 +1,13 @@
-import { HamsterSprite } from '../../components/hamster/HamsterSprite'
+import { SkinSprite } from '../../components/hamster/SkinSprite'
 import { Button } from '../../components/ui/Button'
 import { Screen } from '../../components/ui/Screen'
+import type { AccessoryId, SkinId } from '../../types/game'
 
 interface MainMenuProps {
   hasRun: boolean
   hamsterName?: string
+  skinId?: SkinId
+  accessoryId?: AccessoryId
   day?: number
   onStart: () => void
   onContinue: () => void
@@ -13,6 +16,8 @@ interface MainMenuProps {
 export function MainMenu({
   hasRun,
   hamsterName,
+  skinId = 'hamster',
+  accessoryId = 'none',
   day,
   onStart,
   onContinue,
@@ -25,7 +30,11 @@ export function MainMenu({
         </span>
 
         <div className="mt-8 flex justify-center">
-          <HamsterSprite className="h-36 w-36 animate-hamster-idle sm:h-40 sm:w-40" />
+          <SkinSprite
+            skinId={skinId}
+            accessoryId={accessoryId}
+            className="h-36 w-36 animate-hamster-idle sm:h-40 sm:w-40"
+          />
         </div>
 
         <h1 className="mt-6 font-pixel text-4xl text-cocoa sm:text-6xl">PEANUT</h1>
@@ -62,7 +71,7 @@ export function MainMenu({
         </div>
 
         <p className="mt-8 font-pixel text-[8px] uppercase tracking-widest text-cocoa-soft">
-          v0.2.0 · M1 core gameplay
+          v0.3.0 · skins &amp; secrets
         </p>
       </div>
     </Screen>

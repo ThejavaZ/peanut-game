@@ -6,10 +6,21 @@ import {
 } from '../game/config'
 import { advanceRun, applyCareAction, createRun } from '../game/rules'
 import { clearRun, loadRun, saveRun } from '../services/SaveService'
-import type { CareAction, GameState } from '../types/game'
+import type {
+  AccessoryId,
+  CareAction,
+  GameState,
+  SkinId,
+} from '../types/game'
 
 type GameAction =
-  | { type: 'adopt'; name: string; now: number }
+  | {
+      type: 'adopt'
+      name: string
+      skinId: SkinId
+      accessoryId: AccessoryId
+      now: number
+    }
   | { type: 'tick'; now: number; maxSeconds?: number }
   | { type: 'care'; action: CareAction }
   | { type: 'togglePause'; now: number }
@@ -34,7 +45,12 @@ function initRun(): GameState | null {
 function gameReducer(state: GameState | null, action: GameAction): GameState | null {
   switch (action.type) {
     case 'adopt':
-      return createRun(action.name, action.now)
+      return createRun(
+        action.name,
+        action.now,
+        action.skinId,
+        action.accessoryId,
+      )
 
     case 'tick': {
       if (!state || state.paused) {
@@ -133,10 +149,17 @@ export function useGameRun() {
     return () => window.removeEventListener('pagehide', onPageHide)
   }, [])
 
-  const adopt = useCallback((name: string) => {
-    lastSaveRef.current = 0
-    dispatch({ type: 'adopt', name, now: Date.now() })
-  }, [])
+  const adopt = useCallback(
+    (
+      name: string,
+      skinId: SkinId,
+      accessoryId: AccessoryId = 'none',
+    ) => {
+      lastSaveRef.current = 0
+      dispatch({ type: 'adopt', name, skinId, accessoryId, now: Date.now() })
+    },
+    [],
+  )
 
   const care = useCallback((action: CareAction) => {
     lastSaveRef.current = 0

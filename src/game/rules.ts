@@ -10,7 +10,9 @@ import {
   START_NEEDS,
 } from './config'
 import { CARE_ACTIONS } from './data/careActions'
+import { DEFAULT_SKIN_ID } from './skins'
 import type {
+  AccessoryId,
   CareAction,
   CoreNeedKey,
   GameState,
@@ -18,17 +20,25 @@ import type {
   NeedKey,
   NeedStatus,
   Needs,
+  SkinId,
 } from '../types/game'
 
 export function clamp(value: number, min = 0, max = 100): number {
   return Math.min(max, Math.max(min, value))
 }
 
-export function createRun(name: string, now: number): GameState {
+export function createRun(
+  name: string,
+  now: number,
+  skinId: SkinId = DEFAULT_SKIN_ID,
+  accessoryId: AccessoryId = 'none',
+): GameState {
   return {
     schemaVersion: SAVE_SCHEMA_VERSION,
     hamster: {
       name,
+      skinId,
+      accessoryId,
       adoptedAt: now,
       ageDays: 0,
       needs: { ...START_NEEDS },

@@ -39,6 +39,7 @@ The main objectives are:
 - Clean its habitat.
 - Play and interact with it.
 - Monitor its health and happiness.
+- Discover absurd skins and secret characters by naming your hamster.
 
 ### Survival System
 
@@ -107,6 +108,7 @@ bun run preview  # preview the production build
 ## 📚 Documentation
 
 - [Roadmap v1 (MVP)](docs/roadmap/v1.md) — milestones, scope and current status.
+- [Skins & secret characters](docs/skins.md) — cosmetic skins, unlock names and easter eggs (spoilers).
 
 ## 📚 Project Status
 
@@ -117,6 +119,7 @@ bun run preview  # preview the production build
 - [x] Screen flow: main menu → naming → game → memorial.
 - [x] Tailwind CSS theme and GitHub Pages deployment workflow.
 - [x] Core gameplay implementation.
+- [x] Cosmetic skins, secret name unlocks and developer easter eggs.
 - [ ] Random events and death system.
 - [ ] Minigames.
 - [ ] Audio and animations.

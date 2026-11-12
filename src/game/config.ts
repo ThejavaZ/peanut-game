@@ -10,7 +10,7 @@ export const MAX_OFFLINE_SECONDS = 10 * 60
 export const MAX_TICK_SECONDS = 5
 /** How often the run is written to localStorage (actions save immediately). */
 export const SAVE_INTERVAL_MS = 5000
-export const SAVE_SCHEMA_VERSION = 1
+export const SAVE_SCHEMA_VERSION = 2
 
 /** Points lost per real second. Full → empty takes 4–10 minutes. */
 export const NEED_RATES: Record<CoreNeedKey, number> = {

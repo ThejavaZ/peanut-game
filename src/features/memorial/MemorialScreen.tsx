@@ -1,6 +1,8 @@
-import { HamsterSprite } from '../../components/hamster/HamsterSprite'
+import { SkinSprite } from '../../components/hamster/SkinSprite'
 import { Button } from '../../components/ui/Button'
 import { Screen } from '../../components/ui/Screen'
+import { getDisplayName } from '../../game/easterEggs'
+import { SKINS } from '../../game/skins'
 import type { RunSummary } from '../../types/game'
 
 interface MemorialScreenProps {
@@ -10,16 +12,28 @@ interface MemorialScreenProps {
 }
 
 export function MemorialScreen({ run, onAdoptAnother, onMainMenu }: MemorialScreenProps) {
+  const displayName = getDisplayName(run.hamsterName)
+  const skin = SKINS[run.skinId]
+
   return (
     <Screen>
       <article className="pixel-frame w-full max-w-xl bg-paper p-6 text-center sm:p-8">
         <p className="font-pixel text-[8px] uppercase tracking-widest text-cocoa-soft">
           In memory of
         </p>
-        <h1 className="mt-4 font-pixel text-2xl leading-relaxed">{run.hamsterName}</h1>
+        <h1 className="mt-4 font-pixel text-2xl leading-relaxed">
+          {displayName}
+        </h1>
 
-        <div className="my-6 flex justify-center">
-          <HamsterSprite className="h-24 w-24 opacity-60 grayscale" />
+        <div className="my-6 flex flex-col items-center gap-2">
+          <SkinSprite
+            skinId={run.skinId}
+            accessoryId={run.accessoryId}
+            className="h-24 w-24 opacity-60 grayscale"
+          />
+          <p className="font-pixel text-[7px] uppercase tracking-widest text-cocoa-soft">
+            {skin.name}
+          </p>
         </div>
 
         <p className="text-xl italic text-cocoa-soft">&ldquo;{run.epitaph}&rdquo;</p>

@@ -7,6 +7,8 @@ import type { GameState, RunSummary } from '../types/game'
 export function buildRunSummary(run: GameState): RunSummary {
   return {
     hamsterName: run.hamster.name,
+    skinId: run.hamster.skinId,
+    accessoryId: run.hamster.accessoryId,
     daysSurvived: Math.max(1, run.hamster.ageDays + 1),
     meals: run.stats.meals,
     playSessions: run.stats.playSessions,

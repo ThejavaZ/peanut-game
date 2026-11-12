@@ -1,11 +1,23 @@
-import { HamsterSprite } from '../hamster/HamsterSprite'
+import { SkinSprite } from '../hamster/SkinSprite'
+import type { AccessoryId, SkinId } from '../../types/game'
 
 interface HamsterRoomProps {
   hamsterName: string
+  skinId: SkinId
+  accessoryId?: AccessoryId
   paused?: boolean
+  vanished?: boolean
+  serverDecor?: boolean
 }
 
-export function HamsterRoom({ hamsterName, paused = false }: HamsterRoomProps) {
+export function HamsterRoom({
+  hamsterName,
+  skinId,
+  accessoryId = 'none',
+  paused = false,
+  vanished = false,
+  serverDecor = false,
+}: HamsterRoomProps) {
   return (
     <div
       className="pixel-grid relative aspect-[16/9] w-full overflow-hidden border-4 border-cocoa bg-[#fdf1d8]"
@@ -32,10 +44,32 @@ export function HamsterRoom({ hamsterName, paused = false }: HamsterRoomProps) {
         </div>
       </div>
 
+      {serverDecor ? (
+        <div
+          className="absolute right-[9%] bottom-[20%] flex flex-col gap-1"
+          aria-hidden="true"
+        >
+          {[0, 1, 2].map((row) => (
+            <div
+              key={row}
+              className="flex h-4 w-10 items-center gap-1 border-2 border-cocoa bg-cocoa px-1"
+            >
+              <span className="h-1 w-1 bg-mint" />
+              <span className="h-1 w-1 bg-mint/60" />
+              <span className="h-1 w-1 bg-danger" />
+            </div>
+          ))}
+        </div>
+      ) : null}
+
       {/* hamster */}
       <div className="absolute bottom-[25%] left-1/2 -translate-x-1/2">
-        <HamsterSprite
-          className={`h-24 w-24 sm:h-32 sm:w-32 ${paused ? '' : 'animate-hamster-idle'}`}
+        <SkinSprite
+          skinId={skinId}
+          accessoryId={accessoryId}
+          className={`h-24 w-24 transition-opacity duration-500 sm:h-32 sm:w-32 ${
+            paused || vanished ? '' : 'animate-hamster-idle'
+          } ${vanished ? 'opacity-0' : 'opacity-100'}`}
         />
       </div>
     </div>
