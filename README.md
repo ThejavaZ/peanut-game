@@ -108,6 +108,10 @@ bun run preview  # preview the production build
 ## 📚 Documentation
 
 - [Roadmap v1 (MVP)](docs/roadmap/v1.md) — milestones, scope and current status.
+- [Architecture](docs/ARCHITECTURE.md) — layers, the clock, persistence and the file map.
+- [Gameplay rules](docs/GAMEPLAY.md) — needs, thresholds, care actions and timing, in numbers.
+- [Development guide](docs/DEVELOPMENT.md) — setup, conventions, CI and how to add things.
+- [Art and audio](docs/ART_AND_AUDIO.md) — palette, sprites, animation and the audio plan.
 - [Skins & secret characters](docs/skins.md) — cosmetic skins, unlock names and easter eggs (spoilers).
 
 ## 📚 Project Status
@@ -120,6 +124,7 @@ bun run preview  # preview the production build
 - [x] Tailwind CSS theme and GitHub Pages deployment workflow.
 - [x] Core gameplay implementation.
 - [x] Cosmetic skins, secret name unlocks and developer easter eggs.
+- [x] Developer documentation (architecture, gameplay, development, art and audio).
 - [ ] Random events and death system.
 - [ ] Minigames.
 - [ ] Audio and animations.
