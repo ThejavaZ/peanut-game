@@ -1,0 +1,60 @@
+name: Feature request
+description: A new idea for Peanut — events, minigames, art, audio or docs.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        New ideas go to the post-v1 list unless they fit the current milestone.
+        Check `docs/roadmap/v1.md` section 9 (Out of scope) first.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What do you want?
+      description: One clear sentence.
+      placeholder: Add an event where the hamster escapes the cage.
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: How should it behave?
+      description: What the player sees, chooses, and what changes as a result.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - M2 — Events & death
+        - M3 — Minigames
+        - M4 — Polish, audio & release
+        - UI / UX
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - v1 (fits the roadmap)
+        - Post-v1 (idea for later)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criterion
+      description: One line that tells us when this is done.
+      placeholder: Adopting the name X unlocks the skin and survives a reload.
+    validations:
+      required: true

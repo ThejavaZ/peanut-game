@@ -1,0 +1,70 @@
+name: Bug report
+description: Something in Peanut is broken — needs, saves, screens or rendering.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The more detail you give, the faster it gets fixed.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Where does it happen?
+      options:
+        - Needs & care actions
+        - Clock, pause and offline catch-up
+        - Save / load (localStorage)
+        - Screens and navigation
+        - Skins and easter eggs
+        - Build, lint or deployment
+    validations:
+      required: true
+
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened?
+      description: Clear description of the bug.
+      placeholder: The hunger bar refills after reloading the page.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+      description: The correct behaviour.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: One numbered step per line.
+      placeholder: |
+        1. Adopt a hamster.
+        2. Let hunger drop below 20.
+        3. Reload the page.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does it happen?
+      options:
+        - Always
+        - Sometimes
+        - Only once
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra context
+      description: Screenshots, console errors, browser, or your save JSON.
