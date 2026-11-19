@@ -192,8 +192,9 @@ never uploaded — a red build cannot reach Pages.
 | Artifact | `dist/` |
 | Source of truth for numbers | `src/game/config.ts` |
 
-**Pending manual step:** the repository settings must have *Settings → Pages →
-Source: GitHub Actions*. Verify the first deploy before sharing the live URL.
+**Configuration:** *Settings → Pages → Source: GitHub Actions* is enabled, and
+the first deploy was verified live on 2026-11-18 serving the build with the
+correct `/peanut-game/` base path.
 
 ---
 

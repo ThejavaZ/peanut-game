@@ -94,7 +94,7 @@ Future improvements may include additional minigames, new hamster events, more c
 
 The game is deployed to GitHub Pages through the workflow in `.github/workflows/deploy.yml`.
 
-**Live Demo:** <https://thejavaz.github.io/peanut-game/> _(available after the first deploy on `main`)_
+**Live Demo:** <https://thejavaz.github.io/peanut-game/> _(deployed from `main`; verified 2026-11-18)_
 
 ## 🧑‍💻 Run Locally
 
@@ -122,6 +122,7 @@ bun run preview  # preview the production build
 - [x] Visual prototype: pixel-art hamster, cage and app shell.
 - [x] Screen flow: main menu → naming → game → memorial.
 - [x] Tailwind CSS theme and GitHub Pages deployment workflow.
+- [x] Live build on GitHub Pages (verified 2026-11-18).
 - [x] Core gameplay implementation.
 - [x] Cosmetic skins, secret name unlocks and developer easter eggs.
 - [x] Developer documentation (architecture, gameplay, development, art and audio).
