@@ -34,16 +34,23 @@ function App() {
     setScreen({ name: 'game' })
   }
 
-  const handleEndRun = () => {
-    if (!run) {
-      return
-    }
-    const summary = buildRunSummary(run)
+  /**
+   * The record is what the player sees now: a dead run always renders the
+   * memorial, whatever screen it was left on. Leaving it (either way) clears
+   * the run — the persistent history of every hamster is the cemetery (M2).
+   */
+  const summary = run && run.death ? buildRunSummary(run, run.death) : null
+  const activeScreen: Screen =
+    summary && screen.name !== 'memorial'
+      ? { name: 'memorial', run: summary }
+      : screen
+
+  const leaveMemorial = (next: Screen) => {
     resetRun()
-    setScreen({ name: 'memorial', run: summary })
+    setScreen(next)
   }
 
-  switch (screen.name) {
+  switch (activeScreen.name) {
     case 'menu':
       return (
         <MainMenu
@@ -84,16 +91,15 @@ function App() {
           onCare={care}
           onTogglePause={togglePause}
           onBackToMenu={goToMenu}
-          onEndRun={handleEndRun}
         />
       )
 
     case 'memorial':
       return (
         <MemorialScreen
-          run={screen.run}
-          onAdoptAnother={goToNaming}
-          onMainMenu={goToMenu}
+          run={activeScreen.run}
+          onAdoptAnother={() => leaveMemorial({ name: 'naming' })}
+          onMainMenu={() => leaveMemorial({ name: 'menu' })}
         />
       )
   }

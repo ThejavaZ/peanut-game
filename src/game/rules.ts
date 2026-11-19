@@ -1,4 +1,5 @@
 import {
+  AGE_WARNING_DAYS,
   CORE_NEEDS,
   DAY_START_HOUR,
   HEALTH_RULES,
@@ -10,6 +11,7 @@ import {
   START_NEEDS,
 } from './config'
 import { CARE_ACTIONS } from './data/careActions'
+import { evaluateDeath } from './death'
 import { DEFAULT_SKIN_ID } from './skins'
 import type {
   AccessoryId,
@@ -55,6 +57,7 @@ export function createRun(
     elapsedSeconds: 0,
     lastUpdatedAt: now,
     paused: false,
+    death: null,
   }
 }
 
@@ -107,12 +110,12 @@ function tickCooldowns(
 }
 
 export function advanceRun(state: GameState, seconds: number): GameState {
-  if (seconds <= 0 || state.paused) {
+  if (seconds <= 0 || state.paused || state.death) {
     return state
   }
 
   const elapsedSeconds = state.elapsedSeconds + seconds
-  return {
+  const next: GameState = {
     ...state,
     hamster: {
       ...state.hamster,
@@ -122,10 +125,22 @@ export function advanceRun(state: GameState, seconds: number): GameState {
     cooldowns: tickCooldowns(state.cooldowns, seconds),
     elapsedSeconds,
   }
+
+  // A dead run is frozen: needs, cooldowns and the clock stop with the record.
+  const death = evaluateDeath(next)
+  if (!death) {
+    return next
+  }
+
+  return {
+    ...next,
+    death,
+    hamster: { ...next.hamster, isAlive: false },
+  }
 }
 
 export function applyCareAction(state: GameState, action: CareAction): GameState {
-  if (state.cooldowns[action] > 0) {
+  if (state.death || state.cooldowns[action] > 0) {
     return state
   }
 
@@ -203,6 +218,14 @@ export function getCriticalWarning(needs: Needs): string | null {
     return WARNING_MESSAGES.health
   }
   return null
+}
+
+/**
+ * Announced one full day before old age ends the run, so the inevitable
+ * ending is never a surprise either.
+ */
+export function getAgeWarning(ageDays: number): string | null {
+  return ageDays >= AGE_WARNING_DAYS ? 'is getting on in years.' : null
 }
 
 export function formatGameClock(elapsedSeconds: number): {

@@ -89,12 +89,13 @@ export function useGameRun() {
   const [run, dispatch] = useReducer(gameReducer, undefined, initRun)
   const runRef = useRef<GameState | null>(run)
   const lastSaveRef = useRef(0)
+  const deathSavedRef = useRef(false)
 
   useEffect(() => {
     runRef.current = run
   }, [run])
 
-  const isRunning = run !== null && !run.paused
+  const isRunning = run !== null && !run.paused && run.death === null
 
   useEffect(() => {
     if (!isRunning) {
@@ -131,6 +132,15 @@ export function useGameRun() {
     }
 
     const now = Date.now()
+
+    // The death record must outlive the interval that produced it.
+    if (run.death && !deathSavedRef.current) {
+      deathSavedRef.current = true
+      lastSaveRef.current = now
+      saveRun(run)
+      return
+    }
+
     if (now - lastSaveRef.current < SAVE_INTERVAL_MS) {
       return
     }
@@ -156,6 +166,7 @@ export function useGameRun() {
       accessoryId: AccessoryId = 'none',
     ) => {
       lastSaveRef.current = 0
+      deathSavedRef.current = false
       dispatch({ type: 'adopt', name, skinId, accessoryId, now: Date.now() })
     },
     [],
