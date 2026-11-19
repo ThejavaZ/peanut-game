@@ -31,6 +31,9 @@ body:
     attributes:
       label: Area
       options:
+        - M0 — Foundation
+        - M1 — Core gameplay
+        - M1.5 — Skins & secrets
         - M2 — Events & death
         - M3 — Minigames
         - M4 — Polish, audio & release
