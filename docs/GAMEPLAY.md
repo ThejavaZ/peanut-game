@@ -41,7 +41,7 @@ Thirst is the fastest killer, hygiene the most forgiving. Nothing decays while
 the game is paused.
 
 All values clamp to `[0, 100]`. **Zero is a warning state, never instant death** —
-death belongs to a dedicated system that does not exist yet (§10).
+death only comes from the death system described in §9.
 
 ### Thresholds
 
@@ -87,7 +87,22 @@ second:**
 | Happiness | `0.02`             |
 | **All four at once** | **`0.19`**  |
 
-Total neglect from full health reaches zero in about **8 min 46 s**.
+Two numbers matter, measured on the engine from a fresh hamster with total
+neglect:
+
+| Moment | Elapsed |
+| ------ | ------- |
+| First need goes critical → **the alert banner appears** | **3 min 56 s** |
+| Health reaches zero → **death** | **13 min 53 s** |
+
+The `0.19/s` rate alone would drain health in **8 min 46 s**, but it only starts
+once every core need is critical — hunger empties at ~5 min, hygiene not until
+~10 min 25 s. That gap is what makes the run last almost fourteen minutes.
+
+> Under *total* neglect all four needs hit zero before health does, so the cause
+> is always **systemic failure**. The specific causes — starvation, dehydration,
+> squalor, despair — need **selective** neglect: feeding and playing while
+> forgetting the water, for instance.
 
 **Health recovers at `+0.05` per second — but only when all four core needs are
 at `55` or above.** That is one point every 20 seconds, and no recovery happens
@@ -121,6 +136,7 @@ so the player always makes a small trade-off.
 | ------------------- | ------------ | ---------------------------------------- |
 | `SECONDS_PER_DAY`   | `120`        | One in-game day every two real minutes   |
 | `DAY_START_HOUR`    | `08:00`      | Every in-game day starts in the morning  |
+| `MAX_AGE_DAYS`      | `8`          | Old age ends the run on Day 9            |
 
 The HUD reads `Day N · HH:MM`. Day number and age both derive from
 `elapsedSeconds`, so pausing, reloading or closing the tab never corrupts them.
@@ -157,15 +173,57 @@ cooldowns or health. Full list, with spoilers, in [`skins.md`](skins.md).
 
 ---
 
-## 9. What ends a run today
+## 9. How a run ends
 
-Honest status: **nothing in the game ends a run yet.**
+Death is real now, and it is never instant.
 
-The only exit is the development button *Skip to memorial (dev)* at the bottom
-of the game screen. The memorial already shows days, meals and play sessions
-from real stats, but the cause of death and epitaph are hard-coded placeholders.
+### Rules
 
-There is no cemetery; the menu's *Cemetery* button is disabled.
+- Health reaching `0` ends the run.
+- Reaching `ageDays = 8` (**Day 9**, ~16 real minutes) ends the run — **but only
+  while health is still above zero**. A neglected hamster dies of neglect even
+  on its last day; old age is for hamsters that are otherwise fine.
+- Once dead, everything freezes: needs, cooldowns, the clock and the care
+  buttons. The record is written once and never rewritten.
+
+### The six causes
+
+| Cause | Trigger | Warning before it |
+| ----- | ------- | ----------------- |
+| Starvation | Hunger is the single lowest core need | Critical banner |
+| Dehydration | Thirst is the single lowest core need | Critical banner |
+| Squalor | Hygiene is the single lowest core need | Critical banner |
+| Despair | Happiness is the single lowest core need | Critical banner |
+| Systemic failure | Two or more core needs equally bad | Critical banner |
+| Old age | `ageDays ≥ 8` while health > 0 | Age banner, one full day earlier |
+
+Two things decide which cause you get:
+
+1. **Who is lowest.** One clearly lowest need gets the blame; a tie means no
+   culprit, so it is systemic. Under *total* neglect every need hits zero before
+   health does — see §4 — so that path always ends **systemic**. The specific
+   causes need selective neglect: feeding and playing while forgetting water.
+2. **Neglect beats age.** The health check runs first, so `old age` can only
+   fire on a hamster that is still being looked after.
+
+### Warnings
+
+| Ending | First warning | Death |
+| ------ | ------------- | ----- |
+| Neglect | ~**3 min 56 s** into total neglect (first need critical) | ~**13 min 53 s** |
+| Old age | Whole of **Day 8** (`ageDays = 7`) | Start of **Day 9** (`ageDays = 8`) |
+
+No death happens without one of those having been visible first.
+
+### After death
+
+- The memorial shows name, days survived, meals, play sessions, **real cause of
+  death** and an epitaph — all read from the frozen `DeathRecord`.
+- The record is written to storage immediately, so **reloading brings the
+  memorial back**.
+- Leaving it (*Adopt another* or *Main menu*) clears the run. Keeping a history
+  of every hamster across runs is the **cemetery**, which arrives with the rest
+  of M2.
 
 ---
 
@@ -174,7 +232,7 @@ There is no cemetery; the menu's *Cemetery* button is disabled.
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
 | Random events (≥ 8)           | M2        | Weighted choices that can improve or damage the run          |
-| Death system (≥ 6 causes)     | M2        | Ends runs for real; writes an immutable death record         |
+| Absurd causes of death        | M2        | The six causes cover negligence and old age; absurd endings need events |
 | Persistent cemetery           | M2        | Browsable history of previous hamsters                       |
 | Minigames (3 + Nap Time)      | M3        | Active play that rewards needs, with the clock paused        |
 | Audio                         | M4        | Synthesised SFX and ambient loop                             |

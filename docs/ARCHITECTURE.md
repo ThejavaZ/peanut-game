@@ -102,10 +102,14 @@ Four pure functions in `src/game/rules.ts` do all the work:
 | `advanceRun`       | Wraps `updateNeeds` plus cooldown ticking and the in-game clock           |
 | `applyCareAction`  | Applies one care action if its cooldown allows it                         |
 
+A fifth pure module, `src/game/death.ts`, exposes `evaluateDeath(state)`.
+`advanceRun` calls it after every tick, so the engine is the only place that can
+end a run — React never decides when Peanut dies.
+
 Two rules are load-bearing and tests depend on them:
 
-- **Zero is not death.** Needs clamp at `0` and raise a warning. Death belongs
-  to a dedicated system (planned for M2), never to the decay loop.
+- **Zero is not instant death.** Needs clamp at `0` and raise a warning. Death
+  only comes from `evaluateDeath`, after a warning has already been shown.
 - **Cosmetics never touch rules.** Skins and name easter eggs only change
   rendering. `tests/skins.test.ts` exists largely to keep that true.
 
@@ -181,7 +185,7 @@ Two independent `localStorage` keys:
 | `peanut.run.v1`   | `services/SaveService.ts`   | The whole `GameState`                |
 | `peanut.skins.v1` | `services/SkinService.ts`   | Unlocked cosmetic skin ids            |
 
-The run key name says `v1`; the payload carries `schemaVersion: 2`. The key is
+The run key name says `v1`; the payload carries `schemaVersion: 3`. The key is
 the *storage slot*, the version is *inside the payload* — they move at different
 speeds on purpose.
 
@@ -195,8 +199,10 @@ JSON.parse → migrateSave() → isGameState() → engine
                                    needs, stats, cooldowns, primitives
 ```
 
-- `migrateSave()` upgrades a v1 payload by injecting `skinId: 'hamster'` and
-  `accessoryId: 'none'` instead of discarding a run the player cares about.
+- `migrateSave()` upgrades older payloads **step by step** instead of discarding
+  a run the player cares about: v1 → v2 adds cosmetic skins, v2 → v3 adds
+  `death` (null while Peanut is alive). Each step writes its own version so the
+  next one still matches.
 - If validation fails, `loadRun()` returns `null` — the game starts clean rather
   than crashing on a corrupted object.
 - Both services swallow `localStorage` errors: private mode or a full quota must
@@ -228,26 +234,29 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at v0.3.0 (2 853 total: 2 559 in `src/`, 294 in `tests/`).
+Lines counted at the M2 death system (2026-11-18): **3 433 total** — 2 864 in
+`src/`, 569 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 102   | Screen state machine, adoption side effects      |
-| `src/types/game.ts`                 | 94    | Every shared type                               |
-| `src/game/config.ts`                | 54    | All balance numbers                             |
-| `src/game/rules.ts`                 | 219   | Pure engine: decay, health, actions, clock       |
+| `src/App.tsx`                       | 108   | Screen state machine, adoption side effects, memorial routing |
+| `src/types/game.ts`                 | 122   | Every shared type, including `DeathRecord`      |
+| `src/game/config.ts`                | 60    | All balance numbers                             |
+| `src/game/rules.ts`                 | 242   | Pure engine: decay, health, actions, clock, age warning |
+| `src/game/death.ts`                 | 82    | The only place a run can end, and the record it writes |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
+| `src/game/data/deathCauses.ts`      | 88    | The six causes of death and their epitaphs      |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
-| `src/game/runSummary.ts`            | 18    | Memorial data (placeholder until M2)             |
-| `src/hooks/useGameRun.ts`           | 180   | Reducer, clock effects, save throttling          |
-| `src/services/SaveService.ts`       | 133   | Run persistence, validation, migration           |
+| `src/game/runSummary.ts`            | 21    | Memorial data built from the `DeathRecord`      |
+| `src/hooks/useGameRun.ts`           | 191   | Reducer, clock effects, save throttling, death save |
+| `src/services/SaveService.ts`       | 186   | Run persistence, validation, v1→v2→v3 migration |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 79    | Menu screen                                      |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
-| `src/features/game/GameScreen.tsx`  | 211   | Live HUD                                         |
-| `src/features/memorial/MemorialScreen.tsx` | 76 | Memorial screen                            |
+| `src/features/game/GameScreen.tsx`  | 220   | Live HUD, critical and age warnings              |
+| `src/features/memorial/MemorialScreen.tsx` | 72 | Memorial screen from a `RunSummary`         |
 | `src/components/ui/Screen.tsx`      | 13    | Full-screen layout wrapper                      |
 | `src/components/ui/Button.tsx`      | 33    | Shared button variants                          |
 | `src/components/ui/NeedBar.tsx`     | 48    | Single need bar with warning states             |
@@ -257,6 +266,7 @@ Lines counted at v0.3.0 (2 853 total: 2 559 in `src/`, 294 in `tests/`).
 | `src/index.css`                     | 101   | Theme tokens, frames, animations                |
 | `tests/rules.test.ts`               | 180   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
+| `tests/death.test.ts`               | 275   | Causes, record immutability, warnings           |
 
 ---
 
@@ -266,7 +276,8 @@ Anything that breaks one of these is a regression, whatever the feature:
 
 1. **The engine stays pure.** No `window`, no `document`, no React inside
    `src/game/`. Tests depend on it.
-2. **Zero never kills.** Warnings yes, instant death no.
+2. **Zero never kills instantly.** A need at `0` raises a warning; only
+   `evaluateDeath` ends a run, and only after a warning has been shown.
 3. **Cosmetics never change rules.** Needs, cooldowns and health are identical
    for every skin and name.
 4. **Saves are untrusted.** Anything read from `localStorage` goes through
@@ -283,10 +294,10 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Events and death system | M2     | New module in `src/game/`, `DeathRecord`, cemetery persistence |
+| Random events        | M2        | Weighted scheduler in `src/game/` plus an event modal in the HUD |
+| Persistent cemetery  | M2        | A second storage key holding the history of past hamsters |
 | Minigames (3 + Nap)  | M3        | New `src/features/minigames/` layer, clock paused while playing |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
-| Real memorial content | M2        | Replaces the placeholder in `runSummary.ts`         |
 
 When any of these lands, **this document must be updated in the same PR** —
 that is part of the Definition of Done
