@@ -14,6 +14,7 @@ import {
 import {
   advanceRun,
   applyCareAction,
+  applyEventChoice,
   createRun,
   getAgeWarning,
   getCriticalWarning,
@@ -23,6 +24,10 @@ import type { GameState, Needs } from '../src/types/game'
 
 const NOW = 1_700_000_000_000
 const DAY = SECONDS_PER_DAY
+
+/** Net value of a choice: negative totals hurt, positive totals help. */
+const total = (effects: Partial<Needs>): number =>
+  Object.values(effects).reduce((sum, value) => sum + (value ?? 0), 0)
 
 function makeRun(): GameState {
   return createRun('Peanut', NOW)
@@ -208,11 +213,24 @@ describe('advanceRun with death', () => {
 
   test('reaches neglect death from a healthy run by neglect alone', () => {
     let run = makeRun()
-    // Measured on the engine: total neglect warns at ~3m56s and kills at
-    // ~13m53s, once every core need has reached zero together.
-    while (!run.death && run.elapsedSeconds < 20 * DAY) {
+    let guard = 0
+
+    // Total neglect, with events answered the neglectful way — whichever
+    // option costs the most — because a dialog that nobody answers stops the
+    // clock forever (and would hang this loop).
+    while (!run.death && run.elapsedSeconds < 20 * DAY && guard < 5000) {
+      guard += 1
+      const pending = run.events.pending
+      if (pending) {
+        const worst = [...pending.choices].sort(
+          (a, b) => total(a.effects) - total(b.effects),
+        )[0]
+        run = applyEventChoice(run, worst.id)
+        continue
+      }
       run = advanceRun(run, 10)
     }
+
     expect(run.death).not.toBeNull()
     expect(run.death?.causeId).toMatch(
       /starvation|dehydration|filth|despair|systemic/,

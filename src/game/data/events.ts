@@ -1,12 +1,12 @@
 import type { GameEvent } from '../../types/game'
 
 /**
- * Three events to prove the model. Content targets (≥ 8) belong to issue #4,
- * which also flips `EVENTS_ENABLED` on — until then these never fire in a
- * normal game, they only exist so the scheduler can be tested.
+ * The eight events that can interrupt a run.
  *
  * Design rule from the roadmap: an event may hurt, but the player always sees
  * the consequence before choosing, and no option is a free refill.
+ *
+ * Mix: four negligence, three absurd, one inevitable.
  */
 export const EVENTS: readonly GameEvent[] = [
   {
@@ -78,6 +78,126 @@ export const EVENTS: readonly GameEvent[] = [
         label: 'Stop the wheel',
         hint: 'Happiness −10 · health +4',
         effects: { happiness: -10, health: 4 },
+      },
+    ],
+  },
+  {
+    id: 'water-bottle-jam',
+    title: 'The water bottle is stuck',
+    description:
+      'The spout has seized up. Peanut licks it anyway, which is somehow sadder than doing nothing.',
+    weight: 35,
+    cooldownSeconds: 90,
+    oncePerRun: false,
+    conditions: [{ type: 'needAtMost', need: 'thirst', value: 40 }],
+    choices: [
+      {
+        id: 'unjam',
+        label: 'Twist it free now',
+        hint: 'Thirst +22 · hygiene −4 (it sprays everywhere)',
+        effects: { thirst: 22, hygiene: -4 },
+      },
+      {
+        id: 'wait',
+        label: 'It will fix itself',
+        hint: 'Thirst −10 · happiness −5',
+        effects: { thirst: -10, happiness: -5 },
+      },
+    ],
+  },
+  {
+    id: 'no-play',
+    title: 'Nobody has played today',
+    description:
+      'Peanut sits at the bars and watches you watch the screen. It has been doing that for a while.',
+    weight: 30,
+    cooldownSeconds: 120,
+    oncePerRun: false,
+    conditions: [{ type: 'needAtMost', need: 'happiness', value: 30 }],
+    choices: [
+      {
+        id: 'floor',
+        label: 'Sit on the floor with it',
+        hint: 'Happiness +18 · hunger −6',
+        effects: { happiness: 18, hunger: -6 },
+      },
+      {
+        id: 'tomorrow',
+        label: 'Play tomorrow',
+        hint: 'Happiness −10 · health −3',
+        effects: { happiness: -10, health: -3 },
+      },
+    ],
+  },
+  {
+    id: 'deep-clean',
+    title: 'The cage needs a real clean',
+    description:
+      'The bedding has opinions now. Open the cage and the room learns about them too.',
+    weight: 30,
+    cooldownSeconds: 100,
+    oncePerRun: false,
+    conditions: [{ type: 'needAtMost', need: 'hygiene', value: 30 }],
+    choices: [
+      {
+        id: 'strip',
+        label: 'Strip the bedding',
+        hint: 'Hygiene +30 · happiness −4 (all of it, at once)',
+        effects: { hygiene: 30, happiness: -4 },
+      },
+      {
+        id: 'cover',
+        label: 'Just add fresh paper',
+        hint: 'Hygiene +12 · happiness +3',
+        effects: { hygiene: 12, happiness: 3 },
+      },
+    ],
+  },
+  {
+    id: 'walls',
+    title: 'There is something in the walls',
+    description:
+      'A scratching sound, twice, then nothing. Peanut stares at the same corner you do.',
+    weight: 25,
+    cooldownSeconds: 150,
+    oncePerRun: true,
+    conditions: [{ type: 'dayAtLeast', day: 4 }],
+    choices: [
+      {
+        id: 'listen',
+        label: 'Listen at the wall',
+        hint: 'Happiness +10 · thirst −6',
+        effects: { happiness: 10, thirst: -6 },
+      },
+      {
+        id: 'move',
+        label: 'Move the cage away',
+        hint: 'Happiness −4 · hygiene −9',
+        effects: { happiness: -4, hygiene: -9 },
+      },
+    ],
+  },
+  {
+    id: 'sniffle',
+    title: 'Peanut has a sniffle',
+    description:
+      'One small sneeze. Then another. Nothing in this house has ever been fine on its own.',
+    weight: 20,
+    cooldownSeconds: 0,
+    oncePerRun: true,
+    conditions: [{ type: 'dayAtLeast', day: 5 }],
+    choices: [
+      {
+        id: 'vet',
+        label: 'Take it to the vet',
+        hint: 'Health +12 · hunger −8 · happiness −4',
+        effects: { health: 12, hunger: -8, happiness: -4 },
+      },
+      {
+        id: 'wait',
+        label: 'Wait and see',
+        hint: 'Health −7 · happiness −6',
+        effects: { health: -7, happiness: -6 },
       },
     ],
   },

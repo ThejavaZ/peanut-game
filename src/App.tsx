@@ -11,7 +11,7 @@ import { loadUnlockedSkins, unlockSkin } from './services/SkinService'
 import type { Screen, SkinId } from './types/game'
 
 function App() {
-  const { run, adopt, care, togglePause, resetRun } = useGameRun()
+  const { run, adopt, care, resolveEvent, togglePause, resetRun } = useGameRun()
   const [screen, setScreen] = useState<Screen>({ name: 'menu' })
   const [unlockedSkins, setUnlockedSkins] = useState<SkinId[]>(() =>
     loadUnlockedSkins(),
@@ -89,6 +89,7 @@ function App() {
         <GameScreen
           run={run}
           onCare={care}
+          onResolveEvent={resolveEvent}
           onTogglePause={togglePause}
           onBackToMenu={goToMenu}
         />

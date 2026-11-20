@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { EventModal } from '../../components/events/EventModal'
 import { HamsterRoom } from '../../components/room/HamsterRoom'
 import { Button } from '../../components/ui/Button'
 import { NeedBar } from '../../components/ui/NeedBar'
@@ -32,6 +33,7 @@ const NEED_LABELS = {
 interface GameScreenProps {
   run: GameState
   onCare: (action: CareAction) => void
+  onResolveEvent: (choiceId: string) => void
   onTogglePause: () => void
   onBackToMenu: () => void
 }
@@ -39,6 +41,7 @@ interface GameScreenProps {
 export function GameScreen({
   run,
   onCare,
+  onResolveEvent,
   onTogglePause,
   onBackToMenu,
 }: GameScreenProps) {
@@ -191,7 +194,11 @@ export function GameScreen({
                   <Button
                     key={action.id}
                     variant="secondary"
-                    disabled={cooldown > 0 || run.paused}
+                    disabled={
+                      cooldown > 0 ||
+                      run.paused ||
+                      run.events.pending !== null
+                    }
                     onClick={() => onCare(action.id)}
                     title={action.hint}
                     className={`px-2 text-[8px] ${action.id === 'sleep' ? 'col-span-2' : ''}`}
@@ -215,6 +222,16 @@ export function GameScreen({
           </Button>
         </div>
       </div>
+
+      {run.events.pending ? (
+        <EventModal
+          event={run.events.pending}
+          skinId={run.hamster.skinId}
+          accessoryId={run.hamster.accessoryId}
+          hamsterName={displayName}
+          onChoose={onResolveEvent}
+        />
+      ) : null}
     </Screen>
   )
 }
