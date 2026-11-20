@@ -227,11 +227,55 @@ No death happens without one of those having been visible first.
 
 ---
 
-## 10. Not implemented yet
+## 10. Events (engine ready, UI pending)
+
+Random events exist as **rules**, not yet as something you can see.
+
+### What an event declares
+
+| Field | Meaning |
+| ----- | ------- |
+| `id`, `title`, `description` | Identity and copy |
+| `weight` | Likelihood against the other eligible events |
+| `cooldownSeconds` | Seconds before this same event may fire again |
+| `oncePerRun` | Never fires twice in one run |
+| `conditions` | Gates on needs or day — all must be true |
+| `choices` | One or two options, each with visible effects |
+
+### Cadence
+
+Three gates, in this order, every check:
+
+| Gate | Value | Effect |
+| ---- | ----- | ------ |
+| Global gap | `EVENT_MIN_INTERVAL_SECONDS = 45` | Events can never crowd each other |
+| Chance | `EVENT_CHANCE = 0.3` | Even a valid moment may pass silently |
+| Eligibility | conditions + cooldown + once-per-run | Only events that make sense |
+
+Nothing can fire while another event is waiting for an answer, and nothing at
+all can fire after death.
+
+### The three seed events
+
+| Event | Fires when | Weight | Cooldown | One-shot | Choices |
+| ----- | ---------- | ------ | -------- | -------- | ------- |
+| The bowl is empty | hunger ≤ 35 | 40 | 60 s | no | fill it / later |
+| Peanut is out of the cage | day ≥ 2 | 30 | 180 s | **yes** | chase it / leave a trail of seeds |
+| Peanut runs all night | day ≥ 3 | 25 | 240 s | no | let it run / stop the wheel |
+
+Every option gives and takes something — no choice is a free refill.
+
+### Why you cannot see them yet
+
+`EVENTS_ENABLED = false`. Without a modal nobody could answer a queued event,
+so the scheduler would collect choices nobody sees. Issue #4 ships the modal,
+five more events and flips the flag.
+
+## 11. Not implemented yet
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
-| Random events (≥ 8)           | M2        | Weighted choices that can improve or damage the run          |
+| Event modal and five more events | M2      | The scheduler runs today but is switched off until a modal can answer it |
 | Absurd causes of death        | M2        | The six causes cover negligence and old age; absurd endings need events |
 | Persistent cemetery           | M2        | Browsable history of previous hamsters                       |
 | Minigames (3 + Nap Time)      | M3        | Active play that rewards needs, with the clock paused        |
