@@ -13,6 +13,10 @@ export const SAVE_INTERVAL_MS = 5000
 /** v3 adds `death`; v4 adds the event scheduler. */
 export const SAVE_SCHEMA_VERSION = 4
 
+/** Cemetery payload version, and how many graves are kept (newest first). */
+export const CEMETERY_SCHEMA_VERSION = 1
+export const CEMETERY_MAX_ENTRIES = 50
+
 /**
  * Events are live: the modal in `src/components/events/EventModal.tsx` answers
  * them, and a queued event freezes the clock until someone chooses.
@@ -27,6 +31,12 @@ export const EVENT_CHANCE = 0.3
 export const MAX_AGE_DAYS = 8
 /** The last full day before that, when the HUD starts warning about age. */
 export const AGE_WARNING_DAYS = MAX_AGE_DAYS - 1
+
+/**
+ * Play sessions needed before an empty health bar can be blamed on the wheel:
+ * exactly the gate that lets the wheel event exist in the first place.
+ */
+export const WHEEL_DEATH_SESSIONS = 5
 
 /** Points lost per real second. Full → empty takes 4–10 minutes. */
 export const NEED_RATES: Record<CoreNeedKey, number> = {

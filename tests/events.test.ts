@@ -366,13 +366,14 @@ describe('the reducer honours a queued event', () => {
 })
 
 describe('event content', () => {
-  test('ships eight events with unique ids', () => {
-    expect(EVENTS).toHaveLength(8)
+  test('ships nine events with unique ids', () => {
+    expect(EVENTS).toHaveLength(9)
     expect(new Set(EVENTS.map((event) => event.id)).size).toBe(EVENTS.length)
   })
 
-  test('mixes need-driven and day-driven events', () => {
-    // Negligence reacts to the bars; absurd and inevitable ones to time.
+  test('mixes need-driven, day-driven and stat-driven events', () => {
+    // Negligence reacts to the bars; the others to time or to how the run has
+    // actually been played.
     const needDriven = EVENTS.filter((event) =>
       event.conditions.some(
         (condition) =>
@@ -385,9 +386,30 @@ describe('event content', () => {
           condition.type === 'dayAtLeast' || condition.type === 'dayAtMost',
       ),
     )
+    const statDriven = EVENTS.filter((event) =>
+      event.conditions.some((condition) => condition.type === 'statAtLeast'),
+    )
 
     expect(needDriven.length).toBeGreaterThanOrEqual(3)
     expect(dayDriven.length).toBeGreaterThanOrEqual(3)
+    expect(statDriven.length).toBeGreaterThanOrEqual(1)
+  })
+
+  test('the wheel event only exists once the wheel has been used', () => {
+    const wheel = EVENTS.find((event) => event.id === 'wheel-frenzy')
+    if (!wheel) {
+      throw new Error('expected the wheel event')
+    }
+
+    const rested = at(0)
+    const played: GameState = {
+      ...rested,
+      stats: { ...rested.stats, playSessions: 5 },
+    }
+
+    expect(isConditionMet(wheel.conditions[0], played)).toBe(true)
+    expect(isConditionMet(wheel.conditions[0], rested)).toBe(false)
+    expect(isEventEligible(wheel, rested)).toBe(false)
   })
 
   test('every event is well formed', () => {
@@ -462,6 +484,29 @@ describe('save validation for events', () => {
           }),
         },
       }),
+    ).toBe(false)
+  })
+
+  test('accepts a stat condition and rejects an unknown stat', () => {
+    const base = at(60)
+    const withCondition = (condition: unknown) => ({
+      ...base,
+      events: {
+        ...base.events,
+        pending: synthetic({ conditions: [condition as never] }),
+      },
+    })
+
+    expect(
+      isGameState(
+        withCondition({ type: 'statAtLeast', stat: 'playSessions', value: 5 }),
+      ),
+    ).toBe(true)
+    expect(
+      isGameState(withCondition({ type: 'statAtLeast', stat: 'bogus', value: 5 })),
+    ).toBe(false)
+    expect(
+      isGameState(withCondition({ type: 'statAtLeast', stat: 'playSessions' })),
     ).toBe(false)
   })
 

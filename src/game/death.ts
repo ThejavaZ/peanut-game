@@ -1,7 +1,9 @@
 import {
   CORE_NEEDS,
+  HEALTH_RULES,
   MAX_AGE_DAYS,
   SECONDS_PER_DAY,
+  WHEEL_DEATH_SESSIONS,
 } from './config'
 import { DEATH_CAUSES, pickEpitaph } from './data/deathCauses'
 import type {
@@ -56,12 +58,14 @@ export function buildDeathRecord(
 /**
  * The single place a run can end.
  *
- * Order matters: a neglected hamster dies of neglect even on its last day, and
- * `old age` only fires while Peanut is otherwise healthy — so a player can
- * never die of age while the health bar is already empty.
+ * Order matters: a neglected hamster dies of neglect even on its last day,
+ * an accident is only accepted when neglect is impossible, and `old age` fires
+ * only while Peanut is otherwise healthy — so a player can never die of age
+ * while the health bar is already empty.
  *
- * Every cause here had a warning first: neglect needs a critical need, and old
- * age is announced one full day earlier by `getAgeWarning`.
+ * Every cause here had a warning first: neglect needs a critical need, an
+ * accident has to pass through the health warning at 20 on the way down, and
+ * old age is announced one full day earlier by `getAgeWarning`.
  */
 export function evaluateDeath(state: GameState): DeathRecord | null {
   if (state.death) {
@@ -69,8 +73,19 @@ export function evaluateDeath(state: GameState): DeathRecord | null {
   }
 
   const { needs, ageDays } = state.hamster
+  const { stats } = state
 
   if (needs.health <= 0) {
+    // Neglect cannot empty the bar while every need stays comfortable: the
+    // penalties only exist below 20, and above 55 health recovers. If the bar
+    // is empty anyway and the wheel has been in play, this was not neglect.
+    const comfortable = CORE_NEEDS.every(
+      (need) => needs[need] >= HEALTH_RULES.recoveryThreshold,
+    )
+    if (comfortable && stats.playSessions >= WHEEL_DEATH_SESSIONS) {
+      return buildDeathRecord(state, 'wheel-accident')
+    }
+
     return buildDeathRecord(state, pickNeglectCause(needs))
   }
 

@@ -59,6 +59,16 @@ export const DEATH_CAUSES: Record<DeathCauseId, DeathCauseDefinition> = {
       'A little help, at any time.',
     ],
   },
+  'wheel-accident': {
+    id: 'wheel-accident',
+    label: 'The wheel flew off',
+    detail:
+      'Peanut kept running after the wheel came loose. The wheel did not.',
+    epitaphs: [
+      'He outran the wheel. Eventually the wheel disagreed.',
+      'One last lap, badly measured.',
+    ],
+  },
   'old-age': {
     id: 'old-age',
     label: 'Old age',

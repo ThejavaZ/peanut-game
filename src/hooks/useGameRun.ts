@@ -10,6 +10,7 @@ import {
   applyEventChoice,
   createRun,
 } from '../game/rules'
+import { appendEntry, toCemeteryEntry } from '../services/CemeteryService'
 import { clearRun, loadRun, saveRun } from '../services/SaveService'
 import type {
   AccessoryId,
@@ -158,11 +159,14 @@ export function useGameRun() {
 
     const now = Date.now()
 
-    // The death record must outlive the interval that produced it.
+    // The death record must outlive the interval that produced it. The same
+    // guard writes the grave, so React StrictMode's double-invoked effect can
+    // never record the same hamster twice.
     if (run.death && !deathSavedRef.current) {
       deathSavedRef.current = true
       lastSaveRef.current = now
       saveRun(run)
+      appendEntry(toCemeteryEntry(run, run.death))
       return
     }
 

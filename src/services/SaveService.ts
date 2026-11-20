@@ -17,9 +17,13 @@ const CONDITION_TYPES = [
   'needAtLeast',
   'dayAtLeast',
   'dayAtMost',
+  'statAtLeast',
 ] as const
 
-/** Conditions may only gate on core needs, matching `EventCondition`. */
+/**
+ * Need conditions may only gate on core needs; `statAtLeast` is validated
+ * against the run stats instead.
+ */
 const CONDITION_NEEDS: readonly NeedKey[] = [
   'hunger',
   'thirst',
@@ -73,6 +77,13 @@ function isEventCondition(value: unknown): boolean {
   }
   if (value.type === 'dayAtLeast' || value.type === 'dayAtMost') {
     return isFiniteNumber(value.day)
+  }
+  if (value.type === 'statAtLeast') {
+    return (
+      typeof value.stat === 'string' &&
+      STAT_KEYS.includes(value.stat) &&
+      isFiniteNumber(value.value)
+    )
   }
   return (
     typeof value.need === 'string' &&
