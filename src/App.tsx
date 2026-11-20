@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CemeteryScreen } from './features/cemetery/CemeteryScreen'
 import { GameScreen } from './features/game/GameScreen'
 import { MemorialScreen } from './features/memorial/MemorialScreen'
 import { MainMenu } from './features/menu/MainMenu'
+import { MinigameScreen } from './features/minigames/MinigameScreen'
 import { NamingScreen } from './features/naming/NamingScreen'
+import { MINIGAMES } from './game/data/minigames'
 import { findEasterEgg, getDisplayName } from './game/easterEggs'
 import { buildRunSummary } from './game/runSummary'
 import { findSecretSkin } from './game/skins'
@@ -13,7 +15,8 @@ import { loadUnlockedSkins, unlockSkin } from './services/SkinService'
 import type { Screen, SkinId } from './types/game'
 
 function App() {
-  const { run, adopt, care, resolveEvent, togglePause, resetRun } = useGameRun()
+  const { run, adopt, care, resolveEvent, togglePause, resetRun, suspend, resume, applyReward } =
+    useGameRun()
   const [screen, setScreen] = useState<Screen>({ name: 'menu' })
   const [unlockedSkins, setUnlockedSkins] = useState<SkinId[]>(() =>
     loadUnlockedSkins(),
@@ -22,6 +25,19 @@ function App() {
   const goToMenu = () => setScreen({ name: 'menu' })
   const goToNaming = () => setScreen({ name: 'naming' })
   const goToCemetery = () => setScreen({ name: 'cemetery' })
+  const goToGame = () => setScreen({ name: 'game' })
+
+  /**
+   * The single place that owns the freeze. Whatever path leaves a minigame
+   * resumes the clock, so the time spent playing is never billed as decay.
+   */
+  useEffect(() => {
+    if (screen.name === 'minigame') {
+      suspend()
+    } else {
+      resume()
+    }
+  }, [screen.name, suspend, resume])
 
   const handleAdopt = (hamsterName: string, skinId: SkinId) => {
     const secret = findSecretSkin(hamsterName)
@@ -97,6 +113,7 @@ function App() {
           run={run}
           onCare={care}
           onResolveEvent={resolveEvent}
+          onOpenMinigame={(id) => setScreen({ name: 'minigame', id })}
           onTogglePause={togglePause}
           onBackToMenu={goToMenu}
         />
@@ -113,6 +130,20 @@ function App() {
 
     case 'cemetery':
       return <CemeteryScreen entries={loadCemetery()} onBack={goToMenu} />
+
+    case 'minigame': {
+      const game = MINIGAMES[activeScreen.id]
+      return (
+        <MinigameScreen
+          game={game}
+          onPlay={() => {
+            applyReward(game.reward)
+            goToGame()
+          }}
+          onExit={goToGame}
+        />
+      )
+    }
   }
 }
 

@@ -149,6 +149,7 @@ The HUD reads `Day N · HH:MM`. Day number and age both derive from
 | ---------------------------- | ------------------------------------------------------------ |
 | Pause button                 | Time, cooldowns and decay all freeze                         |
 | Event modal open             | Frozen too — reading an event costs Peanut no time           |
+| Minigame open                | Frozen too — and the time spent playing is never billed       |
 | Tab is hidden                | No ticks while hidden; the run is saved immediately          |
 | Tab becomes visible again    | Catch-up applied, capped at **10 minutes** of decay          |
 | Single tick stall            | Capped at **5 seconds**; the rest is dropped by design       |
@@ -301,11 +302,53 @@ This shipped disabled first (`EVENTS_ENABLED = false`) together with the
 scheduler, because a queued event nobody can answer would have been invisible.
 The modal and the remaining five events flipped it on.
 
-## 11. Not implemented yet
+## 11. Minigames
+
+Minigames are a pause with a purpose: the clock stops, you see exactly what the
+reward is, and you may always walk away with nothing.
+
+### The shell
+
+| Rule | Behaviour |
+| ---- | --------- |
+| Frozen clock | Decay, cooldowns and the timer stop while it is open |
+| Reward preview | Shown **before** you commit, derived from the reward itself |
+| Skip | Always visible, and it applies **nothing** |
+| Applied once | On completion only — never twice, never on exit |
+| Resume | The time spent playing is **never billed** as decay |
+
+Every minigame reports the same contract:
+
+```
+{ effects, advanceSeconds?, clearsCooldowns? }
+```
+
+Need deltas, an optional slice of real time, and an optional cooldown wipe.
+Effects land first, cooldowns second, and time passes **last** through the one
+clock the game has — so an advance also decays and ages.
+
+### Nap Time
+
+The first, and today the only, minigame.
+
+| | |
+| --- | --- |
+| Gives | health **+15** |
+| Costs | **60 s of game time**: about −17 hunger, −20 thirst, −10 hygiene, −13 happiness |
+| Why it is not free | the decay comes from the very clock the nap advances |
+
+Spamming it is self-limiting — each nap drains the bars more than the health it
+returns. Keeping minigames from being spammed *anyway* (a gap between runs) is
+owned by the tuning issue.
+
+> The wheel, the seeds and the maze reuse this shell unchanged: they bring
+> their own `reward` and their own screen body, nothing else.
+
+## 12. Not implemented yet
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
-| Minigames (3 + Nap Time)      | M3        | Active play that rewards needs, with the clock paused        |
+| Wheel, seeds and maze          | M3        | Three more minigames on the shell that Nap Time proved    |
 | Audio                         | M4        | Synthesised SFX and ambient loop                             |
 | Balance pass                  | M4        | Target run length: **5–15 minutes** (target, not tuned)      |
 

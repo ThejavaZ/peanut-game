@@ -155,8 +155,11 @@ export function advanceRun(
   return EVENTS_ENABLED ? advanceEvents(next, seconds, random) : next
 }
 
-/** Care actions and event choices change needs exactly the same way. */
-function applyEffects(needs: Needs, effects: Partial<Needs>): Needs {
+/**
+ * Care actions, event choices and minigame rewards all change needs exactly
+ * the same way: add the delta, clamp to the bounds.
+ */
+export function applyEffects(needs: Needs, effects: Partial<Needs>): Needs {
   const next = { ...needs }
   for (const [key, amount] of Object.entries(effects) as [NeedKey, number][]) {
     next[key] = clamp(next[key] + amount)

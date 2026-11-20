@@ -178,6 +178,22 @@ export interface CemeteryEntry {
   readonly diedAt: number
 }
 
+export type MinigameId = 'nap-time'
+
+/**
+ * The contract every minigame reports back. Applied exactly once when the game
+ * finishes; leaving early applies nothing at all.
+ *
+ * Order is fixed: the effects land first, then `advanceSeconds` of real game
+ * time passes through the normal clock (decay, ageing, and anything else the
+ * clock can trigger).
+ */
+export interface MinigameReward {
+  readonly effects: Partial<Needs>
+  readonly advanceSeconds?: number
+  readonly clearsCooldowns?: boolean
+}
+
 /**
  * Screens are a plain state machine instead of routes: the game lives on a
  * single URL, which keeps GitHub Pages deploys simple.
@@ -188,3 +204,4 @@ export type Screen =
   | { name: 'game' }
   | { name: 'memorial'; run: RunSummary }
   | { name: 'cemetery' }
+  | { name: 'minigame'; id: MinigameId }

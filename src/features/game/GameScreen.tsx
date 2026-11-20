@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { NeedBar } from '../../components/ui/NeedBar'
 import { Screen } from '../../components/ui/Screen'
 import { CARE_ACTION_LIST } from '../../game/data/careActions'
+import { MINIGAME_LIST } from '../../game/data/minigames'
 import { findEasterEgg, getDisplayName } from '../../game/easterEggs'
 import {
   formatGameClock,
@@ -13,7 +14,12 @@ import {
   getHamsterMood,
 } from '../../game/rules'
 import { SKINS } from '../../game/skins'
-import type { CareAction, GameState, HamsterMood } from '../../types/game'
+import type {
+  CareAction,
+  GameState,
+  HamsterMood,
+  MinigameId,
+} from '../../types/game'
 
 const MOOD_BADGES: Record<HamsterMood, { label: string; className: string }> = {
   happy: { label: 'Happy', className: 'bg-mint' },
@@ -34,6 +40,7 @@ interface GameScreenProps {
   run: GameState
   onCare: (action: CareAction) => void
   onResolveEvent: (choiceId: string) => void
+  onOpenMinigame: (id: MinigameId) => void
   onTogglePause: () => void
   onBackToMenu: () => void
 }
@@ -42,6 +49,7 @@ export function GameScreen({
   run,
   onCare,
   onResolveEvent,
+  onOpenMinigame,
   onTogglePause,
   onBackToMenu,
 }: GameScreenProps) {
@@ -213,6 +221,29 @@ export function GameScreen({
             <p className="mt-4 text-base text-cocoa-soft">
               Warnings appear before anything serious happens.
             </p>
+          </section>
+
+          <section className="pixel-frame-sm bg-paper p-4 sm:col-span-2">
+            <div className="flex items-baseline justify-between gap-2">
+              <h2 className="font-pixel text-[10px] uppercase">Minigames</h2>
+              <span className="text-sm text-cocoa-soft">
+                Rewards never replace the bars
+              </span>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {MINIGAME_LIST.map((game) => (
+                <Button
+                  key={game.id}
+                  variant="secondary"
+                  title={game.description}
+                  disabled={run.paused || run.events.pending !== null}
+                  onClick={() => onOpenMinigame(game.id)}
+                  className="text-[8px]"
+                >
+                  {game.title}
+                </Button>
+              ))}
+            </div>
           </section>
         </div>
 
