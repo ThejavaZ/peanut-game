@@ -112,9 +112,11 @@ Answering it is `applyEventChoice` in `rules.ts`. That split is deliberate —
 `events.ts` imports only `config` and `data`, so there is no cycle back through
 the rules.
 
-**Events are currently switched off** by `EVENTS_ENABLED = false`. The engine
-runs, tests exercise it, but nothing is scheduled until the modal (issue #4) can
-answer a queued event.
+**Events are live** (`EVENTS_ENABLED = true`). The scheduler queues at most one
+event; `src/components/events/EventModal.tsx` renders it; `applyEventChoice`
+resolves it. A queued event freezes three things at once — `advanceRun`, the
+reducer's tick and the hook's `isRunning` — so reading a dialog can never cost
+the hamster any time.
 
 Two rules are load-bearing and tests depend on them:
 
@@ -246,31 +248,32 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the M2 event scheduler (2026-11-19): **4 274 total** — 3 315 in
-`src/`, 959 in `tests/`.
+Lines counted at the M2 event modal (2026-11-19): **4 597 total** — 3 559 in
+`src/`, 1 038 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 108   | Screen state machine, adoption side effects, memorial routing |
+| `src/App.tsx`                       | 109   | Screen state machine, adoption side effects, memorial routing |
 | `src/types/game.ts`                 | 172   | Every shared type: `DeathRecord`, `GameEvent`, scheduler state |
-| `src/game/config.ts`                | 71    | All balance numbers, including event cadence    |
-| `src/game/rules.ts`                 | 282   | Pure engine: decay, health, actions, clock, event effects |
+| `src/game/config.ts`                | 70    | All balance numbers, including event cadence    |
+| `src/game/rules.ts`                 | 294   | Pure engine: decay, health, actions, clock, event effects |
 | `src/game/events.ts`                | 138   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 82    | The only place a run can end, and the record it writes |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
 | `src/game/data/deathCauses.ts`      | 88    | The six causes of death and their epitaphs      |
-| `src/game/data/events.ts`           | 84    | Seed events: conditions, weights, choices        |
+| `src/game/data/events.ts`           | 204   | The eight events: conditions, weights, choices   |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 21    | Memorial data built from the `DeathRecord`      |
-| `src/hooks/useGameRun.ts`           | 205   | Reducer, clock effects, save throttling, `resolveEvent` |
+| `src/hooks/useGameRun.ts`           | 221   | Reducer, clock effects, save throttling, `resolveEvent` |
 | `src/services/SaveService.ts`       | 300   | Run persistence, validation, v1→v2→v3→v4 migration |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 79    | Menu screen                                      |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
-| `src/features/game/GameScreen.tsx`  | 220   | Live HUD, critical and age warnings              |
+| `src/features/game/GameScreen.tsx`  | 237   | Live HUD, warnings, host for the event modal     |
 | `src/features/memorial/MemorialScreen.tsx` | 72 | Memorial screen from a `RunSummary`         |
+| `src/components/events/EventModal.tsx` | 79 | The modal: presentation only, no state           |
 | `src/components/ui/Screen.tsx`      | 13    | Full-screen layout wrapper                      |
 | `src/components/ui/Button.tsx`      | 33    | Shared button variants                          |
 | `src/components/ui/NeedBar.tsx`     | 48    | Single need bar with warning states             |
@@ -280,8 +283,8 @@ Lines counted at the M2 event scheduler (2026-11-19): **4 274 total** — 3 315 
 | `src/index.css`                     | 101   | Theme tokens, frames, animations                |
 | `tests/rules.test.ts`               | 180   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
-| `tests/death.test.ts`               | 282   | Causes, record immutability, warnings           |
-| `tests/events.test.ts`              | 383   | Interval, once-per-run, conditions, weights     |
+| `tests/death.test.ts`               | 300   | Causes, record immutability, warnings           |
+| `tests/events.test.ts`              | 444   | Interval, once-per-run, conditions, weights     |
 
 ---
 
@@ -309,7 +312,6 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Event modal and content | M2      | The model and scheduler exist (`src/game/events.ts`) with `EVENTS_ENABLED = false`; the HUD piece and the remaining events are missing |
 | Persistent cemetery  | M2        | A second storage key holding the history of past hamsters |
 | Minigames (3 + Nap)  | M3        | New `src/features/minigames/` layer, clock paused while playing |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
