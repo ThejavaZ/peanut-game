@@ -2,6 +2,7 @@ import {
   AGE_WARNING_DAYS,
   CORE_NEEDS,
   DAY_START_HOUR,
+  EVENTS_ENABLED,
   HEALTH_RULES,
   NEED_CRITICAL,
   NEED_RATES,
@@ -12,6 +13,7 @@ import {
 } from './config'
 import { CARE_ACTIONS } from './data/careActions'
 import { evaluateDeath } from './death'
+import { advanceEvents, createEventScheduler } from './events'
 import { DEFAULT_SKIN_ID } from './skins'
 import type {
   AccessoryId,
@@ -58,6 +60,7 @@ export function createRun(
     lastUpdatedAt: now,
     paused: false,
     death: null,
+    events: createEventScheduler(),
   }
 }
 
@@ -128,15 +131,25 @@ export function advanceRun(state: GameState, seconds: number): GameState {
 
   // A dead run is frozen: needs, cooldowns and the clock stop with the record.
   const death = evaluateDeath(next)
-  if (!death) {
-    return next
+  if (death) {
+    return {
+      ...next,
+      death,
+      hamster: { ...next.hamster, isAlive: false },
+    }
   }
 
-  return {
-    ...next,
-    death,
-    hamster: { ...next.hamster, isAlive: false },
+  // Events stay off until a modal exists to answer them (EVENTS_ENABLED).
+  return EVENTS_ENABLED ? advanceEvents(next, seconds) : next
+}
+
+/** Care actions and event choices change needs exactly the same way. */
+function applyEffects(needs: Needs, effects: Partial<Needs>): Needs {
+  const next = { ...needs }
+  for (const [key, amount] of Object.entries(effects) as [NeedKey, number][]) {
+    next[key] = clamp(next[key] + amount)
   }
+  return next
 }
 
 export function applyCareAction(state: GameState, action: CareAction): GameState {
@@ -145,23 +158,50 @@ export function applyCareAction(state: GameState, action: CareAction): GameState
   }
 
   const definition = CARE_ACTIONS[action]
-  const needs = { ...state.hamster.needs }
-
-  for (const [key, amount] of Object.entries(definition.effects) as [
-    NeedKey,
-    number,
-  ][]) {
-    needs[key] = clamp(needs[key] + amount)
-  }
 
   return {
     ...state,
-    hamster: { ...state.hamster, needs },
+    hamster: {
+      ...state.hamster,
+      needs: applyEffects(state.hamster.needs, definition.effects),
+    },
     stats: {
       ...state.stats,
       [definition.stat]: state.stats[definition.stat] + 1,
     },
     cooldowns: { ...state.cooldowns, [action]: definition.cooldownSeconds },
+  }
+}
+
+/**
+ * Answers the event waiting in `state.events.pending`.
+ *
+ * Unknown choice or nothing pending: the state comes back untouched, so a
+ * double click or a stale modal cannot apply an effect twice.
+ */
+export function applyEventChoice(
+  state: GameState,
+  choiceId: string,
+): GameState {
+  const pending = state.events.pending
+  if (!pending) {
+    return state
+  }
+
+  const choice = pending.choices.find(
+    (candidate) => candidate.id === choiceId,
+  )
+  if (!choice) {
+    return state
+  }
+
+  return {
+    ...state,
+    hamster: {
+      ...state.hamster,
+      needs: applyEffects(state.hamster.needs, choice.effects),
+    },
+    events: { ...state.events, pending: null },
   }
 }
 

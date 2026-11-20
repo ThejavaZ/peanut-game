@@ -1,5 +1,6 @@
 import { SAVE_SCHEMA_VERSION } from '../game/config'
 import { DEATH_CAUSES } from '../game/data/deathCauses'
+import { createEventScheduler } from '../game/events'
 import { DEFAULT_SKIN_ID, isSkinId } from '../game/skins'
 import type { AccessoryId, GameState, NeedKey } from '../types/game'
 
@@ -10,6 +11,21 @@ const ACCESSORY_IDS: readonly AccessoryId[] = ['none', 'crown']
 const STAT_KEYS = ['meals', 'drinks', 'cleanings', 'playSessions', 'naps']
 
 const COOLDOWN_KEYS = ['feed', 'water', 'clean', 'play', 'sleep']
+
+const CONDITION_TYPES = [
+  'needAtMost',
+  'needAtLeast',
+  'dayAtLeast',
+  'dayAtMost',
+] as const
+
+/** Conditions may only gate on core needs, matching `EventCondition`. */
+const CONDITION_NEEDS: readonly NeedKey[] = [
+  'hunger',
+  'thirst',
+  'hygiene',
+  'happiness',
+]
 
 const NEED_KEYS: readonly NeedKey[] = [
   'hunger',
@@ -44,6 +60,83 @@ function isDeathRecord(value: unknown): boolean {
     isFiniteNumber(value.diedAt) &&
     isRecord(stats) &&
     STAT_KEYS.every((key) => isFiniteNumber(stats[key]))
+  )
+}
+
+function isEventCondition(value: unknown): boolean {
+  if (
+    !isRecord(value) ||
+    typeof value.type !== 'string' ||
+    !(CONDITION_TYPES as readonly string[]).includes(value.type)
+  ) {
+    return false
+  }
+  if (value.type === 'dayAtLeast' || value.type === 'dayAtMost') {
+    return isFiniteNumber(value.day)
+  }
+  return (
+    typeof value.need === 'string' &&
+    CONDITION_NEEDS.includes(value.need as NeedKey) &&
+    isFiniteNumber(value.value)
+  )
+}
+
+function isEventChoice(value: unknown): boolean {
+  if (!isRecord(value)) {
+    return false
+  }
+  const effects = value.effects
+  return (
+    typeof value.id === 'string' &&
+    typeof value.label === 'string' &&
+    typeof value.hint === 'string' &&
+    isRecord(effects) &&
+    Object.keys(effects).every(
+      (key) =>
+        NEED_KEYS.includes(key as NeedKey) && isFiniteNumber(effects[key]),
+    )
+  )
+}
+
+function isGameEvent(value: unknown): boolean {
+  if (!isRecord(value)) {
+    return false
+  }
+  const conditions = value.conditions
+  const choices = value.choices
+  return (
+    typeof value.id === 'string' &&
+    typeof value.title === 'string' &&
+    typeof value.description === 'string' &&
+    isFiniteNumber(value.weight) &&
+    value.weight > 0 &&
+    isFiniteNumber(value.cooldownSeconds) &&
+    value.cooldownSeconds >= 0 &&
+    typeof value.oncePerRun === 'boolean' &&
+    Array.isArray(conditions) &&
+    conditions.length > 0 &&
+    conditions.every(isEventCondition) &&
+    Array.isArray(choices) &&
+    choices.length >= 1 &&
+    choices.length <= 2 &&
+    choices.every(isEventChoice)
+  )
+}
+
+function isEventScheduler(value: unknown): boolean {
+  if (!isRecord(value)) {
+    return false
+  }
+  const lastFiredAt = value.lastFiredAt
+  const fired = value.fired
+  const pending = value.pending
+  return (
+    isFiniteNumber(value.lastEventAt) &&
+    isRecord(lastFiredAt) &&
+    Object.values(lastFiredAt).every(isFiniteNumber) &&
+    Array.isArray(fired) &&
+    fired.every((id) => typeof id === 'string') &&
+    (pending === null || isGameEvent(pending))
   )
 }
 
@@ -94,6 +187,10 @@ export function isGameState(value: unknown): value is GameState {
     return false
   }
 
+  if (!isEventScheduler(value.events)) {
+    return false
+  }
+
   return (
     isFiniteNumber(hamster.adoptedAt) &&
     isFiniteNumber(hamster.ageDays) &&
@@ -110,8 +207,10 @@ export function isGameState(value: unknown): value is GameState {
  *
  * - v1 → v2 adds cosmetic skins (`skinId`, `accessoryId`).
  * - v2 → v3 adds `death` (null while Peanut is alive).
+ * - v3 → v4 adds the event scheduler.
  *
- * Each step writes its own version so the next one still matches.
+ * Each step writes **its own** version, never `SAVE_SCHEMA_VERSION`, so the
+ * next step in the chain still matches.
  */
 function migrateV1toV2(value: Record<string, unknown>): Record<string, unknown> {
   const hamster = value.hamster
@@ -136,8 +235,20 @@ function migrateV1toV2(value: Record<string, unknown>): Record<string, unknown> 
 function migrateV2toV3(value: Record<string, unknown>): Record<string, unknown> {
   return {
     ...value,
-    schemaVersion: SAVE_SCHEMA_VERSION,
+    // Literal, not SAVE_SCHEMA_VERSION: this step always lands on v3 so the
+    // next one still matches. Using the constant here silently skips it.
+    schemaVersion: 3,
     death: typeof value.death === 'undefined' ? null : value.death,
+  }
+}
+
+function migrateV3toV4(value: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...value,
+    schemaVersion: SAVE_SCHEMA_VERSION,
+    events: isEventScheduler(value.events)
+      ? value.events
+      : createEventScheduler(),
   }
 }
 
@@ -152,6 +263,9 @@ export function migrateSave(value: unknown): unknown {
   }
   if (current.schemaVersion === 2) {
     current = migrateV2toV3(current)
+  }
+  if (current.schemaVersion === 3) {
+    current = migrateV3toV4(current)
   }
   return current
 }

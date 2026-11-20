@@ -4,7 +4,12 @@ import {
   MAX_TICK_SECONDS,
   SAVE_INTERVAL_MS,
 } from '../game/config'
-import { advanceRun, applyCareAction, createRun } from '../game/rules'
+import {
+  advanceRun,
+  applyCareAction,
+  applyEventChoice,
+  createRun,
+} from '../game/rules'
 import { clearRun, loadRun, saveRun } from '../services/SaveService'
 import type {
   AccessoryId,
@@ -23,6 +28,7 @@ type GameAction =
     }
   | { type: 'tick'; now: number; maxSeconds?: number }
   | { type: 'care'; action: CareAction }
+  | { type: 'resolveEvent'; choiceId: string }
   | { type: 'togglePause'; now: number }
   | { type: 'clear' }
 
@@ -69,6 +75,9 @@ function gameReducer(state: GameState | null, action: GameAction): GameState | n
 
     case 'care':
       return state ? applyCareAction(state, action.action) : state
+
+    case 'resolveEvent':
+      return state ? applyEventChoice(state, action.choiceId) : state
 
     case 'togglePause':
       if (!state) {
@@ -177,6 +186,11 @@ export function useGameRun() {
     dispatch({ type: 'care', action })
   }, [])
 
+  const resolveEvent = useCallback((choiceId: string) => {
+    lastSaveRef.current = 0
+    dispatch({ type: 'resolveEvent', choiceId })
+  }, [])
+
   const togglePause = useCallback(() => {
     lastSaveRef.current = 0
     dispatch({ type: 'togglePause', now: Date.now() })
@@ -187,5 +201,5 @@ export function useGameRun() {
     dispatch({ type: 'clear' })
   }, [])
 
-  return { run, adopt, care, togglePause, resetRun }
+  return { run, adopt, care, resolveEvent, togglePause, resetRun }
 }
