@@ -39,6 +39,10 @@ describe('createRun', () => {
       cleanings: 0,
       playSessions: 0,
       naps: 0,
+      eventsResolved: 0,
+      minigamesCompleted: 0,
+      criticalSeconds: 0,
+      doubleCriticalSeconds: 0,
     })
     expect(run.cooldowns.feed).toBe(0)
     expect(run.elapsedSeconds).toBe(0)

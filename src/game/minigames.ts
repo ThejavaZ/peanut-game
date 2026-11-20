@@ -68,6 +68,10 @@ export function applyMinigameReward(
       ...state.hamster,
       needs: applyEffects(state.hamster.needs, reward.effects),
     },
+    stats: {
+      ...state.stats,
+      minigamesCompleted: state.stats.minigamesCompleted + 1,
+    },
   }
 
   if (reward.clearsCooldowns) {

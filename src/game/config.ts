@@ -10,8 +10,26 @@ export const MAX_OFFLINE_SECONDS = 10 * 60
 export const MAX_TICK_SECONDS = 5
 /** How often the run is written to localStorage (actions save immediately). */
 export const SAVE_INTERVAL_MS = 5000
-/** v3 adds `death`; v4 adds the event scheduler. */
-export const SAVE_SCHEMA_VERSION = 4
+/** v3 adds `death`; v4 adds the event scheduler; v5 adds score counters. */
+export const SAVE_SCHEMA_VERSION = 5
+
+/**
+ * Score rules from Act 1 §10. The score never decides whether Peanut lives
+ * or dies — it only summarises the life.
+ */
+export const SCORE_POINTS = {
+  perDay: 100,
+  perMeal: 5,
+  perDrink: 5,
+  perPlaySession: 10,
+  perCleaning: 5,
+  perEventResolved: 15,
+  penaltyPerCriticalPeriod: 10,
+  penaltyPerDoubleCriticalPeriod: 20,
+} as const
+
+/** Length of one penalty period: 60 s with a critical bar costs 10 points. */
+export const SCORE_PERIOD_SECONDS = 60
 
 /** Cemetery payload version, and how many graves are kept (newest first). */
 export const CEMETERY_SCHEMA_VERSION = 1

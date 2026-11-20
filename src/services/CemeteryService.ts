@@ -1,4 +1,5 @@
 import { CEMETERY_MAX_ENTRIES, CEMETERY_SCHEMA_VERSION } from '../game/config'
+import { computeScore } from '../game/score'
 import { isSkinId } from '../game/skins'
 import type {
   AccessoryId,
@@ -33,7 +34,8 @@ export function isCemeteryEntry(value: unknown): value is CemeteryEntry {
     isFiniteNumber(value.daysSurvived) &&
     typeof value.causeOfDeath === 'string' &&
     typeof value.epitaph === 'string' &&
-    isFiniteNumber(value.diedAt)
+    isFiniteNumber(value.diedAt) &&
+    isFiniteNumber(value.score)
   )
 }
 
@@ -82,6 +84,7 @@ export function toCemeteryEntry(
     causeOfDeath: death.detail,
     epitaph: death.epitaph,
     diedAt: death.diedAt,
+    score: computeScore(run),
   })
 }
 

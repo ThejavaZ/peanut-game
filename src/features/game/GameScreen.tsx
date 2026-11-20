@@ -13,6 +13,7 @@ import {
   getCriticalWarning,
   getHamsterMood,
 } from '../../game/rules'
+import { computeScore } from '../../game/score'
 import { SKINS } from '../../game/skins'
 import type {
   CareAction,
@@ -109,6 +110,9 @@ export function GameScreen({
             ) : null}
           </div>
           <div className="flex items-center gap-2">
+            <span className="border-2 border-cocoa bg-sand px-2 py-1 font-pixel text-[8px] uppercase">
+              Score {computeScore(run)}
+            </span>
             <span
               className={`border-2 border-cocoa px-2 py-1 font-pixel text-[8px] uppercase ${moodBadge.className}`}
             >
