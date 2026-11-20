@@ -222,9 +222,10 @@ No death happens without one of those having been visible first.
   death** and an epitaph — all read from the frozen `DeathRecord`.
 - The record is written to storage immediately, so **reloading brings the
   memorial back**.
-- Leaving it (*Adopt another* or *Main menu*) clears the run. Keeping a history
-  of every hamster across runs is the **cemetery**, which arrives with the rest
-  of M2.
+- The same moment adds a **grave** to the cemetery: name, skin, days, cause and
+  epitaph, kept in its own storage key (newest first, up to 50).
+- Leaving the memorial clears the **run** only. *Adopt another* never touches
+  the cemetery, so every hamster you have lost stays listed in the menu.
 
 ---
 
@@ -293,7 +294,6 @@ The modal and the remaining five events flipped it on.
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
 | Absurd causes of death        | M2        | The six causes cover negligence and old age; absurd endings need their own causes |
-| Persistent cemetery           | M2        | Browsable history of previous hamsters                       |
 | Minigames (3 + Nap Time)      | M3        | Active play that rewards needs, with the clock paused        |
 | Audio                         | M4        | Synthesised SFX and ambient loop                             |
 | Balance pass                  | M4        | Target run length: **5–15 minutes** (target, not tuned)      |

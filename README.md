@@ -128,6 +128,7 @@ bun run preview  # preview the production build
 - [x] Developer documentation (architecture, gameplay, development, art and audio).
 - [x] Death system, causes of death and a real memorial.
 - [x] Random events with a choice modal.
+- [x] Persistent cemetery browsable from the menu.
 - [ ] Minigames.
 - [ ] Audio and animations.
 - [ ] Final release.

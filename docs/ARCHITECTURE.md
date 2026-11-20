@@ -73,15 +73,17 @@ There is no router. `src/App.tsx` holds a `Screen` union and switches on it:
 ```
 menu ──▶ naming ──▶ game ──▶ memorial ──▶ naming   (adopt another)
   ▲        ▲         │                        │
-  └────────┴─────────┴────────────────────────┘   (main menu)
+  ├────────┴─────────┴────────────────────────┘   (main menu)
+  └──▶ cemetery ──▶ menu                          (read-only)
 ```
 
 | Screen     | Component                             | Notes                                             |
 | ---------- | ------------------------------------- | ------------------------------------------------- |
-| `menu`     | `features/menu/MainMenu.tsx`          | Shows *Continue* only when a run exists           |
+| `menu`     | `features/menu/MainMenu.tsx`          | Shows *Continue* only when a run exists, plus the cemetery count |
 | `naming`   | `features/naming/NamingScreen.tsx`    | Validates input, picks a skin, warns when replacing |
-| `game`     | `features/game/GameScreen.tsx`        | The live HUD                                      |
+| `game`     | `features/game/GameScreen.tsx`        | The live HUD, hosts the event modal               |
 | `memorial` | `features/memorial/MemorialScreen.tsx`| Carries a `RunSummary`, not the live `GameState`  |
+| `cemetery` | `features/cemetery/CemeteryScreen.tsx`| Read-only list of every grave                     |
 
 The union lives in `src/types/game.ts`. Because the game stays on one URL,
 GitHub Pages never returns a 404 (roadmap §5, ADR 3).
@@ -190,12 +192,18 @@ decay before React ever renders the menu.
 
 ## 7. Persistence
 
-Two independent `localStorage` keys:
+Three independent `localStorage` keys:
 
-| Key               | Service               | Contents                                     |
-| ----------------- | --------------------- | -------------------------------------------- |
-| `peanut.run.v1`   | `services/SaveService.ts`   | The whole `GameState`                |
-| `peanut.skins.v1` | `services/SkinService.ts`   | Unlocked cosmetic skin ids            |
+| Key                  | Service                      | Contents                                     |
+| -------------------- | ---------------------------- | -------------------------------------------- |
+| `peanut.run.v1`      | `services/SaveService.ts`    | The whole `GameState`                         |
+| `peanut.skins.v1`    | `services/SkinService.ts`    | Unlocked cosmetic skin ids                    |
+| `peanut.cemetery.v1` | `services/CemeteryService.ts`| Every grave: `{ schemaVersion: 1, entries[] }` |
+
+The cemetery is deliberately **its own key**: clearing the run (`clearRun()`)
+cannot touch it, which is what lets *Adopt another* start over without erasing
+the hamsters that already died. It is capped at `CEMETERY_MAX_ENTRIES` graves,
+newest first, so a long-lived save cannot fill the storage quota.
 
 The run key name says `v1`; the payload carries `schemaVersion: 4`. The key is
 the *storage slot*, the version is *inside the payload* — they move at different
@@ -248,15 +256,15 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the M2 event modal (2026-11-19): **4 597 total** — 3 559 in
-`src/`, 1 038 in `tests/`.
+Lines counted at the M2 cemetery (2026-11-19): **4 995 total** — 3 788 in
+`src/`, 1 207 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 109   | Screen state machine, adoption side effects, memorial routing |
-| `src/types/game.ts`                 | 172   | Every shared type: `DeathRecord`, `GameEvent`, scheduler state |
-| `src/game/config.ts`                | 70    | All balance numbers, including event cadence    |
+| `src/App.tsx`                       | 119   | Screen state machine, adoption side effects, memorial routing |
+| `src/types/game.ts`                 | 187   | Every shared type: `DeathRecord`, `GameEvent`, `CemeteryEntry` |
+| `src/game/config.ts`                | 74    | All balance numbers, including event cadence    |
 | `src/game/rules.ts`                 | 294   | Pure engine: decay, health, actions, clock, event effects |
 | `src/game/events.ts`                | 138   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 82    | The only place a run can end, and the record it writes |
@@ -266,10 +274,12 @@ Lines counted at the M2 event modal (2026-11-19): **4 597 total** — 3 559 in
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 21    | Memorial data built from the `DeathRecord`      |
-| `src/hooks/useGameRun.ts`           | 221   | Reducer, clock effects, save throttling, `resolveEvent` |
+| `src/hooks/useGameRun.ts`           | 225   | Reducer, clock effects, saves, writing graves    |
+| `src/services/CemeteryService.ts`   | 112   | Graves: validation, cap, append                 |
 | `src/services/SaveService.ts`       | 300   | Run persistence, validation, v1→v2→v3→v4 migration |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
-| `src/features/menu/MainMenu.tsx`    | 79    | Menu screen                                      |
+| `src/features/menu/MainMenu.tsx`    | 88    | Menu screen with the cemetery entry point        |
+| `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
 | `src/features/game/GameScreen.tsx`  | 237   | Live HUD, warnings, host for the event modal     |
 | `src/features/memorial/MemorialScreen.tsx` | 72 | Memorial screen from a `RunSummary`         |
@@ -285,6 +295,7 @@ Lines counted at the M2 event modal (2026-11-19): **4 597 total** — 3 559 in
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
 | `tests/death.test.ts`               | 300   | Causes, record immutability, warnings           |
 | `tests/events.test.ts`              | 444   | Interval, once-per-run, conditions, weights     |
+| `tests/cemetery.test.ts`            | 131   | Grave validation, cap, duplicates               |
 
 ---
 
@@ -312,7 +323,7 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Persistent cemetery  | M2        | A second storage key holding the history of past hamsters |
+| Absurd cause of death | M2       | A new entry in `src/game/data/deathCauses.ts`      |
 | Minigames (3 + Nap)  | M3        | New `src/features/minigames/` layer, clock paused while playing |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
 
