@@ -10,8 +10,19 @@ export const MAX_OFFLINE_SECONDS = 10 * 60
 export const MAX_TICK_SECONDS = 5
 /** How often the run is written to localStorage (actions save immediately). */
 export const SAVE_INTERVAL_MS = 5000
-/** v3 adds `death`; v2 added `skinId`/`accessoryId`. */
-export const SAVE_SCHEMA_VERSION = 3
+/** v3 adds `death`; v4 adds the event scheduler. */
+export const SAVE_SCHEMA_VERSION = 4
+
+/**
+ * The scheduler stays off until the event modal exists: without a UI nobody can
+ * answer an event, so shipping it live would only queue a choice nobody sees.
+ * Issue #4 flips this to `true`.
+ */
+export const EVENTS_ENABLED = false
+/** No two events may ever be closer than this, whatever the weights say. */
+export const EVENT_MIN_INTERVAL_SECONDS = 45
+/** Chance per eligible check that an event fires at all. */
+export const EVENT_CHANCE = 0.3
 
 /** `hamster.ageDays` at which Peanut dies of old age, whatever its needs are. */
 export const MAX_AGE_DAYS = 8

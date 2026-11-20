@@ -88,6 +88,55 @@ export interface DeathRecord {
   readonly stats: Readonly<RunStats>
 }
 
+/**
+ * Gates an event on the current state. Everything is data, so conditions can
+ * be validated, documented and tested without executing game code.
+ */
+export type EventCondition =
+  | { type: 'needAtMost'; need: CoreNeedKey; value: number }
+  | { type: 'needAtLeast'; need: CoreNeedKey; value: number }
+  | { type: 'dayAtLeast'; day: number }
+  | { type: 'dayAtMost'; day: number }
+
+/** One option inside an event. Every option costs or gives something. */
+export interface EventChoice {
+  readonly id: string
+  readonly label: string
+  /** The consequence shown to the player before choosing. */
+  readonly hint: string
+  readonly effects: Partial<Needs>
+}
+
+export interface GameEvent {
+  readonly id: string
+  readonly title: string
+  readonly description: string
+  /** Relative likelihood against the other eligible events. */
+  readonly weight: number
+  /** Seconds before this same event may fire again. */
+  readonly cooldownSeconds: number
+  /** Never fires more than once in a single run. */
+  readonly oncePerRun: boolean
+  readonly conditions: readonly EventCondition[]
+  /** One or two options; never zero, never three. */
+  readonly choices: readonly EventChoice[]
+}
+
+/**
+ * Everything the scheduler needs to remember between ticks. Persisted with the
+ * run so closing the tab does not revive an event that already happened.
+ */
+export interface EventSchedulerState {
+  /** `elapsedSeconds` of the last event of any kind. */
+  readonly lastEventAt: number
+  /** `elapsedSeconds` when each event id last fired. */
+  readonly lastFiredAt: Readonly<Record<string, number>>
+  /** Event ids that already fired during this run. */
+  readonly fired: readonly string[]
+  /** The event waiting for a decision, or `null`. At most one at a time. */
+  readonly pending: GameEvent | null
+}
+
 export interface GameState {
   schemaVersion: number
   hamster: Hamster
@@ -98,6 +147,7 @@ export interface GameState {
   paused: boolean
   /** `null` while Peanut is alive. */
   death: DeathRecord | null
+  events: EventSchedulerState
 }
 
 export interface RunSummary {

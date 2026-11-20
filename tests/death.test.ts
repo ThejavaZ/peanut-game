@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import {
   AGE_WARNING_DAYS,
   MAX_AGE_DAYS,
+  SAVE_SCHEMA_VERSION,
   SECONDS_PER_DAY,
 } from '../src/game/config'
 import { DEATH_CAUSES, DEATH_CAUSE_LIST } from '../src/game/data/deathCauses'
@@ -274,6 +275,8 @@ describe('save validation for death', () => {
 
     expect(isGameState(migrated)).toBe(true)
     expect(migrated.death).toBeNull()
-    expect(migrated.schemaVersion).toBe(3)
+    // The whole chain runs: v2 → v3 → v4, not a single shortcut step.
+    expect(migrated.schemaVersion).toBe(SAVE_SCHEMA_VERSION)
+    expect(migrated.events.pending).toBeNull()
   })
 })

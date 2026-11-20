@@ -106,6 +106,16 @@ A fifth pure module, `src/game/death.ts`, exposes `evaluateDeath(state)`.
 `advanceRun` calls it after every tick, so the engine is the only place that can
 end a run — React never decides when Peanut dies.
 
+A sixth, `src/game/events.ts`, owns scheduling. It only **queues**: it selects
+eligible events and stores one as `state.events.pending`, never touching needs.
+Answering it is `applyEventChoice` in `rules.ts`. That split is deliberate —
+`events.ts` imports only `config` and `data`, so there is no cycle back through
+the rules.
+
+**Events are currently switched off** by `EVENTS_ENABLED = false`. The engine
+runs, tests exercise it, but nothing is scheduled until the modal (issue #4) can
+answer a queued event.
+
 Two rules are load-bearing and tests depend on them:
 
 - **Zero is not instant death.** Needs clamp at `0` and raise a warning. Death
@@ -185,7 +195,7 @@ Two independent `localStorage` keys:
 | `peanut.run.v1`   | `services/SaveService.ts`   | The whole `GameState`                |
 | `peanut.skins.v1` | `services/SkinService.ts`   | Unlocked cosmetic skin ids            |
 
-The run key name says `v1`; the payload carries `schemaVersion: 3`. The key is
+The run key name says `v1`; the payload carries `schemaVersion: 4`. The key is
 the *storage slot*, the version is *inside the payload* — they move at different
 speeds on purpose.
 
@@ -201,8 +211,10 @@ JSON.parse → migrateSave() → isGameState() → engine
 
 - `migrateSave()` upgrades older payloads **step by step** instead of discarding
   a run the player cares about: v1 → v2 adds cosmetic skins, v2 → v3 adds
-  `death` (null while Peanut is alive). Each step writes its own version so the
-  next one still matches.
+  `death` (null while Peanut is alive), v3 → v4 adds the event scheduler. Each
+  step writes **its own** version — never `SAVE_SCHEMA_VERSION` — so the next
+  step in the chain still matches. Using the constant inside an early step would
+  silently skip the rest.
 - If validation fails, `loadRun()` returns `null` — the game starts clean rather
   than crashing on a corrupted object.
 - Both services swallow `localStorage` errors: private mode or a full quota must
@@ -234,24 +246,26 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the M2 death system (2026-11-18): **3 433 total** — 2 864 in
-`src/`, 569 in `tests/`.
+Lines counted at the M2 event scheduler (2026-11-19): **4 274 total** — 3 315 in
+`src/`, 959 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
 | `src/App.tsx`                       | 108   | Screen state machine, adoption side effects, memorial routing |
-| `src/types/game.ts`                 | 122   | Every shared type, including `DeathRecord`      |
-| `src/game/config.ts`                | 60    | All balance numbers                             |
-| `src/game/rules.ts`                 | 242   | Pure engine: decay, health, actions, clock, age warning |
+| `src/types/game.ts`                 | 172   | Every shared type: `DeathRecord`, `GameEvent`, scheduler state |
+| `src/game/config.ts`                | 71    | All balance numbers, including event cadence    |
+| `src/game/rules.ts`                 | 282   | Pure engine: decay, health, actions, clock, event effects |
+| `src/game/events.ts`                | 138   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 82    | The only place a run can end, and the record it writes |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
 | `src/game/data/deathCauses.ts`      | 88    | The six causes of death and their epitaphs      |
+| `src/game/data/events.ts`           | 84    | Seed events: conditions, weights, choices        |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 21    | Memorial data built from the `DeathRecord`      |
-| `src/hooks/useGameRun.ts`           | 191   | Reducer, clock effects, save throttling, death save |
-| `src/services/SaveService.ts`       | 186   | Run persistence, validation, v1→v2→v3 migration |
+| `src/hooks/useGameRun.ts`           | 205   | Reducer, clock effects, save throttling, `resolveEvent` |
+| `src/services/SaveService.ts`       | 300   | Run persistence, validation, v1→v2→v3→v4 migration |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 79    | Menu screen                                      |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
@@ -266,7 +280,8 @@ Lines counted at the M2 death system (2026-11-18): **3 433 total** — 2 864 in
 | `src/index.css`                     | 101   | Theme tokens, frames, animations                |
 | `tests/rules.test.ts`               | 180   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
-| `tests/death.test.ts`               | 275   | Causes, record immutability, warnings           |
+| `tests/death.test.ts`               | 282   | Causes, record immutability, warnings           |
+| `tests/events.test.ts`              | 383   | Interval, once-per-run, conditions, weights     |
 
 ---
 
@@ -294,7 +309,7 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Random events        | M2        | Weighted scheduler in `src/game/` plus an event modal in the HUD |
+| Event modal and content | M2      | The model and scheduler exist (`src/game/events.ts`) with `EVENTS_ENABLED = false`; the HUD piece and the remaining events are missing |
 | Persistent cemetery  | M2        | A second storage key holding the history of past hamsters |
 | Minigames (3 + Nap)  | M3        | New `src/features/minigames/` layer, clock paused while playing |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
