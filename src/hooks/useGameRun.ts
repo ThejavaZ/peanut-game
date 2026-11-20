@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import {
   MAX_OFFLINE_SECONDS,
   MAX_TICK_SECONDS,
   SAVE_INTERVAL_MS,
 } from '../game/config'
+import { applyMinigameReward } from '../game/minigames'
 import {
   advanceRun,
   applyCareAction,
@@ -16,6 +17,7 @@ import type {
   AccessoryId,
   CareAction,
   GameState,
+  MinigameReward,
   SkinId,
 } from '../types/game'
 
@@ -27,9 +29,11 @@ type GameAction =
       accessoryId: AccessoryId
       now: number
     }
-  | { type: 'tick'; now: number; maxSeconds?: number }
+  | { type: 'tick'; now: number; maxSeconds?: number; suspended?: boolean }
   | { type: 'care'; action: CareAction }
   | { type: 'resolveEvent'; choiceId: string; now: number }
+  | { type: 'applyReward'; reward: MinigameReward }
+  | { type: 'refreshClock'; now: number }
   | { type: 'togglePause'; now: number }
   | { type: 'clear' }
 
@@ -61,8 +65,15 @@ export function gameReducer(state: GameState | null, action: GameAction): GameSt
       )
 
     case 'tick': {
-      // Paused, dead or answering an event: time does not pass here either.
-      if (!state || state.paused || state.death || state.events.pending) {
+      // Paused, dead, answering an event or inside a minigame: time does not
+      // pass here either.
+      if (
+        !state ||
+        state.paused ||
+        state.death ||
+        state.events.pending ||
+        action.suspended
+      ) {
         return state
       }
       const elapsed = Math.max(0, (action.now - state.lastUpdatedAt) / 1000)
@@ -92,6 +103,13 @@ export function gameReducer(state: GameState | null, action: GameAction): GameSt
       return { ...answered, lastUpdatedAt: action.now }
     }
 
+    case 'applyReward':
+      return state ? applyMinigameReward(state, action.reward) : state
+
+    case 'refreshClock':
+      // Coming out of a minigame: the time spent playing is never billed.
+      return state ? { ...state, lastUpdatedAt: action.now } : state
+
     case 'togglePause':
       if (!state) {
         return state
@@ -112,6 +130,10 @@ export function useGameRun() {
   const runRef = useRef<GameState | null>(run)
   const lastSaveRef = useRef(0)
   const deathSavedRef = useRef(false)
+  // Suspended while a minigame owns the screen: state for re-rendering, ref
+  // for the visibility handler registered once.
+  const [suspended, setSuspended] = useState(false)
+  const suspendedRef = useRef(false)
 
   useEffect(() => {
     runRef.current = run
@@ -121,7 +143,8 @@ export function useGameRun() {
     run !== null &&
     !run.paused &&
     run.death === null &&
-    run.events.pending === null
+    run.events.pending === null &&
+    !suspended
 
   useEffect(() => {
     if (!isRunning) {
@@ -142,7 +165,12 @@ export function useGameRun() {
   useEffect(() => {
     const onVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        dispatch({ type: 'tick', now: Date.now(), maxSeconds: MAX_OFFLINE_SECONDS })
+        dispatch({
+          type: 'tick',
+          now: Date.now(),
+          maxSeconds: MAX_OFFLINE_SECONDS,
+          suspended: suspendedRef.current,
+        })
       } else if (runRef.current) {
         saveRun(runRef.current)
       }
@@ -211,6 +239,28 @@ export function useGameRun() {
     dispatch({ type: 'resolveEvent', choiceId, now: Date.now() })
   }, [])
 
+  const applyReward = useCallback((reward: MinigameReward) => {
+    lastSaveRef.current = 0
+    dispatch({ type: 'applyReward', reward })
+  }, [])
+
+  /** Freezes the clock while a minigame owns the screen. */
+  const suspend = useCallback(() => {
+    suspendedRef.current = true
+    setSuspended(true)
+  }, [])
+
+  /** Resumes, and never bills the time the minigame just consumed. */
+  const resume = useCallback(() => {
+    if (!suspendedRef.current) {
+      return
+    }
+    suspendedRef.current = false
+    setSuspended(false)
+    lastSaveRef.current = 0
+    dispatch({ type: 'refreshClock', now: Date.now() })
+  }, [])
+
   const togglePause = useCallback(() => {
     lastSaveRef.current = 0
     dispatch({ type: 'togglePause', now: Date.now() })
@@ -221,5 +271,15 @@ export function useGameRun() {
     dispatch({ type: 'clear' })
   }, [])
 
-  return { run, adopt, care, resolveEvent, togglePause, resetRun }
+  return {
+    run,
+    adopt,
+    care,
+    resolveEvent,
+    applyReward,
+    suspend,
+    resume,
+    togglePause,
+    resetRun,
+  }
 }

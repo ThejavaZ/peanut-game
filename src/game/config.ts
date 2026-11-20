@@ -38,6 +38,13 @@ export const AGE_WARNING_DAYS = MAX_AGE_DAYS - 1
  */
 export const WHEEL_DEATH_SESSIONS = 5
 
+/**
+ * Nap Time: half a day of sleep. The health comes from the reward, the cost is
+ * the decay those seconds cause — which is what stops it being a free refill.
+ */
+export const NAP_TIME_SECONDS = 60
+export const NAP_TIME_HEALTH = 15
+
 /** Points lost per real second. Full → empty takes 4–10 minutes. */
 export const NEED_RATES: Record<CoreNeedKey, number> = {
   hunger: 0.28,
