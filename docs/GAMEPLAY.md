@@ -187,7 +187,7 @@ Death is real now, and it is never instant.
 - Once dead, everything freezes: needs, cooldowns, the clock and the care
   buttons. The record is written once and never rewritten.
 
-### The six causes
+### The seven causes
 
 | Cause | Trigger | Warning before it |
 | ----- | ------- | ----------------- |
@@ -196,22 +196,28 @@ Death is real now, and it is never instant.
 | Squalor | Hygiene is the single lowest core need | Critical banner |
 | Despair | Happiness is the single lowest core need | Critical banner |
 | Systemic failure | Two or more core needs equally bad | Critical banner |
+| The wheel flew off | Health empty **while every need stays comfortable** and at least 5 play sessions | Health banner once the bar drops under 20 |
 | Old age | `ageDays ≥ 8` while health > 0 | Age banner, one full day earlier |
 
-Two things decide which cause you get:
+Three things decide which cause you get:
 
 1. **Who is lowest.** One clearly lowest need gets the blame; a tie means no
    culprit, so it is systemic. Under *total* neglect every need hits zero before
    health does — see §4 — so that path always ends **systemic**. The specific
    causes need selective neglect: feeding and playing while forgetting water.
-2. **Neglect beats age.** The health check runs first, so `old age` can only
-   fire on a hamster that is still being looked after.
+2. **Neglect beats accidents and age.** The health check runs first, so `old
+   age` can only fire on a hamster that is still being looked after.
+3. **An accident needs impossible evidence.** Neglect cannot empty the health
+   bar while every need is at or above 55 — penalties only exist below 20, and
+   above 55 health recovers. If the bar is empty anyway *and* the wheel has been
+   used at least five times, nothing but the accident explains it.
 
 ### Warnings
 
 | Ending | First warning | Death |
 | ------ | ------------- | ----- |
 | Neglect | ~**3 min 56 s** into total neglect (first need critical) | ~**13 min 53 s** |
+| The wheel flew off | Health banner when the bar drops under 20 | When the bar empties |
 | Old age | Whole of **Day 8** (`ageDays = 7`) | Start of **Day 9** (`ageDays = 8`) |
 
 No death happens without one of those having been visible first.
@@ -231,7 +237,7 @@ No death happens without one of those having been visible first.
 
 ## 10. Events
 
-Eight events can interrupt a run. A modal opens over the HUD, **the clock stops**,
+Nine events can interrupt a run. A modal opens over the HUD, **the clock stops**,
 and there is no way out of it but to choose.
 
 ### What an event declares
@@ -258,7 +264,7 @@ Three gates, in this order, every check:
 Nothing can fire while another event is waiting for an answer, and nothing at
 all can fire after death or while the game is paused.
 
-### The eight events
+### The nine events
 
 | Event | Type | Fires when | Weight | Cooldown | One-shot | Choices |
 | ----- | ---- | ---------- | ------ | -------- | -------- | ------- |
@@ -269,10 +275,16 @@ all can fire after death or while the game is paused.
 | Peanut is out of the cage | absurd | day ≥ 2 | 30 | 180 s | **yes** | chase it / leave a trail of seeds |
 | Peanut runs all night | absurd | day ≥ 3 | 25 | 240 s | no | let it run / stop the wheel |
 | There is something in the walls | absurd | day ≥ 4 | 25 | 150 s | **yes** | listen / move the cage |
+| The wheel is going too fast | absurd | play sessions ≥ 5 | 25 | 150 s | no | push it faster / take the wheel off |
 | Peanut has a sniffle | inevitable | day ≥ 5 | 20 | 0 | **yes** | the vet / wait and see |
 
-Four negligence, three absurd, one inevitable. Every option gives and takes
+Four negligence, four absurd, one inevitable. Every option gives and takes
 something — no choice is a free refill.
+
+> The wheel event is the only one gated on a **stat** instead of a need or a
+> day, and its costliest choice is the only one that can empty the health bar
+> while every need is healthy — which is what lets the death system call it an
+> accident instead of neglect (§9).
 
 ### The modal
 
@@ -293,7 +305,6 @@ The modal and the remaining five events flipped it on.
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
-| Absurd causes of death        | M2        | The six causes cover negligence and old age; absurd endings need their own causes |
 | Minigames (3 + Nap Time)      | M3        | Active play that rewards needs, with the clock paused        |
 | Audio                         | M4        | Synthesised SFX and ambient loop                             |
 | Balance pass                  | M4        | Target run length: **5–15 minutes** (target, not tuned)      |

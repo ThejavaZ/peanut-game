@@ -256,27 +256,27 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the M2 cemetery (2026-11-19): **4 995 total** — 3 788 in
-`src/`, 1 207 in `tests/`.
+Lines counted at the absurd cause of death (2026-11-19): **5 156 total** — 3 859
+in `src/`, 1 297 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
 | `src/App.tsx`                       | 119   | Screen state machine, adoption side effects, memorial routing |
-| `src/types/game.ts`                 | 187   | Every shared type: `DeathRecord`, `GameEvent`, `CemeteryEntry` |
-| `src/game/config.ts`                | 74    | All balance numbers, including event cadence    |
+| `src/types/game.ts`                 | 190   | Every shared type: `DeathRecord`, `GameEvent`, `CemeteryEntry` |
+| `src/game/config.ts`                | 80    | All balance numbers, including event cadence    |
 | `src/game/rules.ts`                 | 294   | Pure engine: decay, health, actions, clock, event effects |
-| `src/game/events.ts`                | 138   | Scheduler: eligibility, weighted pick, queueing  |
-| `src/game/death.ts`                 | 82    | The only place a run can end, and the record it writes |
+| `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
+| `src/game/death.ts`                 | 97    | The only place a run can end, and the record it writes |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
-| `src/game/data/deathCauses.ts`      | 88    | The six causes of death and their epitaphs      |
-| `src/game/data/events.ts`           | 204   | The eight events: conditions, weights, choices   |
+| `src/game/data/deathCauses.ts`      | 98    | The seven causes of death and their epitaphs    |
+| `src/game/data/events.ts`           | 228   | The nine events: conditions, weights, choices    |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 21    | Memorial data built from the `DeathRecord`      |
 | `src/hooks/useGameRun.ts`           | 225   | Reducer, clock effects, saves, writing graves    |
 | `src/services/CemeteryService.ts`   | 112   | Graves: validation, cap, append                 |
-| `src/services/SaveService.ts`       | 300   | Run persistence, validation, v1→v2→v3→v4 migration |
+| `src/services/SaveService.ts`       | 311   | Run persistence, validation, v1→v2→v3→v4 migration |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 88    | Menu screen with the cemetery entry point        |
 | `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
@@ -293,8 +293,8 @@ Lines counted at the M2 cemetery (2026-11-19): **4 995 total** — 3 788 in
 | `src/index.css`                     | 101   | Theme tokens, frames, animations                |
 | `tests/rules.test.ts`               | 180   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
-| `tests/death.test.ts`               | 300   | Causes, record immutability, warnings           |
-| `tests/events.test.ts`              | 444   | Interval, once-per-run, conditions, weights     |
+| `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |
+| `tests/events.test.ts`              | 527   | Interval, once-per-run, conditions, weights     |
 | `tests/cemetery.test.ts`            | 131   | Grave validation, cap, duplicates               |
 
 ---
@@ -323,7 +323,6 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Absurd cause of death | M2       | A new entry in `src/game/data/deathCauses.ts`      |
 | Minigames (3 + Nap)  | M3        | New `src/features/minigames/` layer, clock paused while playing |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
 
