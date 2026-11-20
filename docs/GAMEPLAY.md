@@ -148,6 +148,7 @@ The HUD reads `Day N · HH:MM`. Day number and age both derive from
 | Situation                    | What happens                                                |
 | ---------------------------- | ------------------------------------------------------------ |
 | Pause button                 | Time, cooldowns and decay all freeze                         |
+| Event modal open             | Frozen too — reading an event costs Peanut no time           |
 | Tab is hidden                | No ticks while hidden; the run is saved immediately          |
 | Tab becomes visible again    | Catch-up applied, capped at **10 minutes** of decay          |
 | Single tick stall            | Capped at **5 seconds**; the rest is dropped by design       |
@@ -227,9 +228,10 @@ No death happens without one of those having been visible first.
 
 ---
 
-## 10. Events (engine ready, UI pending)
+## 10. Events
 
-Random events exist as **rules**, not yet as something you can see.
+Eight events can interrupt a run. A modal opens over the HUD, **the clock stops**,
+and there is no way out of it but to choose.
 
 ### What an event declares
 
@@ -253,30 +255,44 @@ Three gates, in this order, every check:
 | Eligibility | conditions + cooldown + once-per-run | Only events that make sense |
 
 Nothing can fire while another event is waiting for an answer, and nothing at
-all can fire after death.
+all can fire after death or while the game is paused.
 
-### The three seed events
+### The eight events
 
-| Event | Fires when | Weight | Cooldown | One-shot | Choices |
-| ----- | ---------- | ------ | -------- | -------- | ------- |
-| The bowl is empty | hunger ≤ 35 | 40 | 60 s | no | fill it / later |
-| Peanut is out of the cage | day ≥ 2 | 30 | 180 s | **yes** | chase it / leave a trail of seeds |
-| Peanut runs all night | day ≥ 3 | 25 | 240 s | no | let it run / stop the wheel |
+| Event | Type | Fires when | Weight | Cooldown | One-shot | Choices |
+| ----- | ---- | ---------- | ------ | -------- | -------- | ------- |
+| The bowl is empty | negligence | hunger ≤ 35 | 40 | 60 s | no | fill it / later |
+| The water bottle is stuck | negligence | thirst ≤ 40 | 35 | 90 s | no | twist it free / let it be |
+| Nobody has played today | negligence | happiness ≤ 30 | 30 | 120 s | no | sit with it / tomorrow |
+| The cage needs a real clean | negligence | hygiene ≤ 30 | 30 | 100 s | no | strip it / just add paper |
+| Peanut is out of the cage | absurd | day ≥ 2 | 30 | 180 s | **yes** | chase it / leave a trail of seeds |
+| Peanut runs all night | absurd | day ≥ 3 | 25 | 240 s | no | let it run / stop the wheel |
+| There is something in the walls | absurd | day ≥ 4 | 25 | 150 s | **yes** | listen / move the cage |
+| Peanut has a sniffle | inevitable | day ≥ 5 | 20 | 0 | **yes** | the vet / wait and see |
 
-Every option gives and takes something — no choice is a free refill.
+Four negligence, three absurd, one inevitable. Every option gives and takes
+something — no choice is a free refill.
 
-### Why you cannot see them yet
+### The modal
 
-`EVENTS_ENABLED = false`. Without a modal nobody could answer a queued event,
-so the scheduler would collect choices nobody sees. Issue #4 ships the modal,
-five more events and flips the flag.
+- Title, an illustration of your hamster, a description, and **one or two
+  options with the consequence spelled out before you commit**.
+- No close button, no Escape, no clicking outside: only choosing closes it.
+- While it is open, **decay, cooldowns and the clock are frozen**. Reading the
+  event costs the hamster nothing.
+- The chosen effect applies immediately and is saved — reload and it is there.
+
+### History note
+
+This shipped disabled first (`EVENTS_ENABLED = false`) together with the
+scheduler, because a queued event nobody can answer would have been invisible.
+The modal and the remaining five events flipped it on.
 
 ## 11. Not implemented yet
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
-| Event modal and five more events | M2      | The scheduler runs today but is switched off until a modal can answer it |
-| Absurd causes of death        | M2        | The six causes cover negligence and old age; absurd endings need events |
+| Absurd causes of death        | M2        | The six causes cover negligence and old age; absurd endings need their own causes |
 | Persistent cemetery           | M2        | Browsable history of previous hamsters                       |
 | Minigames (3 + Nap Time)      | M3        | Active play that rewards needs, with the clock paused        |
 | Audio                         | M4        | Synthesised SFX and ambient loop                             |

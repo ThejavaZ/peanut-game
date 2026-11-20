@@ -20,6 +20,7 @@ import {
   applyEventChoice,
   createRun,
 } from '../src/game/rules'
+import { gameReducer } from '../src/hooks/useGameRun'
 import { isGameState, migrateSave } from '../src/services/SaveService'
 import type { GameEvent, GameState, Needs } from '../src/types/game'
 
@@ -260,13 +261,55 @@ describe('answering an event', () => {
   })
 })
 
-describe('the scheduler does not run by itself yet', () => {
-  test('advanceRun never queues an event while EVENTS_ENABLED is false', () => {
-    let run = at(EVENT_MIN_INTERVAL_SECONDS + 30, { hunger: 30 })
-    for (let i = 0; i < 30; i += 1) {
-      run = advanceRun(run, 10)
+describe('the scheduler is live', () => {
+  test('advanceRun queues an event as soon as one is eligible', () => {
+    const ready = at(EVENT_MIN_INTERVAL_SECONDS, { hunger: 30 })
+    const queued = advanceRun(ready, 1, () => 0)
+
+    expect(queued.events.pending).not.toBeNull()
+    expect(queued.elapsedSeconds).toBe(ready.elapsedSeconds + 1)
+  })
+
+  test('a queued event freezes the clock until it is answered', () => {
+    const queued = advanceRun(
+      at(EVENT_MIN_INTERVAL_SECONDS, { hunger: 30 }),
+      1,
+      () => 0,
+    )
+    expect(queued.events.pending).not.toBeNull()
+
+    // Time does not pass while the modal is open, not even on a long gap.
+    const later = advanceRun(queued, 600, () => 0)
+    expect(later).toBe(queued)
+    expect(later.elapsedSeconds).toBe(queued.elapsedSeconds)
+
+    const choice = queued.events.pending?.choices[0]
+    if (!choice) {
+      throw new Error('expected a pending event with at least one choice')
     }
-    expect(run.events.pending).toBeNull()
+    const answered = applyEventChoice(queued, choice.id)
+    expect(answered.events.pending).toBeNull()
+  })
+
+  test('reaches an event within ten minutes of ordinary play', () => {
+    // The issue's acceptance criterion, made deterministic by injecting the
+    // RNG instead of hoping Math.random cooperates in CI.
+    let run = at(0, { hunger: 90 })
+    let appeared = false
+
+    for (let second = 0; second < 10 * 60 && !appeared; second += 1) {
+      const pending = run.events.pending
+      if (pending) {
+        const choice = pending.choices[0]
+        run = applyEventChoice(run, choice.id)
+        continue
+      }
+      run = advanceRun(run, 1, () => 0)
+      appeared = run.events.pending !== null
+    }
+
+    expect(appeared).toBe(true)
+    expect(run.events.fired.length).toBeGreaterThan(0)
   })
 
   test('a dead run schedules nothing', () => {
@@ -285,10 +328,66 @@ describe('the scheduler does not run by itself yet', () => {
   })
 })
 
+describe('the reducer honours a queued event', () => {
+  const queuedEvent = () =>
+    advanceRun(at(EVENT_MIN_INTERVAL_SECONDS, { hunger: 30 }), 1, () => 0)
+
+  test('ticks do not advance time while the modal is open', () => {
+    const queued = queuedEvent()
+    expect(queued.events.pending).not.toBeNull()
+
+    // Ten minutes later, as if the tab had been hidden and shown again: the
+    // guard drops the tick instead of charging up to 10 minutes of decay.
+    const ticked = gameReducer(queued, {
+      type: 'tick',
+      now: queued.lastUpdatedAt + 10 * 60 * 1000,
+    })
+
+    expect(ticked).toBe(queued)
+  })
+
+  test('answering restarts the clock from the moment of the choice', () => {
+    const queued = queuedEvent()
+    const choice = queued.events.pending?.choices[0]
+    if (!choice) {
+      throw new Error('expected a pending event')
+    }
+
+    const now = queued.lastUpdatedAt + 30_000
+    const resolved = gameReducer(queued, {
+      type: 'resolveEvent',
+      choiceId: choice.id,
+      now,
+    })
+
+    expect(resolved?.events.pending).toBeNull()
+    expect(resolved?.lastUpdatedAt).toBe(now)
+  })
+})
+
 describe('event content', () => {
-  test('ships three seed events with unique ids', () => {
-    expect(EVENTS).toHaveLength(3)
+  test('ships eight events with unique ids', () => {
+    expect(EVENTS).toHaveLength(8)
     expect(new Set(EVENTS.map((event) => event.id)).size).toBe(EVENTS.length)
+  })
+
+  test('mixes need-driven and day-driven events', () => {
+    // Negligence reacts to the bars; absurd and inevitable ones to time.
+    const needDriven = EVENTS.filter((event) =>
+      event.conditions.some(
+        (condition) =>
+          condition.type === 'needAtMost' || condition.type === 'needAtLeast',
+      ),
+    )
+    const dayDriven = EVENTS.filter((event) =>
+      event.conditions.some(
+        (condition) =>
+          condition.type === 'dayAtLeast' || condition.type === 'dayAtMost',
+      ),
+    )
+
+    expect(needDriven.length).toBeGreaterThanOrEqual(3)
+    expect(dayDriven.length).toBeGreaterThanOrEqual(3)
   })
 
   test('every event is well formed', () => {

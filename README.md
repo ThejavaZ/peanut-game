@@ -127,7 +127,7 @@ bun run preview  # preview the production build
 - [x] Cosmetic skins, secret name unlocks and developer easter eggs.
 - [x] Developer documentation (architecture, gameplay, development, art and audio).
 - [x] Death system, causes of death and a real memorial.
-- [ ] Random events.
+- [x] Random events with a choice modal.
 - [ ] Minigames.
 - [ ] Audio and animations.
 - [ ] Final release.

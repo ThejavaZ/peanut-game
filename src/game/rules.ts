@@ -112,8 +112,21 @@ function tickCooldowns(
   }
 }
 
-export function advanceRun(state: GameState, seconds: number): GameState {
-  if (seconds <= 0 || state.paused || state.death) {
+/**
+ * The clock. `random` is injected so tests can drive the event scheduler
+ * deterministically; gameplay uses `Math.random`.
+ */
+export function advanceRun(
+  state: GameState,
+  seconds: number,
+  random: () => number = Math.random,
+): GameState {
+  if (
+    seconds <= 0 ||
+    state.paused ||
+    state.death ||
+    state.events.pending
+  ) {
     return state
   }
 
@@ -139,8 +152,7 @@ export function advanceRun(state: GameState, seconds: number): GameState {
     }
   }
 
-  // Events stay off until a modal exists to answer them (EVENTS_ENABLED).
-  return EVENTS_ENABLED ? advanceEvents(next, seconds) : next
+  return EVENTS_ENABLED ? advanceEvents(next, seconds, random) : next
 }
 
 /** Care actions and event choices change needs exactly the same way. */

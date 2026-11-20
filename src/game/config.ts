@@ -14,11 +14,10 @@ export const SAVE_INTERVAL_MS = 5000
 export const SAVE_SCHEMA_VERSION = 4
 
 /**
- * The scheduler stays off until the event modal exists: without a UI nobody can
- * answer an event, so shipping it live would only queue a choice nobody sees.
- * Issue #4 flips this to `true`.
+ * Events are live: the modal in `src/components/events/EventModal.tsx` answers
+ * them, and a queued event freezes the clock until someone chooses.
  */
-export const EVENTS_ENABLED = false
+export const EVENTS_ENABLED = true
 /** No two events may ever be closer than this, whatever the weights say. */
 export const EVENT_MIN_INTERVAL_SECONDS = 45
 /** Chance per eligible check that an event fires at all. */

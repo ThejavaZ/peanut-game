@@ -28,7 +28,7 @@ type GameAction =
     }
   | { type: 'tick'; now: number; maxSeconds?: number }
   | { type: 'care'; action: CareAction }
-  | { type: 'resolveEvent'; choiceId: string }
+  | { type: 'resolveEvent'; choiceId: string; now: number }
   | { type: 'togglePause'; now: number }
   | { type: 'clear' }
 
@@ -48,7 +48,8 @@ function initRun(): GameState | null {
   return { ...advanced, lastUpdatedAt: now }
 }
 
-function gameReducer(state: GameState | null, action: GameAction): GameState | null {
+/** Exported so the pause rules can be tested without rendering React. */
+export function gameReducer(state: GameState | null, action: GameAction): GameState | null {
   switch (action.type) {
     case 'adopt':
       return createRun(
@@ -59,7 +60,8 @@ function gameReducer(state: GameState | null, action: GameAction): GameState | n
       )
 
     case 'tick': {
-      if (!state || state.paused) {
+      // Paused, dead or answering an event: time does not pass here either.
+      if (!state || state.paused || state.death || state.events.pending) {
         return state
       }
       const elapsed = Math.max(0, (action.now - state.lastUpdatedAt) / 1000)
@@ -76,8 +78,18 @@ function gameReducer(state: GameState | null, action: GameAction): GameState | n
     case 'care':
       return state ? applyCareAction(state, action.action) : state
 
-    case 'resolveEvent':
-      return state ? applyEventChoice(state, action.choiceId) : state
+    case 'resolveEvent': {
+      if (!state) {
+        return state
+      }
+      const answered = applyEventChoice(state, action.choiceId)
+      if (answered === state) {
+        return state
+      }
+      // The modal froze the clock: restart it from now, so the time spent
+      // reading is never charged as decay.
+      return { ...answered, lastUpdatedAt: action.now }
+    }
 
     case 'togglePause':
       if (!state) {
@@ -104,7 +116,11 @@ export function useGameRun() {
     runRef.current = run
   }, [run])
 
-  const isRunning = run !== null && !run.paused && run.death === null
+  const isRunning =
+    run !== null &&
+    !run.paused &&
+    run.death === null &&
+    run.events.pending === null
 
   useEffect(() => {
     if (!isRunning) {
@@ -188,7 +204,7 @@ export function useGameRun() {
 
   const resolveEvent = useCallback((choiceId: string) => {
     lastSaveRef.current = 0
-    dispatch({ type: 'resolveEvent', choiceId })
+    dispatch({ type: 'resolveEvent', choiceId, now: Date.now() })
   }, [])
 
   const togglePause = useCallback(() => {
