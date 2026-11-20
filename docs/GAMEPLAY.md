@@ -62,6 +62,7 @@ health starts falling.
 | ---------------- | --------------------------------------------------------------- |
 | Need bars        | Shows the rounded `0–100` value; bar and number change colour at warning (`35`) and critical (`20`) |
 | Mood badge       | `Happy` (average ≥ 75), `Doing okay`, `Worried` (≤ 35), `Critical` (≤ 20) |
+| Score badge      | Running total from §12, recalculated on every tick             |
 | Alert banner     | Names the **lowest** core need once it is critical, or health    |
 | Action buttons   | Disabled during cooldown, labelled with remaining seconds        |
 | Pause overlay    | Freezes the room and every action                               |
@@ -344,7 +345,45 @@ owned by the tuning issue.
 > The wheel, the seeds and the maze reuse this shell unchanged: they bring
 > their own `reward` and their own screen body, nothing else.
 
-## 12. Not implemented yet
+## 12. Score
+
+The score summarises a life; it never decides whether Peanut lives or dies.
+
+### Formula (Act 1 §10)
+
+| Component | Points |
+| --------- | ------ |
+| Completed day survived | +100 |
+| Meal | +5 |
+| Drink | +5 |
+| Play session or minigame completed | +10 |
+| Cage cleaning | +5 |
+| Event answered with nothing left critical | +15 |
+| Each 60 s period with one bar at or below 20 | −10 |
+| Each of those periods that had two or more bars critical | −20 **more** |
+
+The total never drops below **0**.
+
+Two details worth knowing:
+
+- **Days count completed days only.** A life that ends during day 1 earns no
+  day points, because no full day was survived.
+- **The penalties stack.** A minute with two critical bars costs 10 + 20 = 30,
+  since those seconds are counted by both rules — the second is an *extra*
+  penalty for abandoning the run, not a replacement.
+
+### Where it shows up
+
+- **HUD**: a `Score` badge beside the mood, recalculated on every tick.
+- **Memorial**: the final score next to days, meals and play.
+- **Cemetery**: the score each hamster reached, kept forever with its grave.
+
+### What it is not
+
+The score has no effect on decay, health, events or death. It is derived from
+the state — the state itself only follows the rules in §2 and §4.
+
+## 13. Not implemented yet
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |

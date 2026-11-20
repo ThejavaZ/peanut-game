@@ -211,7 +211,7 @@ cannot touch it, which is what lets *Adopt another* start over without erasing
 the hamsters that already died. It is capped at `CEMETERY_MAX_ENTRIES` graves,
 newest first, so a long-lived save cannot fill the storage quota.
 
-The run key name says `v1`; the payload carries `schemaVersion: 4`. The key is
+The run key name says `v1`; the payload carries `schemaVersion: 5`. The key is
 the *storage slot*, the version is *inside the payload* — they move at different
 speeds on purpose.
 
@@ -227,10 +227,10 @@ JSON.parse → migrateSave() → isGameState() → engine
 
 - `migrateSave()` upgrades older payloads **step by step** instead of discarding
   a run the player cares about: v1 → v2 adds cosmetic skins, v2 → v3 adds
-  `death` (null while Peanut is alive), v3 → v4 adds the event scheduler. Each
-  step writes **its own** version — never `SAVE_SCHEMA_VERSION` — so the next
-  step in the chain still matches. Using the constant inside an early step would
-  silently skip the rest.
+  `death` (null while Peanut is alive), v3 → v4 adds the event scheduler,
+  v4 → v5 adds the score counters. Each step writes **its own** version — never
+  `SAVE_SCHEMA_VERSION` — so the next step in the chain still matches. Using the
+  constant inside an early step would silently skip the rest.
 - If validation fails, `loadRun()` returns `null` — the game starts clean rather
   than crashing on a corrupted object.
 - Both services swallow `localStorage` errors: private mode or a full quota must
@@ -262,36 +262,37 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the minigame shell (2026-11-19): **5 669 total** — 4 179 in
-`src/`, 1 490 in `tests/`.
+Lines counted at the score (2026-11-19): **6 047 total** — 4 334 in `src/`,
+1 713 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
 | `src/App.tsx`                       | 150   | Screen state machine, adoption side effects, minigame suspension |
-| `src/types/game.ts`                 | 207   | Every shared type: `DeathRecord`, `GameEvent`, `MinigameReward` |
-| `src/game/config.ts`                | 87    | All balance numbers, including event cadence    |
-| `src/game/rules.ts`                 | 297   | Pure engine: decay, health, actions, clock, shared `applyEffects` |
+| `src/types/game.ts`                 | 216   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
+| `src/game/config.ts`                | 105   | All balance numbers, including the score rules  |
+| `src/game/rules.ts`                 | 320   | Pure engine: decay, health, actions, clock, critical-time tracking |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 97    | The only place a run can end, and the record it writes |
-| `src/game/minigames.ts`             | 82    | Reward contract: apply once, preview, advance   |
+| `src/game/score.ts`                 | 40    | Score from Act 1 §10: pure, never affects survival |
+| `src/game/minigames.ts`             | 86    | Reward contract: apply once, preview, advance   |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
 | `src/game/data/deathCauses.ts`      | 98    | The seven causes of death and their epitaphs    |
 | `src/game/data/events.ts`           | 228   | The nine events: conditions, weights, choices    |
 | `src/game/data/minigames.ts`        | 36    | Minigame registry and their rewards             |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
-| `src/game/runSummary.ts`            | 21    | Memorial data built from the `DeathRecord`      |
+| `src/game/runSummary.ts`            | 24    | Memorial data built from the `DeathRecord`      |
 | `src/hooks/useGameRun.ts`           | 285   | Reducer, clock effects, saves, suspension       |
-| `src/services/CemeteryService.ts`   | 112   | Graves: validation, cap, append                 |
-| `src/services/SaveService.ts`       | 311   | Run persistence, validation, v1→v2→v3→v4 migration |
+| `src/services/CemeteryService.ts`   | 115   | Graves: validation, cap, append, score          |
+| `src/services/SaveService.ts`       | 358   | Run persistence, validation, v1→v2→v3→v4→v5 migration |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 88    | Menu screen with the cemetery entry point        |
 | `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
 | `src/features/minigames/MinigameScreen.tsx` | 53 | The shell every minigame runs inside       |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
-| `src/features/game/GameScreen.tsx`  | 268   | Live HUD, warnings, event modal, minigame panel  |
-| `src/features/memorial/MemorialScreen.tsx` | 72 | Memorial screen from a `RunSummary`         |
+| `src/features/game/GameScreen.tsx`  | 272   | Live HUD with score, warnings, modal, minigames  |
+| `src/features/memorial/MemorialScreen.tsx` | 76 | Final score beside days, meals and cause |
 | `src/components/events/EventModal.tsx` | 79 | The modal: presentation only, no state           |
 | `src/components/ui/Screen.tsx`      | 13    | Full-screen layout wrapper                      |
 | `src/components/ui/Button.tsx`      | 33    | Shared button variants                          |
@@ -300,12 +301,13 @@ Lines counted at the minigame shell (2026-11-19): **5 669 total** — 4 179 in
 | `src/components/hamster/SkinSprite.tsx` | 64 | Grid → SVG renderer                            |
 | `src/components/hamster/skinSprites.ts` | 526 | 21 × 16×16 sprite grids                    |
 | `src/index.css`                     | 101   | Theme tokens, frames, animations                |
-| `tests/rules.test.ts`               | 180   | Engine and save validation                      |
+| `tests/rules.test.ts`               | 184   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |
 | `tests/events.test.ts`              | 527   | Interval, once-per-run, conditions, weights     |
-| `tests/cemetery.test.ts`            | 131   | Grave validation, cap, duplicates               |
+| `tests/cemetery.test.ts`            | 132   | Grave validation, cap, duplicates               |
 | `tests/minigames.test.ts`           | 193   | Reward contract, frozen clock, registry         |
+| `tests/score.test.ts`               | 218   | The Act 1 formula, penalties, schema v5         |
 
 ---
 
