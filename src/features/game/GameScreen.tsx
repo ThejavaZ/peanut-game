@@ -7,6 +7,7 @@ import { CARE_ACTION_LIST } from '../../game/data/careActions'
 import { findEasterEgg, getDisplayName } from '../../game/easterEggs'
 import {
   formatGameClock,
+  getAgeWarning,
   getCriticalWarning,
   getHamsterMood,
 } from '../../game/rules'
@@ -33,7 +34,6 @@ interface GameScreenProps {
   onCare: (action: CareAction) => void
   onTogglePause: () => void
   onBackToMenu: () => void
-  onEndRun: () => void
 }
 
 export function GameScreen({
@@ -41,12 +41,12 @@ export function GameScreen({
   onCare,
   onTogglePause,
   onBackToMenu,
-  onEndRun,
 }: GameScreenProps) {
   const { day, time } = formatGameClock(run.elapsedSeconds)
   const mood = getHamsterMood(run.hamster.needs)
   const moodBadge = MOOD_BADGES[mood]
   const warning = getCriticalWarning(run.hamster.needs)
+  const ageWarning = getAgeWarning(run.hamster.ageDays)
   const displayName = getDisplayName(run.hamster.name)
   const skin = SKINS[run.hamster.skinId]
   const egg = findEasterEgg(run.hamster.name)
@@ -125,6 +125,18 @@ export function GameScreen({
           </p>
         ) : null}
 
+        {ageWarning ? (
+          <p
+            role="status"
+            className="mb-3 border-2 border-shell bg-shell/15 px-3 py-2 text-lg text-shell-dark"
+          >
+            <strong className="font-pixel text-[9px] uppercase">
+              {displayName}
+            </strong>{' '}
+            {ageWarning}
+          </p>
+        ) : null}
+
         {egg?.id === 'segfault' ? (
           <p className="mb-3 border-2 border-cocoa bg-cocoa px-3 py-1 font-pixel text-[8px] uppercase tracking-widest text-mint">
             segmentation fault · core dumped
@@ -197,12 +209,9 @@ export function GameScreen({
           </section>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-6">
           <Button variant="ghost" onClick={onBackToMenu}>
             ← Main menu
-          </Button>
-          <Button variant="ghost" onClick={onEndRun} className="text-danger">
-            Skip to memorial (dev)
           </Button>
         </div>
       </div>

@@ -1,18 +1,21 @@
-import type { GameState, RunSummary } from '../types/game'
+import type { DeathRecord, GameState, RunSummary } from '../types/game'
 
 /**
- * M1 placeholder: the real cause of death and epitaph generator arrive with
- * the death system in M2. Stats are already real.
+ * The memorial reads the immutable `DeathRecord`, never the live state: once a
+ * run ends, what is shown must not depend on anything that could change.
  */
-export function buildRunSummary(run: GameState): RunSummary {
+export function buildRunSummary(
+  run: GameState,
+  death: DeathRecord,
+): RunSummary {
   return {
     hamsterName: run.hamster.name,
     skinId: run.hamster.skinId,
     accessoryId: run.hamster.accessoryId,
-    daysSurvived: Math.max(1, run.hamster.ageDays + 1),
-    meals: run.stats.meals,
-    playSessions: run.stats.playSessions,
-    causeOfDeath: 'Unknown — the death system arrives in M2.',
-    epitaph: 'He lived, he ran, he ate. Mostly ate.',
+    daysSurvived: Math.max(1, death.day),
+    meals: death.stats.meals,
+    playSessions: death.stats.playSessions,
+    causeOfDeath: death.detail,
+    epitaph: death.epitaph,
   }
 }

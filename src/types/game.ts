@@ -62,6 +62,32 @@ export interface RunStats {
   naps: number
 }
 
+export type DeathCauseId =
+  | 'starvation'
+  | 'dehydration'
+  | 'filth'
+  | 'despair'
+  | 'systemic'
+  | 'old-age'
+
+/**
+ * Written once, when the run ends, and never rewritten afterwards. Every field
+ * is readonly and the object is frozen: the record is evidence, not state.
+ */
+export interface DeathRecord {
+  readonly causeId: DeathCauseId
+  readonly cause: string
+  readonly detail: string
+  readonly epitaph: string
+  /** `hamster.ageDays` at the moment of death. */
+  readonly ageDays: number
+  /** Displayed day number, same formula as the HUD clock. */
+  readonly day: number
+  readonly elapsedSeconds: number
+  readonly diedAt: number
+  readonly stats: Readonly<RunStats>
+}
+
 export interface GameState {
   schemaVersion: number
   hamster: Hamster
@@ -70,6 +96,8 @@ export interface GameState {
   elapsedSeconds: number
   lastUpdatedAt: number
   paused: boolean
+  /** `null` while Peanut is alive. */
+  death: DeathRecord | null
 }
 
 export interface RunSummary {

@@ -66,10 +66,6 @@ export function MemorialScreen({ run, onAdoptAnother, onMainMenu }: MemorialScre
             Main menu
           </Button>
         </div>
-
-        <p className="mt-5 text-base text-cocoa-soft">
-          Placeholder memorial — the death system arrives in M2.
-        </p>
       </article>
     </Screen>
   )
