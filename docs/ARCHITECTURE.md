@@ -75,15 +75,18 @@ menu ──▶ naming ──▶ game ──▶ memorial ──▶ naming   (adop
   ▲        ▲         │                        │
   ├────────┴─────────┴────────────────────────┘   (main menu)
   └──▶ cemetery ──▶ menu                          (read-only)
+
+game ──▶ minigame ──▶ game                        (exit or reward)
 ```
 
 | Screen     | Component                             | Notes                                             |
 | ---------- | ------------------------------------- | ------------------------------------------------- |
 | `menu`     | `features/menu/MainMenu.tsx`          | Shows *Continue* only when a run exists, plus the cemetery count |
 | `naming`   | `features/naming/NamingScreen.tsx`    | Validates input, picks a skin, warns when replacing |
-| `game`     | `features/game/GameScreen.tsx`        | The live HUD, hosts the event modal               |
+| `game`     | `features/game/GameScreen.tsx`        | The live HUD, hosts the event modal and the minigame panel |
 | `memorial` | `features/memorial/MemorialScreen.tsx`| Carries a `RunSummary`, not the live `GameState`  |
 | `cemetery` | `features/cemetery/CemeteryScreen.tsx`| Read-only list of every grave                     |
+| `minigame` | `features/minigames/MinigameScreen.tsx`| Shell: frozen clock, reward preview, always-on skip |
 
 The union lives in `src/types/game.ts`. Because the game stays on one URL,
 GitHub Pages never returns a 404 (roadmap §5, ADR 3).
@@ -160,6 +163,9 @@ Edge cases worth knowing before you touch this code:
 
 - **While paused**, `lastUpdatedAt` is *not* advanced. `togglePause` resets it
   on resume, so pausing never burns game time.
+- **While a minigame owns the screen**, ticks carry a `suspended` flag that the
+  reducer drops, and the way out dispatches `refreshClock` — so the time spent
+  playing is never billed as decay either.
 - **Returning to the tab** dispatches a catch-up tick capped at
   `MAX_OFFLINE_SECONDS`, so a long absence applies at most 10 minutes of decay.
 - **Ticks are capped, not queued.** If the browser throttles for 30 seconds,
@@ -256,32 +262,35 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the absurd cause of death (2026-11-19): **5 156 total** — 3 859
-in `src/`, 1 297 in `tests/`.
+Lines counted at the minigame shell (2026-11-19): **5 669 total** — 4 179 in
+`src/`, 1 490 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 119   | Screen state machine, adoption side effects, memorial routing |
-| `src/types/game.ts`                 | 190   | Every shared type: `DeathRecord`, `GameEvent`, `CemeteryEntry` |
-| `src/game/config.ts`                | 80    | All balance numbers, including event cadence    |
-| `src/game/rules.ts`                 | 294   | Pure engine: decay, health, actions, clock, event effects |
+| `src/App.tsx`                       | 150   | Screen state machine, adoption side effects, minigame suspension |
+| `src/types/game.ts`                 | 207   | Every shared type: `DeathRecord`, `GameEvent`, `MinigameReward` |
+| `src/game/config.ts`                | 87    | All balance numbers, including event cadence    |
+| `src/game/rules.ts`                 | 297   | Pure engine: decay, health, actions, clock, shared `applyEffects` |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 97    | The only place a run can end, and the record it writes |
+| `src/game/minigames.ts`             | 82    | Reward contract: apply once, preview, advance   |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
 | `src/game/data/deathCauses.ts`      | 98    | The seven causes of death and their epitaphs    |
 | `src/game/data/events.ts`           | 228   | The nine events: conditions, weights, choices    |
+| `src/game/data/minigames.ts`        | 36    | Minigame registry and their rewards             |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 21    | Memorial data built from the `DeathRecord`      |
-| `src/hooks/useGameRun.ts`           | 225   | Reducer, clock effects, saves, writing graves    |
+| `src/hooks/useGameRun.ts`           | 285   | Reducer, clock effects, saves, suspension       |
 | `src/services/CemeteryService.ts`   | 112   | Graves: validation, cap, append                 |
 | `src/services/SaveService.ts`       | 311   | Run persistence, validation, v1→v2→v3→v4 migration |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 88    | Menu screen with the cemetery entry point        |
 | `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
+| `src/features/minigames/MinigameScreen.tsx` | 53 | The shell every minigame runs inside       |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
-| `src/features/game/GameScreen.tsx`  | 237   | Live HUD, warnings, host for the event modal     |
+| `src/features/game/GameScreen.tsx`  | 268   | Live HUD, warnings, event modal, minigame panel  |
 | `src/features/memorial/MemorialScreen.tsx` | 72 | Memorial screen from a `RunSummary`         |
 | `src/components/events/EventModal.tsx` | 79 | The modal: presentation only, no state           |
 | `src/components/ui/Screen.tsx`      | 13    | Full-screen layout wrapper                      |
@@ -296,6 +305,7 @@ in `src/`, 1 297 in `tests/`.
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |
 | `tests/events.test.ts`              | 527   | Interval, once-per-run, conditions, weights     |
 | `tests/cemetery.test.ts`            | 131   | Grave validation, cap, duplicates               |
+| `tests/minigames.test.ts`           | 193   | Reward contract, frozen clock, registry         |
 
 ---
 
@@ -323,7 +333,7 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Minigames (3 + Nap)  | M3        | New `src/features/minigames/` layer, clock paused while playing |
+| Wheel, seeds and maze | M3      | They reuse the shell in `src/features/minigames/` and the same reward contract |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
 
 When any of these lands, **this document must be updated in the same PR** —
