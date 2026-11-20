@@ -68,6 +68,7 @@ export type DeathCauseId =
   | 'filth'
   | 'despair'
   | 'systemic'
+  | 'wheel-accident'
   | 'old-age'
 
 /**
@@ -97,6 +98,8 @@ export type EventCondition =
   | { type: 'needAtLeast'; need: CoreNeedKey; value: number }
   | { type: 'dayAtLeast'; day: number }
   | { type: 'dayAtMost'; day: number }
+  /** Gates on a run stat, e.g. how often Peanut has been played with. */
+  | { type: 'statAtLeast'; stat: keyof RunStats; value: number }
 
 /** One option inside an event. Every option costs or gives something. */
 export interface EventChoice {

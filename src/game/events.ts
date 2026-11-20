@@ -32,6 +32,8 @@ export function isConditionMet(
       return dayOf(state.elapsedSeconds) >= condition.day
     case 'dayAtMost':
       return dayOf(state.elapsedSeconds) <= condition.day
+    case 'statAtLeast':
+      return state.stats[condition.stat] >= condition.value
   }
 }
 

@@ -201,4 +201,28 @@ export const EVENTS: readonly GameEvent[] = [
       },
     ],
   },
+  {
+    id: 'wheel-frenzy',
+    title: 'The wheel is going too fast',
+    description:
+      'Peanut has been running for a while and shows no sign of stopping. The axle is making a noise it did not have yesterday.',
+    weight: 25,
+    cooldownSeconds: 150,
+    oncePerRun: false,
+    conditions: [{ type: 'statAtLeast', stat: 'playSessions', value: 5 }],
+    choices: [
+      {
+        id: 'faster',
+        label: 'Push it faster',
+        hint: 'Happiness +15 · health −35 (it is really enjoying this)',
+        effects: { happiness: 15, health: -35 },
+      },
+      {
+        id: 'dismantle',
+        label: 'Take the wheel off',
+        hint: 'Happiness −8 · hygiene −4',
+        effects: { happiness: -8, hygiene: -4 },
+      },
+    ],
+  },
 ]

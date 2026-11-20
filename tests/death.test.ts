@@ -4,6 +4,7 @@ import {
   MAX_AGE_DAYS,
   SAVE_SCHEMA_VERSION,
   SECONDS_PER_DAY,
+  WHEEL_DEATH_SESSIONS,
 } from '../src/game/config'
 import { DEATH_CAUSES, DEATH_CAUSE_LIST } from '../src/game/data/deathCauses'
 import {
@@ -250,6 +251,50 @@ describe('warnings before death', () => {
     expect(getAgeWarning(AGE_WARNING_DAYS)).not.toBeNull()
     expect(getAgeWarning(AGE_WARNING_DAYS - 1)).toBeNull()
     expect(getAgeWarning(MAX_AGE_DAYS)).not.toBeNull()
+  })
+})
+
+describe('the wheel accident', () => {
+  /** Health empty while every need stays above the recovery threshold. */
+  function comfortableRun(playSessions: number): GameState {
+    const run = makeRun()
+    return {
+      ...run,
+      hamster: {
+        ...run.hamster,
+        needs: {
+          hunger: 60,
+          thirst: 60,
+          hygiene: 60,
+          happiness: 60,
+          health: 0,
+        },
+      },
+      stats: { ...run.stats, playSessions },
+    }
+  }
+
+  test('takes the blame when neglect is impossible', () => {
+    const record = evaluateDeath(comfortableRun(WHEEL_DEATH_SESSIONS))
+
+    expect(record?.causeId).toBe('wheel-accident')
+    expect(record?.cause).toBe(DEATH_CAUSES['wheel-accident'].label)
+    expect(record?.detail).toBe(DEATH_CAUSES['wheel-accident'].detail)
+  })
+
+  test('is never blamed without enough play sessions', () => {
+    // Same impossible-looking state, but the wheel was never in play: there is
+    // no accident to name, so the cause falls back to neglect.
+    const record = evaluateDeath(comfortableRun(WHEEL_DEATH_SESSIONS - 1))
+
+    expect(record?.causeId).toBe('systemic')
+  })
+
+  test('healthy needs still kill before old age is even considered', () => {
+    const aged = { ...comfortableRun(WHEEL_DEATH_SESSIONS) }
+    aged.hamster = { ...aged.hamster, ageDays: MAX_AGE_DAYS + 5 }
+
+    expect(evaluateDeath(aged)?.causeId).toBe('wheel-accident')
   })
 })
 
