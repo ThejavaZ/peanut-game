@@ -162,6 +162,20 @@ export interface RunSummary {
 }
 
 /**
+ * One grave. Written once when a run ends, never updated afterwards — the same
+ * rule as `DeathRecord`, because a history you can rewrite is not a history.
+ */
+export interface CemeteryEntry {
+  readonly name: string
+  readonly skinId: SkinId
+  readonly accessoryId: AccessoryId
+  readonly daysSurvived: number
+  readonly causeOfDeath: string
+  readonly epitaph: string
+  readonly diedAt: number
+}
+
+/**
  * Screens are a plain state machine instead of routes: the game lives on a
  * single URL, which keeps GitHub Pages deploys simple.
  */
@@ -170,3 +184,4 @@ export type Screen =
   | { name: 'naming' }
   | { name: 'game' }
   | { name: 'memorial'; run: RunSummary }
+  | { name: 'cemetery' }

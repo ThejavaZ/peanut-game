@@ -13,6 +13,10 @@ export const SAVE_INTERVAL_MS = 5000
 /** v3 adds `death`; v4 adds the event scheduler. */
 export const SAVE_SCHEMA_VERSION = 4
 
+/** Cemetery payload version, and how many graves are kept (newest first). */
+export const CEMETERY_SCHEMA_VERSION = 1
+export const CEMETERY_MAX_ENTRIES = 50
+
 /**
  * Events are live: the modal in `src/components/events/EventModal.tsx` answers
  * them, and a queued event freezes the clock until someone chooses.

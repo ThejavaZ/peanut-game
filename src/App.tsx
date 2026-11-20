@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CemeteryScreen } from './features/cemetery/CemeteryScreen'
 import { GameScreen } from './features/game/GameScreen'
 import { MemorialScreen } from './features/memorial/MemorialScreen'
 import { MainMenu } from './features/menu/MainMenu'
@@ -7,6 +8,7 @@ import { findEasterEgg, getDisplayName } from './game/easterEggs'
 import { buildRunSummary } from './game/runSummary'
 import { findSecretSkin } from './game/skins'
 import { useGameRun } from './hooks/useGameRun'
+import { loadCemetery } from './services/CemeteryService'
 import { loadUnlockedSkins, unlockSkin } from './services/SkinService'
 import type { Screen, SkinId } from './types/game'
 
@@ -19,6 +21,7 @@ function App() {
 
   const goToMenu = () => setScreen({ name: 'menu' })
   const goToNaming = () => setScreen({ name: 'naming' })
+  const goToCemetery = () => setScreen({ name: 'cemetery' })
 
   const handleAdopt = (hamsterName: string, skinId: SkinId) => {
     const secret = findSecretSkin(hamsterName)
@@ -59,8 +62,10 @@ function App() {
           skinId={run?.hamster.skinId}
           accessoryId={run?.hamster.accessoryId}
           day={run ? run.hamster.ageDays + 1 : undefined}
+          cemeteryCount={loadCemetery().length}
           onStart={goToNaming}
           onContinue={() => setScreen({ name: 'game' })}
+          onOpenCemetery={goToCemetery}
         />
       )
 
@@ -80,8 +85,10 @@ function App() {
         return (
           <MainMenu
             hasRun={false}
+            cemeteryCount={loadCemetery().length}
             onStart={goToNaming}
             onContinue={goToMenu}
+            onOpenCemetery={goToCemetery}
           />
         )
       }
@@ -103,6 +110,9 @@ function App() {
           onMainMenu={() => leaveMemorial({ name: 'menu' })}
         />
       )
+
+    case 'cemetery':
+      return <CemeteryScreen entries={loadCemetery()} onBack={goToMenu} />
   }
 }
 

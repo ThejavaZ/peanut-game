@@ -9,8 +9,10 @@ interface MainMenuProps {
   skinId?: SkinId
   accessoryId?: AccessoryId
   day?: number
+  cemeteryCount: number
   onStart: () => void
   onContinue: () => void
+  onOpenCemetery: () => void
 }
 
 export function MainMenu({
@@ -19,8 +21,10 @@ export function MainMenu({
   skinId = 'hamster',
   accessoryId = 'none',
   day,
+  cemeteryCount,
   onStart,
   onContinue,
+  onOpenCemetery,
 }: MainMenuProps) {
   return (
     <Screen>
@@ -60,14 +64,19 @@ export function MainMenu({
               <Button onClick={onStart} className="w-full">
                 Adopt a hamster
               </Button>
-              <Button variant="secondary" disabled className="mt-3 w-full">
-                Cemetery · soon
-              </Button>
               <p className="mt-5 text-lg text-cocoa-soft">
                 Every little life has an ending. Make it count.
               </p>
             </>
           )}
+
+          <Button
+            variant="secondary"
+            onClick={onOpenCemetery}
+            className="mt-3 w-full"
+          >
+            Cemetery{cemeteryCount > 0 ? ` · ${cemeteryCount}` : ''}
+          </Button>
         </div>
 
         <p className="mt-8 font-pixel text-[8px] uppercase tracking-widest text-cocoa-soft">
