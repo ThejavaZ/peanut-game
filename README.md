@@ -105,8 +105,10 @@ The game is deployed to GitHub Pages through the workflow in `.github/workflows/
 Safari → *Share* → *Add to Home Screen*. Peanut then opens **without a browser
 bar** and keeps working **offline** — your run lives in the device anyway.
 
-**From the archive** — the `v1.0.0` release will attach the built game as a
-zip: unzip it and serve the folder with any static server (for example
+**From the archive** — download
+[`peanut-game-v1.0.0.zip`](https://github.com/ThejavaZ/peanut-game/releases/tag/v1.0.0)
+from the **[v1.0.0 release](https://github.com/ThejavaZ/peanut-game/releases/tag/v1.0.0)**,
+unzip it and serve the folder with any static server (for example
 `python3 -m http.server`) and open the address it prints.
 
 ## 🧑‍💻 Run Locally
