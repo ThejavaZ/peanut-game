@@ -142,14 +142,15 @@ interface SkinSpriteData {
 - A soft ground shadow is a single `<ellipse>` under the grid.
 - The `crown` accessory is a separate `<g>` drawn only when requested.
 
-### Structure of `skinSprites.ts` (602 lines)
+### Structure of `skinSprites.ts` (787 lines)
 
 | Group | Entries | Contents |
 | ----- | ------- | -------- |
 | `ANIMAL_SPRITES` | 12 | Non-secret skins |
 | `SECRET_SPRITES` | 9 | Secret-name skins |
+| `GAME_SPRITES` | 8 | Video game culture skins (M5) |
 | `HAMSTER_STATE_SPRITES` | 2 | The classic hamster's `eat` and `sleep` poses |
-| **Total** | **21 + 2** | One per `SkinId`, plus two poses |
+| **Total** | **29 + 2** | One per `SkinId`, plus two poses |
 
 **Rows are shared.** `HAMSTER_ROWS` backs more than one skin by swapping the
 palette, and `CHICK_ROWS` backs four chick variants. Editing one row changes
@@ -208,7 +209,7 @@ The container is `role="img"` with a readable label, so screen readers announce
 | Asset | Type | Path |
 | ----- | ---- | ---- |
 | Favicon | Hand-written SVG, 16×16, `crispEdges` | `public/favicon.svg` |
-| 21 skin sprites + 2 poses | Data → SVG at runtime | `src/components/hamster/skinSprites.ts` |
+| 29 skin sprites + 2 poses | Data → SVG at runtime | `src/components/hamster/skinSprites.ts` |
 | Cage, wheel and bedding | CSS boxes | `src/components/room/HamsterRoom.tsx` |
 | Frames, grid, motion | CSS | `src/index.css` |
 | **Bitmap images** | **none** | — |
@@ -244,5 +245,5 @@ ambient pad, with no audio file anywhere in the repository.
 | Planned | Milestone | Notes |
 | ------- | --------- | ----- |
 | Authored room background | M4 | The cage is CSS boxes on purpose (ADR 6); replacing it needs real art |
-| State poses for the other 20 skins | M5 | Only the classic hamster has its own grids |
+| State poses for the other 28 skins | M5 | Only the classic hamster has its own grids |
 | Photos in the credits | M4 | Initials stand in until the team sends theirs |

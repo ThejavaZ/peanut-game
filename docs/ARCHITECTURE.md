@@ -272,7 +272,7 @@ Lines counted at the pixel art pass (2026-11-20): **8 549 total** — 5 942 in
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 26    | React entry point, service worker registration  |
 | `src/App.tsx`                       | 232   | Screen state machine, preferences, sound triggers |
-| `src/types/game.ts`                 | 220   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
+| `src/types/game.ts`                 | 228   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
 | `src/game/config.ts`                | 134   | All balance numbers, including the score rules  |
 | `src/game/rules.ts`                 | 321   | Pure engine: decay, health, actions, clock, critical-time tracking |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
@@ -286,7 +286,7 @@ Lines counted at the pixel art pass (2026-11-20): **8 549 total** — 5 942 in
 | `src/game/data/deathCauses.ts`      | 98    | The seven causes of death and their epitaphs    |
 | `src/game/data/events.ts`           | 228   | The nine events: conditions, weights, choices    |
 | `src/game/data/minigames.ts`        | 79    | The four minigames, their attempts and rewards  |
-| `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
+| `src/game/skins.ts`                 | 241   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 24    | Memorial data built from the `DeathRecord`      |
 | `src/hooks/useGameRun.ts`           | 285   | Reducer, clock effects, saves, suspension       |
@@ -314,14 +314,14 @@ Lines counted at the pixel art pass (2026-11-20): **8 549 total** — 5 942 in
 | `src/components/ui/NeedBar.tsx`     | 48    | Single need bar with warning states             |
 | `src/components/room/HamsterRoom.tsx` | 102 | Cage scene: bottle, bowl, wheel, bedding         |
 | `src/components/hamster/SkinSprite.tsx` | 85 | State-aware grid → SVG renderer                 |
-| `src/components/hamster/skinSprites.ts` | 602 | 21 base sprites plus two poses                  |
+| `src/components/hamster/skinSprites.ts` | 787 | 29 base sprites plus two poses                  |
 | `src/index.css`                     | 93    | Theme tokens, frames, animations, text-grade red |
 | `tests/audio.test.ts`               | 50    | Patch table completeness and master gain        |
 | `tests/team.test.ts`                | 42    | Credits data and initials                       |
 | `tests/contrast.test.ts`            | 128   | WCAG ratios parsed from the stylesheet          |
 | `tests/balance.test.ts`             | 69    | The 5–15 minute target and the order of endings |
 | `tests/rules.test.ts`               | 184   | Engine and save validation                      |
-| `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
+| `tests/skins.test.ts`               | 125   | Skins, easter eggs, migration                   |
 | `tests/sprites.test.ts`             | 75    | Pose grids, palette reuse, skin isolation       |
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |
 | `tests/events.test.ts`              | 527   | Interval, once-per-run, conditions, weights     |

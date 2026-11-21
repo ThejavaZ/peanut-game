@@ -41,6 +41,22 @@ Original pixel-art interpretations, not official artwork.
 | Scripty | `javascript`, `js`, `scripty` | A creature of undefined behaviour. |
 | Root | `root` | A dark hamster with full access to the cage. |
 
+## Video game culture skins
+
+Silhouettes, colours and jokes instead of anyone's logo. Original pixel art,
+inspired by the genre rather than by any particular character.
+
+| Skin | Trigger names | Notes |
+| --- | --- | --- |
+| Ghost | `ghost`, `fantasma` | A floating specter. Never touches the bedding. |
+| Blocky | `blocky`, `bloque` | Eight pixels wide and somehow still adorable. |
+| Astro | `astro`, `astronauta` | Helmet and reflective visor. Mission: the cage. |
+| Slime | `slime`, `limo` | A gelatinous dome that spreads at the bottom. |
+| Ninja | `ninja`, `shinobi` | Headband and mask. You never hear it eat. |
+| Zombie | `zombie`, `zombi` | It got better. Mostly. |
+| Knight | `knight`, `caballero` | Helmet with a plume. Sworn to the water bottle. |
+| Robot | `robot`, `mecha` | Antenna, glowing eyes, a chest panel. |
+
 ## Name-based easter eggs
 
 These do not unlock a skin, but they change how the run is presented. None of them are penalties.

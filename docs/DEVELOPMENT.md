@@ -119,9 +119,9 @@ through ESLint. It changes how components memoise, not how they behave.
 ## 6. Testing
 
 - Runner: **`bun test`** (no Jest, no Vitest, no config file).
-- Location: `tests/`, two files, **26 tests**.
-- Coverage focus: the pure engine (`rules.test.ts`) and the cosmetic registries
-  (`skins.test.ts`).
+- Location: `tests/`, 17 files, **198 tests**.
+- Coverage focus: the pure engine (`rules.test.ts`), the minigames, and the
+  cosmetic registries (`skins.test.ts`, `sprites.test.ts`).
 - **There is no DOM environment.** No `jsdom`/`happy-dom` is installed, so tests
   cannot touch `window`, `document` or `localStorage`. This works because the
   engine is pure — keep it that way.
@@ -223,8 +223,10 @@ The HUD needs **no change**: `GameScreen` iterates `CARE_ACTION_LIST`. (Only
 1. `src/types/game.ts` — add the id to `SkinId`.
 2. `src/game/skins.ts` — entry in `SKINS` (`name`, `description`, `category`,
    optional `triggers` for a secret name).
-3. `src/components/hamster/skinSprites.ts` — `SKIN_SPRITES` entry: 16 rows of
-   exactly 16 characters plus a palette for every character used.
+3. `src/components/hamster/skinSprites.ts` — entry in the right group
+   (`ANIMAL_SPRITES`, `SECRET_SPRITES` or `GAME_SPRITES`, all spread into
+   `SKIN_SPRITES`): 16 rows of exactly 16 characters plus a palette for every
+   character used.
 
 Nothing else. `isSkinId()` is derived from `SKINS`, the sprite test validates
 the 16×16 grid automatically, and secret triggers are checked for uniqueness and

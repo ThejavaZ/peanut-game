@@ -3,8 +3,8 @@
 | Field | Value |
 | ----- | ----- |
 | Applies to | v1.0.0, published 2026-11-20 |
-| Last updated | 2026-11-20 |
-| Suite | 182 tests across 15 files, `bun test` |
+| Last updated | 2026-11-21 |
+| Suite | 198 tests across 17 files, `bun test` |
 | Related | [`DEVELOPMENT.md`](DEVELOPMENT.md) §6 · [`ARCHITECTURE.md`](ARCHITECTURE.md) |
 
 ---
@@ -46,14 +46,16 @@ bun run build         # types + production build, also enforced by CI
 | `tests/minigames.test.ts` | 13 | Reward contract, clamps, clock advance, frozen clock, registry |
 | `tests/wheel.test.ts` | 11 | Angle wrap-around, three scoring bands, happiness cap, registry |
 | `tests/cemetery.test.ts` | 10 | Grave validation, cap of 50, newest-first order, duplicates, freezing |
-| `tests/skins.test.ts` | 9 | 16×16 sprite grids, secret triggers, save migration |
+| `tests/skins.test.ts` | 10 | 16×16 sprite grids, secret triggers (incl. the M5 culture skins), save migration |
 | `tests/seeds.test.ts` | 8 | Board generation, partial rewards, registry |
+| `tests/pwa.test.ts` | 8 | Manifest, icons, service worker cache name tied to `package.json` |
 | `tests/contrast.test.ts` | 7 | **WCAG ratios parsed from `index.css`**, forbidden text colours, 44 px touch target, reduced motion selectors |
+| `tests/sprites.test.ts` | 7 | Pose grids, shared palettes, poses never lent to another skin |
 | `tests/audio.test.ts` | 6 | Patch table completeness and the master gain |
 | `tests/settings.test.ts` | 5 | Preference repair and volume clamping |
 | `tests/team.test.ts` | 5 | Credits data, roles and initials |
 | `tests/balance.test.ts` | 3 | The 5–15 minute target, and neglect dying before old age |
-| **Total** | **182** | |
+| **Total** | **198** | |
 
 **Gates on every pull request** (`.github/workflows/ci.yml`):
 
