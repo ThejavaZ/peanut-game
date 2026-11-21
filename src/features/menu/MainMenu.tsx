@@ -14,6 +14,7 @@ interface MainMenuProps {
   onContinue: () => void
   onOpenCemetery: () => void
   onOpenSettings: () => void
+  onOpenCredits: () => void
 }
 
 export function MainMenu({
@@ -27,6 +28,7 @@ export function MainMenu({
   onContinue,
   onOpenCemetery,
   onOpenSettings,
+  onOpenCredits,
 }: MainMenuProps) {
   return (
     <Screen>
@@ -86,6 +88,14 @@ export function MainMenu({
             className="mt-3 w-full"
           >
             Settings
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={onOpenCredits}
+            className="mt-3 w-full"
+          >
+            Credits
           </Button>
         </div>
 

@@ -15,6 +15,7 @@ import { buildRunSummary } from './game/runSummary'
 import { findSecretSkin } from './game/skins'
 import { useGameRun } from './hooks/useGameRun'
 import { SettingsScreen } from './features/settings/SettingsScreen'
+import { CreditsScreen } from './features/credits/CreditsScreen'
 import { applySettings, init, play } from './services/AudioService'
 import { clearCemetery, loadCemetery } from './services/CemeteryService'
 import { loadSettings, saveSettings } from './services/SettingsService'
@@ -67,6 +68,7 @@ function App() {
   const goToCemetery = () => setScreen({ name: 'cemetery' })
   const goToGame = () => setScreen({ name: 'game' })
   const goToSettings = () => setScreen({ name: 'settings' })
+  const goToCredits = () => setScreen({ name: 'credits' })
 
   /**
    * The single place that owns the freeze. Whatever path leaves a minigame
@@ -124,6 +126,7 @@ function App() {
           onContinue={() => setScreen({ name: 'game' })}
           onOpenCemetery={goToCemetery}
           onOpenSettings={goToSettings}
+          onOpenCredits={goToCredits}
         />
       )
 
@@ -148,6 +151,7 @@ function App() {
             onContinue={goToMenu}
             onOpenCemetery={goToCemetery}
             onOpenSettings={goToSettings}
+            onOpenCredits={goToCredits}
           />
         )
       }
@@ -188,6 +192,9 @@ function App() {
           onBack={goToMenu}
         />
       )
+
+    case 'credits':
+      return <CreditsScreen onBack={goToMenu} />
 
     case 'minigame': {
       const game = MINIGAMES[activeScreen.id]
