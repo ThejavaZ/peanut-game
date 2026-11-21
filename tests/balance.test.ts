@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { seededRandom } from './prng'
 import {
   MAX_AGE_DAYS,
   SECONDS_PER_DAY,
@@ -23,6 +24,9 @@ const net = (effects: Partial<Needs>): number =>
 function neglectUntilDeath(): { seconds: number; cause: string } {
   let run: GameState = createRun('Balance', NOW)
   let guard = 0
+  // Seeded: the event scheduler is genuinely random, and unseeded this ran a
+  // different game every time. Same seed, same verdict, on every machine.
+  const random = seededRandom(0xba1a)
 
   while (!run.death && guard < 12_000) {
     guard += 1
@@ -36,7 +40,7 @@ function neglectUntilDeath(): { seconds: number; cause: string } {
       continue
     }
 
-    run = advanceRun(run, 1)
+    run = advanceRun(run, 1, random)
   }
 
   return { seconds: run.elapsedSeconds, cause: run.death?.causeId ?? 'none' }

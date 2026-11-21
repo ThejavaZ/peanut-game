@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { seededRandom } from './prng'
 import {
   AGE_WARNING_DAYS,
   MAX_AGE_DAYS,
@@ -219,6 +220,12 @@ describe('advanceRun with death', () => {
     // Total neglect, with events answered the neglectful way — whichever
     // option costs the most — because a dialog that nobody answers stops the
     // clock forever (and would hang this loop).
+    //
+    // One second per tick, like the real clock, and a seeded random: a ten
+    // second step coarsens the decay enough that old age occasionally wins
+    // (measured: 1 run in 40), and unseeded events made this flaky in CI.
+    const random = seededRandom(0xdead)
+
     while (!run.death && run.elapsedSeconds < 20 * DAY && guard < 5000) {
       guard += 1
       const pending = run.events.pending
@@ -229,7 +236,7 @@ describe('advanceRun with death', () => {
         run = applyEventChoice(run, worst.id)
         continue
       }
-      run = advanceRun(run, 10)
+      run = advanceRun(run, 1, random)
     }
 
     expect(run.death).not.toBeNull()
