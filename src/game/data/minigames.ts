@@ -1,4 +1,9 @@
-import { NAP_TIME_HEALTH, NAP_TIME_SECONDS } from '../config'
+import {
+  NAP_TIME_HEALTH,
+  NAP_TIME_SECONDS,
+  WHEEL_ATTEMPTS,
+  WHEEL_HAPPINESS_CAP,
+} from '../config'
 import type { MinigameId, MinigameReward } from '../../types/game'
 
 export interface MinigameDefinition {
@@ -8,6 +13,10 @@ export interface MinigameDefinition {
   /** Label of the button that starts it. */
   actionLabel: string
   reward: MinigameReward
+  /** Swings or tries granted per session; absent means a single, one-shot play. */
+  maxAttempts?: number
+  /** Overrides the generated preview when the reward depends on play. */
+  rewardPreview?: string
 }
 
 /**
@@ -29,6 +38,16 @@ export const MINIGAMES: Record<MinigameId, MinigameDefinition> = {
       effects: { health: NAP_TIME_HEALTH },
       advanceSeconds: NAP_TIME_SECONDS,
     },
+  },
+  wheel: {
+    id: 'wheel',
+    title: 'Hamster Wheel',
+    description:
+      'Peanut is already running. Stop the marker inside the golden arc — three swings, and the happiness you earn is capped.',
+    actionLabel: 'Start running',
+    maxAttempts: WHEEL_ATTEMPTS,
+    rewardPreview: `Up to +${WHEEL_HAPPINESS_CAP} happiness`,
+    reward: { effects: { happiness: WHEEL_HAPPINESS_CAP } },
   },
 }
 

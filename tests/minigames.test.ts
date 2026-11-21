@@ -131,9 +131,12 @@ describe('describeReward', () => {
 })
 
 describe('the minigame registry', () => {
-  test('ships Nap Time, ready to play', () => {
+  test('ships two minigames with unique ids', () => {
     const nap = MINIGAMES['nap-time']
-    expect(MINIGAME_LIST).toHaveLength(1)
+    expect(MINIGAME_LIST).toHaveLength(2)
+    expect(new Set(MINIGAME_LIST.map((game) => game.id)).size).toBe(
+      MINIGAME_LIST.length,
+    )
     expect(nap.title.length).toBeGreaterThan(0)
     expect(nap.actionLabel.length).toBeGreaterThan(0)
     expect(nap.description.length).toBeGreaterThan(0)
