@@ -96,7 +96,7 @@ export function NamingScreen({
             Any name works. Probably.
           </p>
           {replacingName ? (
-            <p className="mt-3 border-2 border-danger/60 bg-danger/10 px-2 py-1 text-base text-danger">
+            <p className="mt-3 border-2 border-danger/60 bg-danger/10 px-2 py-1 text-base text-danger-ink">
               This replaces {replacingName}. There is no way back.
             </p>
           ) : null}
@@ -128,7 +128,7 @@ export function NamingScreen({
 
           {secretSkin ? (
             <div className="mt-4 border-2 border-shell-dark bg-shell/20 px-3 py-2">
-              <p className="font-pixel text-[8px] uppercase tracking-widest text-shell-dark">
+              <p className="font-pixel text-[8px] uppercase tracking-widest text-cocoa">
                 Secret detected
               </p>
               <p className="mt-1 text-base">

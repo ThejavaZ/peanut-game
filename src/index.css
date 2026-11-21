@@ -17,6 +17,9 @@
   --color-mint: #9ed9c4;
   --color-sky: #a9c9e8;
   --color-danger: #d9534f;
+  /* Text-grade red: 5.59:1 on paper. The fill above is only 3.69:1, fine for
+     borders and backgrounds but never for type (WCAG AA needs 4.5:1). */
+  --color-danger-ink: #b03a35;
 }
 
 @layer base {

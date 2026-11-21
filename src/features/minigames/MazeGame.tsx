@@ -116,7 +116,7 @@ export function MazeGame({ onComplete }: MazeGameProps) {
 
       <div className="flex items-center justify-between border-2 border-cocoa/25 bg-paper-deep px-3 py-2 text-base">
         <span>Steps {steps}</span>
-        <span className={blocked ? 'text-danger' : 'text-cocoa-soft'}>
+        <span className={blocked ? 'text-danger-ink' : 'text-cocoa-soft'}>
           {blocked ? 'The wall does not move' : 'Find the green exit'}
         </span>
       </div>

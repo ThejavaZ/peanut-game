@@ -108,7 +108,7 @@ export function SeedsGame({ onComplete }: SeedsGameProps) {
         <span>
           Seeds {found.length}/{SEEDS_TOTAL}
         </span>
-        <span className={seconds <= 5 ? 'text-danger' : 'text-cocoa-soft'}>
+        <span className={seconds <= 5 ? 'text-danger-ink' : 'text-cocoa-soft'}>
           {seconds}s
         </span>
       </div>

@@ -26,7 +26,7 @@ export function Button({
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center gap-2 px-4 py-3 font-pixel text-[10px] uppercase tracking-wider transition-transform disabled:cursor-not-allowed disabled:opacity-50 ${frame} ${variantStyles[variant]} ${className}`}
+      className={`inline-flex min-h-11 items-center justify-center gap-2 px-4 py-3 font-pixel text-[10px] uppercase tracking-wider transition-transform disabled:cursor-not-allowed disabled:opacity-50 ${frame} ${variantStyles[variant]} ${className}`}
       {...props}
     />
   )

@@ -9,8 +9,8 @@ const BAR_STYLES: Record<NeedStatus, string> = {
 
 const VALUE_STYLES: Record<NeedStatus, string> = {
   ok: 'text-cocoa-soft',
-  warning: 'text-shell-dark',
-  critical: 'text-danger',
+  warning: 'text-cocoa',
+  critical: 'text-danger-ink',
 }
 
 interface NeedBarProps {

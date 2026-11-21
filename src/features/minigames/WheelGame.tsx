@@ -24,7 +24,7 @@ const RESULT_LABEL: Record<SwingResult, string> = {
 
 const RESULT_CLASS: Record<SwingResult, string> = {
   perfect: 'text-cocoa',
-  good: 'text-shell-dark',
+  good: 'text-cocoa',
   miss: 'text-cocoa-soft',
 }
 

@@ -149,7 +149,7 @@ export function GameScreen({
         {warning ? (
           <p
             role="alert"
-            className="mb-3 border-2 border-danger bg-danger/10 px-3 py-2 text-lg text-danger"
+            className="mb-3 border-2 border-danger bg-danger/10 px-3 py-2 text-lg text-danger-ink"
           >
             <strong className="font-pixel text-[9px] uppercase">
               {displayName}
@@ -161,7 +161,7 @@ export function GameScreen({
         {ageWarning ? (
           <p
             role="status"
-            className="mb-3 border-2 border-shell bg-shell/15 px-3 py-2 text-lg text-shell-dark"
+            className="mb-3 border-2 border-shell bg-shell/15 px-3 py-2 text-lg text-cocoa"
           >
             <strong className="font-pixel text-[9px] uppercase">
               {displayName}

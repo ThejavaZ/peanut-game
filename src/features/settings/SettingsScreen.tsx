@@ -93,7 +93,7 @@ export function SettingsScreen({
         </section>
 
         <section className="mt-3 border-2 border-danger bg-danger/5 p-4">
-          <p className="font-pixel text-[9px] uppercase text-danger">
+          <p className="font-pixel text-[9px] uppercase text-danger-ink">
             Danger zone
           </p>
 
@@ -106,7 +106,7 @@ export function SettingsScreen({
                   </Button>
                   <Button
                     variant="secondary"
-                    className="border-danger text-danger"
+                    className="border-danger text-danger-ink"
                     onClick={() => {
                       setConfirming(null)
                       onResetRun()
@@ -135,7 +135,7 @@ export function SettingsScreen({
                 </Button>
                 <Button
                   variant="secondary"
-                  className="border-danger text-danger"
+                  className="border-danger text-danger-ink"
                   onClick={() => {
                     setConfirming(null)
                     onClearCemetery()
