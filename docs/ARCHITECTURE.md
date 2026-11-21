@@ -5,7 +5,7 @@
 | Field        | Value                                            |
 | ------------ | ------------------------------------------------ |
 | Scope        | How the code in `src/` is organised and why      |
-| Applies to   | v0.3.0 (M0 + M1 + M1.5 complete)                 |
+| Applies to   | v0.9.0 (M0–M3 complete)                 |
 | Last updated | 2026-11-18                                       |
 | Related docs | [`roadmap/v1.md`](roadmap/v1.md) (decisions, §5) |
 

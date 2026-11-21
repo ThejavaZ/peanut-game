@@ -5,7 +5,7 @@
 | Field        | Value                                                    |
 | ------------ | -------------------------------------------------------- |
 | Scope        | How the look of the game is built, and the plan for sound |
-| Applies to   | v0.3.0 (M0 + M1 + M1.5 complete)                         |
+| Applies to   | v0.9.0 (M0–M3 complete)                         |
 | Last updated | 2026-11-18                                               |
 | Status       | **Art: implemented. Audio: not implemented (M4).**        |
 | Related docs | [`ARCHITECTURE.md`](ARCHITECTURE.md) §8 · [`skins.md`](skins.md) |
