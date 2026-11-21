@@ -519,9 +519,194 @@ const SECRET_SPRITES: Record<string, SkinSpriteData> = {
   },
 }
 
+/**
+ * Eight skins inspired by video game culture — silhouettes, colours and jokes
+ * instead of anyone's logo. Each has its own palette; every grid is validated
+ * by `tests/skins.test.ts` the moment it enters `SKIN_SPRITES`.
+ */
+const GAME_SPRITES: Record<string, SkinSpriteData> = {
+  // A floating specter: no feet, wavy tail.
+  ghost: {
+    palette: { h: '#b9a7ee', b: '#efeaff', n: '#6d4fb8', E: '#2b1d16' },
+    rows: [
+      '................',
+      '.....hhhhhh.....',
+      '...hhhhhhhhhh...',
+      '..hhhhhhhhhhhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhhhhhhhhhhh..',
+      '..hhhbbbbbbhhh..',
+      '..hhhnnnnnnhhh..',
+      '..hhhhhhhhhhhh..',
+      '..hhhhhhhhhhhh..',
+      '..hh...hh...hh..',
+      '..hh...hh...hh..',
+      '................',
+      '................',
+      '................',
+    ],
+  },
+  // Square on every side: the blocky hero of a blocky world.
+  blocky: {
+    palette: { h: '#7fbf4d', b: '#d9f2a8', n: '#3d6b1f', d: '#5a8f33', E: '#2b1d16' },
+    rows: [
+      '................',
+      '..hhhhhhhhhhhh..',
+      '..hhhhhhhhhhhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhhhhhhhhhhh..',
+      '..hhbbbbbbbbhh..',
+      '..hhbbnnnnbbhh..',
+      '..hhbbbbbbbbhh..',
+      '.hhhhhhhhhhhhhh.',
+      '.hhhhhhhhhhhhhh.',
+      '..hhhhhhhhhhhh..',
+      '....dddddddd....',
+      '..dd........dd..',
+      '................',
+      '................',
+    ],
+  },
+  // Helmet and reflective visor: no face to see.
+  astro: {
+    palette: { e: '#e8eef7', i: '#9fd7ff', b: '#f4f7fb', n: '#7fb6d9', d: '#b9c7d9' },
+    rows: [
+      '................',
+      '.....eeeeee.....',
+      '...eeeeeeeeee...',
+      '..eeeeeeeeeeee..',
+      '..eeiiiiiiiiee..',
+      '..eeiiiiiiiiee..',
+      '..eeeeeeeeeeee..',
+      '..eebbbbbbbbee..',
+      '..eebbnnnnbbee..',
+      '..eebbbbbbbbee..',
+      '..eeeeeeeeeeee..',
+      '..dddddddddddd..',
+      '....dddddddd....',
+      '..dd........dd..',
+      '................',
+      '................',
+    ],
+  },
+  // A dome that spreads at the bottom: no ears, no legs.
+  slime: {
+    palette: { h: '#69d98f', b: '#b6f2c7', n: '#1f7a45', E: '#2b1d16' },
+    rows: [
+      '................',
+      '................',
+      '.....hhhhhh.....',
+      '...hhhhhhhhhh...',
+      '..hhhhhhhhhhhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhhhhhhhhhhh..',
+      '..hhhbbbbbbhhh..',
+      '..hhhnnnnnnhhh..',
+      '..hhhbbbbbbhhh..',
+      '.hhhhhhhhhhhhhh.',
+      'hhhhhhhhhhhhhhhh',
+      '.hhhhhhhhhhhhhh.',
+      '................',
+      '................',
+    ],
+  },
+  // Headband knots on top, mask over the mouth, eyes narrowed.
+  ninja: {
+    palette: { h: '#3c4160', b: '#565d8a', k: '#24273f', d: '#2a2e47', E: '#f2f5ff' },
+    rows: [
+      '................',
+      '....hh....hh....',
+      '..hhhhhhhhhhhh..',
+      '..hhhhhhhhhhhh..',
+      '..hhE......Ehh..',
+      '..hhhhhhhhhhhh..',
+      '..hhhbbbbbbhhh..',
+      '..hhhkkkkkkhhh..',
+      '..hhhhhhhhhhhh..',
+      '.hhhhhhhhhhhhhh.',
+      'hhhhhhhhhhhhhhhh',
+      '.hhhhhhhhhhhhhh.',
+      '..dd........dd..',
+      '................',
+      '................',
+      '................',
+    ],
+  },
+  // Droopy ears and a heavy, spreading base.
+  zombie: {
+    palette: { d: '#5a8f4a', i: '#cfe8c4', h: '#7fbf6a', b: '#e6f2d9', n: '#3f6b35', E: '#2b1d16' },
+    rows: [
+      '................',
+      '..ddd......ddd..',
+      '..ddihhhhhhidd..',
+      '..ddhhhhhhhhdd..',
+      '..hhEEhhhhEEhh..',
+      '..hhhhhhhhhhhh..',
+      '..hhhbbbbbbhhh..',
+      '..hhhnnnnnnhhh..',
+      '..hhbbbbbbbbhh..',
+      '.hhhhhhhhhhhhhh.',
+      'hhhhhhhhhhhhhhhh',
+      '.hhhhhhhhhhhhhh.',
+      '..dd........dd..',
+      '................',
+      '................',
+      '................',
+    ],
+  },
+  // Helmet with a plume and a narrow visor.
+  knight: {
+    palette: { p: '#e8556d', e: '#c9d4e3', i: '#9fd7ff', b: '#eef3fa', n: '#7f8ea8', h: '#8fa3c4', l: '#c9d4e3', d: '#6b7a94' },
+    rows: [
+      '.......pp.......',
+      '.......ppp......',
+      '..eeeeeeeeeeee..',
+      '..eeeeeeeeeeee..',
+      '..eeiiiiiiiiee..',
+      '..eeiiiiiiiiee..',
+      '..eeeeeeeeeeee..',
+      '..eebbbbbbbbee..',
+      '..eebbnnnnbbee..',
+      '..eebbbbbbbbee..',
+      '.hhhhhhhhhhhhhh.',
+      '.llllllllllllll.',
+      '....dddddddd....',
+      '..dd........dd..',
+      '................',
+      '................',
+    ],
+  },
+  // Antenna, glowing eyes, a panel on the chest.
+  robot: {
+    palette: { a: '#f2c14e', m: '#b8c4d4', M: '#7f93ad', n: '#4a5a70', d: '#8f9eb3', E: '#ffe066' },
+    rows: [
+      '.......a........',
+      '.......aaa......',
+      '..mmmmmmmmmmmm..',
+      '..mmEEmmmmEEmm..',
+      '..mmmmmmmmmmmm..',
+      '..mmMMMMMMMMmm..',
+      '..mmMMnnnnMMmm..',
+      '..mmMMMMMMMMmm..',
+      '.mmmmmmmmmmmmmm.',
+      '.mmmmmmmmmmmmmm.',
+      '..mmmmmmmmmmmm..',
+      '....dddddddd....',
+      '..dd........dd..',
+      '................',
+      '................',
+      '................',
+    ],
+  },
+}
+
 export const SKIN_SPRITES = {
   ...ANIMAL_SPRITES,
   ...SECRET_SPRITES,
+  ...GAME_SPRITES,
 } as Record<SkinId, SkinSpriteData>
 
 /**

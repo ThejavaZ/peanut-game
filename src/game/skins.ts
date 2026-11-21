@@ -158,6 +158,62 @@ export const SKINS: Record<SkinId, SkinDefinition> = {
     category: 'secret',
     triggers: ['root'],
   },
+  ghost: {
+    id: 'ghost',
+    name: 'Ghost',
+    description: 'A floating specter. It never touches the bedding.',
+    category: 'secret',
+    triggers: ['ghost', 'fantasma'],
+  },
+  blocky: {
+    id: 'blocky',
+    name: 'Blocky',
+    description: 'Eight pixels wide and somehow still adorable.',
+    category: 'secret',
+    triggers: ['blocky', 'bloque'],
+  },
+  astro: {
+    id: 'astro',
+    name: 'Astro',
+    description: 'Ready for a mission that never leaves the cage.',
+    category: 'secret',
+    triggers: ['astro', 'astronauta'],
+  },
+  slime: {
+    id: 'slime',
+    name: 'Slime',
+    description: 'A gelatinous hamster. It absorbs food through the floor.',
+    category: 'secret',
+    triggers: ['slime', 'limo'],
+  },
+  ninja: {
+    id: 'ninja',
+    name: 'Ninja',
+    description: 'You will never hear it eat. The seeds just vanish.',
+    category: 'secret',
+    triggers: ['ninja', 'shinobi'],
+  },
+  zombie: {
+    id: 'zombie',
+    name: 'Zombie',
+    description: 'It got better. Mostly. Do not ask about the smell.',
+    category: 'secret',
+    triggers: ['zombie', 'zombi'],
+  },
+  knight: {
+    id: 'knight',
+    name: 'Knight',
+    description: 'Sworn to protect the water bottle with its life.',
+    category: 'secret',
+    triggers: ['knight', 'caballero'],
+  },
+  robot: {
+    id: 'robot',
+    name: 'Robot',
+    description: 'Runs on seeds, firmware and questionable decisions.',
+    category: 'secret',
+    triggers: ['robot', 'mecha'],
+  },
 }
 
 export const SKIN_LIST: readonly SkinDefinition[] = Object.values(SKINS)

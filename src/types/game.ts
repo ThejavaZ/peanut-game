@@ -33,6 +33,14 @@ export type SkinId =
   | 'swift'
   | 'javascript'
   | 'root'
+  | 'ghost'
+  | 'blocky'
+  | 'astro'
+  | 'slime'
+  | 'ninja'
+  | 'zombie'
+  | 'knight'
+  | 'robot'
 
 export type AccessoryId = 'none' | 'crown'
 

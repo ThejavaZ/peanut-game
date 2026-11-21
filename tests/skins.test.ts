@@ -48,6 +48,17 @@ describe('skin registry', () => {
     expect(findSecretSkin('Mochi')).toBeNull()
   })
 
+  test('the eight video game culture skins unlock by name', () => {
+    expect(findSecretSkin('Ghost')).toMatchObject({ id: 'ghost' })
+    expect(findSecretSkin('bloque')).toMatchObject({ id: 'blocky' })
+    expect(findSecretSkin('ASTRONAUTA')).toMatchObject({ id: 'astro' })
+    expect(findSecretSkin('Slime')).toMatchObject({ id: 'slime' })
+    expect(findSecretSkin('shinobi')).toMatchObject({ id: 'ninja' })
+    expect(findSecretSkin('Zombi')).toMatchObject({ id: 'zombie' })
+    expect(findSecretSkin('caballero')).toMatchObject({ id: 'knight' })
+    expect(findSecretSkin(' Mecha ')).toMatchObject({ id: 'robot' })
+  })
+
   test('classic hamster is always a valid skin', () => {
     expect(DEFAULT_SKIN_ID).toBe('hamster')
     expect(isSkinId('hamster')).toBe(true)
