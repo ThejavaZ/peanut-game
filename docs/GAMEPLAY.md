@@ -366,8 +366,29 @@ body counts it down, and entering again restores it — reloading simply starts
 a new session, which is exactly what the rule asks for. Nap Time declares none
 because it is a single press by design.
 
-> The seeds and the maze reuse this shell unchanged: they bring their own
-> `reward`, their own `maxAttempts` and their own screen body, nothing else.
+### Tiny Maze
+
+| | |
+| --- | --- |
+| Play | A 5×5 grid with **one real path** and two dead ends |
+| Controls | Arrows or WASD, plus four on-screen arrows for pointer and touch |
+| Collisions | Walls and the edge of the level simply refuse the move — one pure rule, every input |
+| Reward | **+10 happiness** and **every care cooldown cleared** |
+| Attempts | None: one run to the exit |
+| Solvability | Guaranteed by a breadth-first search test — an impossible grid fails CI |
+
+### The gap between minigames
+
+Playing is not free either: after any minigame, **60 seconds** must pass before
+the next one may start. The panel disables the buttons and counts down exactly
+like the care actions do.
+
+That gap is what keeps the bars necessary — no combination of the three
+minigames can feed, water or clean Peanut, and happiness alone has never solved
+a run.
+
+> The seeds reuse this shell unchanged: their own `reward`, their own
+> `maxAttempts` and their own screen body, nothing else.
 
 ## 12. Score
 
@@ -411,7 +432,7 @@ the state — the state itself only follows the rules in §2 and §4.
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
-| Seeds and maze                | M3        | The remaining minigames, on the shell the wheel just proved   |
+| Seeds                        | M3        | The last minigame pending, on the shell the maze just proved |
 | Audio                         | M4        | Synthesised SFX and ambient loop                             |
 | Balance pass                  | M4        | Target run length: **5–15 minutes** (target, not tuned)      |
 

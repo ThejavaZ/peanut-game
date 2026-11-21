@@ -4,6 +4,7 @@ import type {
   MinigameReward,
   NeedKey,
 } from '../types/game'
+import { MINIGAME_GAP_SECONDS } from './config'
 import { CARE_ACTIONS } from './data/careActions'
 import { advanceRun, applyEffects } from './rules'
 
@@ -82,5 +83,17 @@ export function applyMinigameReward(
     next = advanceRun(next, reward.advanceSeconds)
   }
 
-  return next
+  // The gap starts when the minigame finishes, including any time it advanced.
+  return { ...next, lastMinigameAt: next.elapsedSeconds }
+}
+
+/**
+ * Seconds until the next minigame may start; 0 means ready. Same shape as the
+ * care-action cooldowns, so the HUD renders it the same way.
+ */
+export function minigameGap(state: GameState): number {
+  return Math.max(
+    0,
+    MINIGAME_GAP_SECONDS - (state.elapsedSeconds - state.lastMinigameAt),
+  )
 }

@@ -158,6 +158,8 @@ export interface GameState {
   /** `null` while Peanut is alive. */
   death: DeathRecord | null
   events: EventSchedulerState
+  /** `elapsedSeconds` when the last minigame finished; starts the gap. */
+  lastMinigameAt: number
 }
 
 export interface RunSummary {
@@ -187,7 +189,7 @@ export interface CemeteryEntry {
   readonly score: number
 }
 
-export type MinigameId = 'nap-time' | 'wheel'
+export type MinigameId = 'nap-time' | 'wheel' | 'maze'
 
 /**
  * The contract every minigame reports back. Applied exactly once when the game

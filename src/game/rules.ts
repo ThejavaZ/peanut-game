@@ -65,6 +65,7 @@ export function createRun(
     paused: false,
     death: null,
     events: createEventScheduler(),
+    lastMinigameAt: 0,
   }
 }
 

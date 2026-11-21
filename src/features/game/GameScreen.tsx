@@ -7,6 +7,7 @@ import { Screen } from '../../components/ui/Screen'
 import { CARE_ACTION_LIST } from '../../game/data/careActions'
 import { MINIGAME_LIST } from '../../game/data/minigames'
 import { findEasterEgg, getDisplayName } from '../../game/easterEggs'
+import { minigameGap } from '../../game/minigames'
 import {
   formatGameClock,
   getAgeWarning,
@@ -59,6 +60,7 @@ export function GameScreen({
   const moodBadge = MOOD_BADGES[mood]
   const warning = getCriticalWarning(run.hamster.needs)
   const ageWarning = getAgeWarning(run.hamster.ageDays)
+  const gapSeconds = minigameGap(run)
   const displayName = getDisplayName(run.hamster.name)
   const skin = SKINS[run.hamster.skinId]
   const egg = findEasterEgg(run.hamster.name)
@@ -240,11 +242,17 @@ export function GameScreen({
                   key={game.id}
                   variant="secondary"
                   title={game.description}
-                  disabled={run.paused || run.events.pending !== null}
+                  disabled={
+                    run.paused ||
+                    run.events.pending !== null ||
+                    gapSeconds > 0
+                  }
                   onClick={() => onOpenMinigame(game.id)}
                   className="text-[8px]"
                 >
-                  {game.title}
+                  {gapSeconds > 0
+                    ? `${game.title} · ${Math.ceil(gapSeconds)}s`
+                    : game.title}
                 </Button>
               ))}
             </div>
