@@ -60,6 +60,13 @@ export interface RunStats {
   cleanings: number
   playSessions: number
   naps: number
+  /** Events answered while no need was left critical. */
+  eventsResolved: number
+  minigamesCompleted: number
+  /** Seconds spent with at least one of the five bars at or below 20. */
+  criticalSeconds: number
+  /** Seconds spent with two or more bars at or below 20. */
+  doubleCriticalSeconds: number
 }
 
 export type DeathCauseId =
@@ -162,6 +169,7 @@ export interface RunSummary {
   playSessions: number
   causeOfDeath: string
   epitaph: string
+  score: number
 }
 
 /**
@@ -176,6 +184,7 @@ export interface CemeteryEntry {
   readonly causeOfDeath: string
   readonly epitaph: string
   readonly diedAt: number
+  readonly score: number
 }
 
 export type MinigameId = 'nap-time'

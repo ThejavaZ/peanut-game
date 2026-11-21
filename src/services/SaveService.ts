@@ -8,7 +8,17 @@ const STORAGE_KEY = 'peanut.run.v1'
 
 const ACCESSORY_IDS: readonly AccessoryId[] = ['none', 'crown']
 
-const STAT_KEYS = ['meals', 'drinks', 'cleanings', 'playSessions', 'naps']
+const STAT_KEYS = [
+  'meals',
+  'drinks',
+  'cleanings',
+  'playSessions',
+  'naps',
+  'eventsResolved',
+  'minigamesCompleted',
+  'criticalSeconds',
+  'doubleCriticalSeconds',
+]
 
 const COOLDOWN_KEYS = ['feed', 'water', 'clean', 'play', 'sleep']
 
@@ -256,10 +266,44 @@ function migrateV2toV3(value: Record<string, unknown>): Record<string, unknown> 
 function migrateV3toV4(value: Record<string, unknown>): Record<string, unknown> {
   return {
     ...value,
-    schemaVersion: SAVE_SCHEMA_VERSION,
+    // Literal, not SAVE_SCHEMA_VERSION: this step always lands on v4 so the
+    // next one still matches. Using the constant here silently skips it.
+    schemaVersion: 4,
     events: isEventScheduler(value.events)
       ? value.events
       : createEventScheduler(),
+  }
+}
+
+/**
+ * Score counters arrive with v5. A v4 payload simply has none, so they start
+ * at zero rather than invalidating a run the player already cares about.
+ */
+function migrateV4toV5(value: Record<string, unknown>): Record<string, unknown> {
+  const stats = value.stats
+  if (!isRecord(stats)) {
+    return { ...value, schemaVersion: SAVE_SCHEMA_VERSION }
+  }
+
+  const scoreKeys = [
+    'eventsResolved',
+    'minigamesCompleted',
+    'criticalSeconds',
+    'doubleCriticalSeconds',
+  ]
+
+  return {
+    ...value,
+    schemaVersion: SAVE_SCHEMA_VERSION,
+    stats: {
+      ...stats,
+      ...Object.fromEntries(
+        scoreKeys.map((key) => [
+          key,
+          isFiniteNumber(stats[key]) ? stats[key] : 0,
+        ]),
+      ),
+    },
   }
 }
 
@@ -277,6 +321,9 @@ export function migrateSave(value: unknown): unknown {
   }
   if (current.schemaVersion === 3) {
     current = migrateV3toV4(current)
+  }
+  if (current.schemaVersion === 4) {
+    current = migrateV4toV5(current)
   }
   return current
 }

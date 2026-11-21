@@ -54,6 +54,10 @@ export function createRun(
       cleanings: 0,
       playSessions: 0,
       naps: 0,
+      eventsResolved: 0,
+      minigamesCompleted: 0,
+      criticalSeconds: 0,
+      doubleCriticalSeconds: 0,
     },
     cooldowns: { feed: 0, water: 0, clean: 0, play: 0, sleep: 0 },
     elapsedSeconds: 0,
@@ -130,16 +134,28 @@ export function advanceRun(
     return state
   }
 
+  const needs = updateNeeds(state.hamster.needs, seconds)
+  const criticalBars = Object.values(needs).filter(
+    (value) => value <= NEED_CRITICAL,
+  ).length
+
   const elapsedSeconds = state.elapsedSeconds + seconds
   const next: GameState = {
     ...state,
     hamster: {
       ...state.hamster,
-      needs: updateNeeds(state.hamster.needs, seconds),
+      needs,
       ageDays: Math.floor(elapsedSeconds / SECONDS_PER_DAY),
     },
     cooldowns: tickCooldowns(state.cooldowns, seconds),
     elapsedSeconds,
+    stats: {
+      ...state.stats,
+      criticalSeconds:
+        state.stats.criticalSeconds + (criticalBars >= 1 ? seconds : 0),
+      doubleCriticalSeconds:
+        state.stats.doubleCriticalSeconds + (criticalBars >= 2 ? seconds : 0),
+    },
   }
 
   // A dead run is frozen: needs, cooldowns and the clock stop with the record.
@@ -210,11 +226,18 @@ export function applyEventChoice(
     return state
   }
 
+  const needs = applyEffects(state.hamster.needs, choice.effects)
+  const leftCritical = Object.values(needs).some(
+    (value) => value <= NEED_CRITICAL,
+  )
+
   return {
     ...state,
-    hamster: {
-      ...state.hamster,
-      needs: applyEffects(state.hamster.needs, choice.effects),
+    hamster: { ...state.hamster, needs },
+    // Act 1 §10: an event pays only when the answer leaves nothing critical.
+    stats: {
+      ...state.stats,
+      eventsResolved: state.stats.eventsResolved + (leftCritical ? 0 : 1),
     },
     events: { ...state.events, pending: null },
   }

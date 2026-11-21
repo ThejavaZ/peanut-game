@@ -1,8 +1,10 @@
+import { computeScore } from './score'
 import type { DeathRecord, GameState, RunSummary } from '../types/game'
 
 /**
  * The memorial reads the immutable `DeathRecord`, never the live state: once a
  * run ends, what is shown must not depend on anything that could change.
+ * The score is the one value recalculated here, from the final state.
  */
 export function buildRunSummary(
   run: GameState,
@@ -17,5 +19,6 @@ export function buildRunSummary(
     playSessions: death.stats.playSessions,
     causeOfDeath: death.detail,
     epitaph: death.epitaph,
+    score: computeScore(run),
   }
 }

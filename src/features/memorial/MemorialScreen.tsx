@@ -38,7 +38,7 @@ export function MemorialScreen({ run, onAdoptAnother, onMainMenu }: MemorialScre
 
         <p className="text-xl italic text-cocoa-soft">&ldquo;{run.epitaph}&rdquo;</p>
 
-        <dl className="mt-6 grid grid-cols-3 gap-2">
+        <dl className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
           <div className="border-2 border-cocoa/25 px-2 py-3">
             <dt className="font-pixel text-[7px] uppercase text-cocoa-soft">Days</dt>
             <dd className="mt-1 text-2xl">{run.daysSurvived}</dd>
@@ -50,6 +50,10 @@ export function MemorialScreen({ run, onAdoptAnother, onMainMenu }: MemorialScre
           <div className="border-2 border-cocoa/25 px-2 py-3">
             <dt className="font-pixel text-[7px] uppercase text-cocoa-soft">Play</dt>
             <dd className="mt-1 text-2xl">{run.playSessions}</dd>
+          </div>
+          <div className="border-2 border-cocoa/25 px-2 py-3">
+            <dt className="font-pixel text-[7px] uppercase text-cocoa-soft">Score</dt>
+            <dd className="mt-1 text-2xl">{run.score}</dd>
           </div>
         </dl>
 

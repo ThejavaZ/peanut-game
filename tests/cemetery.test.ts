@@ -24,6 +24,7 @@ function entry(overrides: Partial<CemeteryEntry> = {}): CemeteryEntry {
     causeOfDeath: 'Starvation',
     epitaph: 'The bowl was right there.',
     diedAt: NOW,
+    score: 1_500,
     ...overrides,
   }
 }

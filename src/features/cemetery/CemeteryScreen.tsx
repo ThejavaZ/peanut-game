@@ -47,7 +47,7 @@ export function CemeteryScreen({ entries, onBack }: CemeteryScreenProps) {
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <h2 className="font-pixel text-sm">{entry.name}</h2>
                       <span className="font-pixel text-[7px] uppercase tracking-widest text-cocoa-soft">
-                        Day {entry.daysSurvived} ·{' '}
+                        Day {entry.daysSurvived} · Score {entry.score} ·{' '}
                         {new Date(entry.diedAt).toLocaleDateString()}
                       </span>
                     </div>
