@@ -1,4 +1,5 @@
 import {
+  MAZE_HAPPINESS,
   NAP_TIME_HEALTH,
   NAP_TIME_SECONDS,
   WHEEL_ATTEMPTS,
@@ -48,6 +49,18 @@ export const MINIGAMES: Record<MinigameId, MinigameDefinition> = {
     maxAttempts: WHEEL_ATTEMPTS,
     rewardPreview: `Up to +${WHEEL_HAPPINESS_CAP} happiness`,
     reward: { effects: { happiness: WHEEL_HAPPINESS_CAP } },
+  },
+  maze: {
+    id: 'maze',
+    title: 'Tiny Maze',
+    description:
+      'Five by five, one way out, and the walls are real — they do not let you through. Reach the exit and every care cooldown clears.',
+    actionLabel: 'Enter the maze',
+    reward: {
+      effects: { happiness: MAZE_HAPPINESS },
+      clearsCooldowns: true,
+    },
+    rewardPreview: `+${MAZE_HAPPINESS} happiness · clears every care cooldown`,
   },
 }
 

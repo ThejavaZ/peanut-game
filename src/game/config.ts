@@ -10,8 +10,13 @@ export const MAX_OFFLINE_SECONDS = 10 * 60
 export const MAX_TICK_SECONDS = 5
 /** How often the run is written to localStorage (actions save immediately). */
 export const SAVE_INTERVAL_MS = 5000
-/** v3 adds `death`; v4 adds the event scheduler; v5 adds score counters. */
-export const SAVE_SCHEMA_VERSION = 5
+/** v5 adds score counters; v6 adds the gap between minigames. */
+export const SAVE_SCHEMA_VERSION = 6
+
+/** Maze reward: it clears care cooldowns and adds a small happiness bonus. */
+export const MAZE_HAPPINESS = 10
+/** No two minigames can be played back to back — the bars stay necessary. */
+export const MINIGAME_GAP_SECONDS = 60
 
 /**
  * Score rules from Act 1 §10. The score never decides whether Peanut lives

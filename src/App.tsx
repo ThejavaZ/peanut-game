@@ -4,6 +4,7 @@ import { GameScreen } from './features/game/GameScreen'
 import { MemorialScreen } from './features/memorial/MemorialScreen'
 import { MainMenu } from './features/menu/MainMenu'
 import { MinigameScreen } from './features/minigames/MinigameScreen'
+import { MazeGame } from './features/minigames/MazeGame'
 import { NapTime } from './features/minigames/NapTime'
 import { WheelGame } from './features/minigames/WheelGame'
 import { NamingScreen } from './features/naming/NamingScreen'
@@ -142,6 +143,8 @@ function App() {
       const body =
         activeScreen.id === 'wheel' ? (
           <WheelGame onComplete={finish} />
+        ) : activeScreen.id === 'maze' ? (
+          <MazeGame onComplete={finish} />
         ) : (
           <NapTime game={game} onComplete={finish} />
         )

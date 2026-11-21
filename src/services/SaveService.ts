@@ -217,6 +217,7 @@ export function isGameState(value: unknown): value is GameState {
     isFiniteNumber(hamster.ageDays) &&
     isFiniteNumber(value.elapsedSeconds) &&
     isFiniteNumber(value.lastUpdatedAt) &&
+    isFiniteNumber(value.lastMinigameAt) &&
     typeof value.paused === 'boolean' &&
     typeof hamster.isAlive === 'boolean'
   )
@@ -294,7 +295,9 @@ function migrateV4toV5(value: Record<string, unknown>): Record<string, unknown> 
 
   return {
     ...value,
-    schemaVersion: SAVE_SCHEMA_VERSION,
+    // Literal, not SAVE_SCHEMA_VERSION: this step always lands on v5 so the
+    // next one still matches. Using the constant here silently skips it.
+    schemaVersion: 5,
     stats: {
       ...stats,
       ...Object.fromEntries(
@@ -304,6 +307,20 @@ function migrateV4toV5(value: Record<string, unknown>): Record<string, unknown> 
         ]),
       ),
     },
+  }
+}
+
+/**
+ * The gap between minigames arrives with v6: a v5 payload has no timestamp, so
+ * the first minigame of an old save stays immediately available.
+ */
+function migrateV5toV6(value: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...value,
+    schemaVersion: SAVE_SCHEMA_VERSION,
+    lastMinigameAt: isFiniteNumber(value.lastMinigameAt)
+      ? value.lastMinigameAt
+      : 0,
   }
 }
 
@@ -324,6 +341,9 @@ export function migrateSave(value: unknown): unknown {
   }
   if (current.schemaVersion === 4) {
     current = migrateV4toV5(current)
+  }
+  if (current.schemaVersion === 5) {
+    current = migrateV5toV6(current)
   }
   return current
 }
