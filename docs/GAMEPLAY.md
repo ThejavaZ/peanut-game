@@ -441,7 +441,22 @@ Two details worth knowing:
 The score has no effect on decay, health, events or death. It is derived from
 the state — the state itself only follows the rules in §2 and §4.
 
-## 13. Not implemented yet
+## 13. Settings
+
+Reachable from the main menu, next to the cemetery.
+
+| Setting | What it does |
+| ------- | ------------ |
+| **Reduced motion** | Applied immediately: every animation stops, the same way the system's `prefers-reduced-motion` does |
+| **Volume and mute** | Stored now, so the audio service inherits a decision the player already made |
+| **Reset the current run** | Asks twice, then ends the run and clears its save |
+| **Clear the cemetery** | Asks twice, then erases every grave |
+
+Neither destructive action is a single click: the first press arms it, the
+second confirms it. Preferences live in their own storage key, apart from the
+run and the graves, so resetting a run never touches the others.
+
+## 14. Not implemented yet
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |

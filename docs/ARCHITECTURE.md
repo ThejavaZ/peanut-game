@@ -86,6 +86,7 @@ game ──▶ minigame ──▶ game                        (exit or reward)
 | `game`     | `features/game/GameScreen.tsx`        | The live HUD, hosts the event modal and the minigame panel |
 | `memorial` | `features/memorial/MemorialScreen.tsx`| Carries a `RunSummary`, not the live `GameState`  |
 | `cemetery` | `features/cemetery/CemeteryScreen.tsx`| Read-only list of every grave                     |
+| `settings` | `features/settings/SettingsScreen.tsx`| Motion, sound preferences and the destructive actions |
 | `minigame` | `features/minigames/MinigameScreen.tsx`| Shell: frozen clock, reward preview, always-on skip |
 
 The union lives in `src/types/game.ts`. Because the game stays on one URL,
@@ -263,14 +264,14 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at find the seeds (2026-11-20): **7 174 total** — 5 090 in
-`src/`, 2 084 in `tests/`.
+Lines counted at settings (2026-11-20): **7 516 total** — 5 388 in `src/`,
+2 128 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 164   | Screen state machine, bodies per minigame       |
-| `src/types/game.ts`                 | 218   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
+| `src/App.tsx`                       | 200   | Screen state machine, bodies per minigame, preferences |
+| `src/types/game.ts`                 | 219   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
 | `src/game/config.ts`                | 127   | All balance numbers, including the score rules  |
 | `src/game/rules.ts`                 | 321   | Pure engine: decay, health, actions, clock, critical-time tracking |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
@@ -288,11 +289,13 @@ Lines counted at find the seeds (2026-11-20): **7 174 total** — 5 090 in
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 24    | Memorial data built from the `DeathRecord`      |
 | `src/hooks/useGameRun.ts`           | 285   | Reducer, clock effects, saves, suspension       |
-| `src/services/CemeteryService.ts`   | 115   | Graves: validation, cap, append, score          |
+| `src/services/CemeteryService.ts`   | 124   | Graves: validation, cap, append, score, clear   |
 | `src/services/SaveService.ts`       | 378   | Run persistence, validation, v1→v6 migration    |
+| `src/services/SettingsService.ts`   | 65    | Preferences: motion, sound, per-field repair    |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
-| `src/features/menu/MainMenu.tsx`    | 88    | Menu screen with the cemetery entry point        |
+| `src/features/menu/MainMenu.tsx`    | 98    | Menu with the cemetery and settings entrances    |
 | `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
+| `src/features/settings/SettingsScreen.tsx` | 171 | Preferences behind explicit confirmations |
 | `src/features/minigames/MinigameScreen.tsx` | 66 | The shell every minigame runs inside       |
 | `src/features/minigames/NapTime.tsx` | 20   | One press, one reward                            |
 | `src/features/minigames/WheelGame.tsx` | 125 | Rotating marker, three swings, capped reward |
@@ -319,6 +322,7 @@ Lines counted at find the seeds (2026-11-20): **7 174 total** — 5 090 in
 | `tests/wheel.test.ts`               | 101   | Angles, swing scoring and the cap              |
 | `tests/maze.test.ts`                | 182   | Collisions, solvability, gap, schema v6         |
 | `tests/seeds.test.ts`               | 85    | Board generation, partial rewards, registry     |
+| `tests/settings.test.ts`            | 44    | Preference repair and clamping                  |
 
 ---
 
