@@ -387,8 +387,21 @@ That gap is what keeps the bars necessary — no combination of the three
 minigames can feed, water or clean Peanut, and happiness alone has never solved
 a run.
 
-> The seeds reuse this shell unchanged: their own `reward`, their own
-> `maxAttempts` and their own screen body, nothing else.
+### Find the Seeds
+
+The fourth minigame, and the one that pays in food.
+
+| | |
+| --- | --- |
+| Play | **12 cells, 5 seeds, 20 seconds** — uncover them before the clock runs out |
+| Controls | Every cell is a button: pointer, or Tab + Enter |
+| Reward | **+10 hunger per seed, capped at 35** — five seeds would pay 50 |
+| Partial | Running out of time pays for the seeds you actually found |
+| Attempts | The board itself is the set of tries; leaving pays nothing |
+
+> All four minigames — nap, wheel, maze and seeds — run through the same shell:
+> frozen clock, reward preview, a Skip that applies nothing, and the 60 second
+> gap afterwards.
 
 ## 12. Score
 
@@ -432,7 +445,6 @@ the state — the state itself only follows the rules in §2 and §4.
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
-| Seeds                        | M3        | The last minigame pending, on the shell the maze just proved |
 | Audio                         | M4        | Synthesised SFX and ambient loop                             |
 | Balance pass                  | M4        | Target run length: **5–15 minutes** (target, not tuned)      |
 

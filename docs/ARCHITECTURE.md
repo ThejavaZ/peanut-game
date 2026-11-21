@@ -263,26 +263,27 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the tiny maze (2026-11-20): **6 900 total** — 4 901 in
-`src/`, 1 999 in `tests/`.
+Lines counted at find the seeds (2026-11-20): **7 174 total** — 5 090 in
+`src/`, 2 084 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 161   | Screen state machine, bodies per minigame       |
+| `src/App.tsx`                       | 164   | Screen state machine, bodies per minigame       |
 | `src/types/game.ts`                 | 218   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
-| `src/game/config.ts`                | 119   | All balance numbers, including the score rules  |
+| `src/game/config.ts`                | 127   | All balance numbers, including the score rules  |
 | `src/game/rules.ts`                 | 321   | Pure engine: decay, health, actions, clock, critical-time tracking |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 97    | The only place a run can end, and the record it writes |
 | `src/game/score.ts`                 | 40    | Score from Act 1 §10: pure, never affects survival |
 | `src/game/wheel.ts`                 | 60    | Angles, swing scoring and the happiness cap     |
 | `src/game/maze.ts`                  | 111   | Grid, collisions and a breadth-first solvability check |
+| `src/game/seeds.ts`                 | 46    | Board generation and the hunger reward          |
 | `src/game/minigames.ts`             | 99    | Reward contract: apply once, preview, gap       |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
 | `src/game/data/deathCauses.ts`      | 98    | The seven causes of death and their epitaphs    |
 | `src/game/data/events.ts`           | 228   | The nine events: conditions, weights, choices    |
-| `src/game/data/minigames.ts`        | 68    | The three minigames, their attempts and rewards  |
+| `src/game/data/minigames.ts`        | 79    | The four minigames, their attempts and rewards  |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 24    | Memorial data built from the `DeathRecord`      |
@@ -296,6 +297,7 @@ Lines counted at the tiny maze (2026-11-20): **6 900 total** — 4 901 in
 | `src/features/minigames/NapTime.tsx` | 20   | One press, one reward                            |
 | `src/features/minigames/WheelGame.tsx` | 125 | Rotating marker, three swings, capped reward |
 | `src/features/minigames/MazeGame.tsx` | 137 | Walls, keyboard and pointer, one exit        |
+| `src/features/minigames/SeedsGame.tsx` | 121 | Twelve buttons, five seeds, twenty seconds   |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
 | `src/features/game/GameScreen.tsx`  | 280   | Live HUD with score, warnings, modal, minigames  |
 | `src/features/memorial/MemorialScreen.tsx` | 76 | Final score beside days, meals and cause |
@@ -316,6 +318,7 @@ Lines counted at the tiny maze (2026-11-20): **6 900 total** — 4 901 in
 | `tests/score.test.ts`               | 218   | The Act 1 formula, penalties, schema v5         |
 | `tests/wheel.test.ts`               | 101   | Angles, swing scoring and the cap              |
 | `tests/maze.test.ts`                | 182   | Collisions, solvability, gap, schema v6         |
+| `tests/seeds.test.ts`               | 85    | Board generation, partial rewards, registry     |
 
 ---
 
@@ -343,7 +346,7 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Seeds only | M3        | The last minigame, reusing the shell, contract, attempts and gap |
+| Settings, audio, sprite art, credits, packaged build | M4 | New screens, services, sprites and artifacts in the file map |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
 
 When any of these lands, **this document must be updated in the same PR** —
