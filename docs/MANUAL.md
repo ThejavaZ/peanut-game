@@ -14,6 +14,7 @@ it went.
 | --- | --- |
 | **Address** | <https://thejavaz.github.io/peanut-game/> |
 | **Needs** | Any current browser. No account, no download, no server |
+| **Sound** | Generated on the fly — it starts after your first click, and **Settings** holds mute and volume |
 | **Where progress lives** | In your own browser. Closing the tab is safe |
 | **A full life** | Roughly 5 to 15 minutes if you look after it well |
 

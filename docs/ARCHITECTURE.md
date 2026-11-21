@@ -264,13 +264,13 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at settings (2026-11-20): **7 516 total** — 5 388 in `src/`,
-2 128 in `tests/`.
+Lines counted at the audio (2026-11-20): **7 842 total** — 5 664 in `src/`,
+2 178 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 200   | Screen state machine, bodies per minigame, preferences |
+| `src/App.tsx`                       | 218   | Screen state machine, bodies per minigame, preferences and sound triggers |
 | `src/types/game.ts`                 | 219   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
 | `src/game/config.ts`                | 127   | All balance numbers, including the score rules  |
 | `src/game/rules.ts`                 | 321   | Pure engine: decay, health, actions, clock, critical-time tracking |
@@ -289,6 +289,7 @@ Lines counted at settings (2026-11-20): **7 516 total** — 5 388 in `src/`,
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 24    | Memorial data built from the `DeathRecord`      |
 | `src/hooks/useGameRun.ts`           | 285   | Reducer, clock effects, saves, suspension       |
+| `src/services/AudioService.ts`      | 239   | Synthesised effects and the ambient pad         |
 | `src/services/CemeteryService.ts`   | 124   | Graves: validation, cap, append, score, clear   |
 | `src/services/SaveService.ts`       | 378   | Run persistence, validation, v1→v6 migration    |
 | `src/services/SettingsService.ts`   | 65    | Preferences: motion, sound, per-field repair    |
@@ -302,7 +303,7 @@ Lines counted at settings (2026-11-20): **7 516 total** — 5 388 in `src/`,
 | `src/features/minigames/MazeGame.tsx` | 137 | Walls, keyboard and pointer, one exit        |
 | `src/features/minigames/SeedsGame.tsx` | 121 | Twelve buttons, five seeds, twenty seconds   |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
-| `src/features/game/GameScreen.tsx`  | 280   | Live HUD with score, warnings, modal, minigames  |
+| `src/features/game/GameScreen.tsx`  | 299   | Live HUD, warnings, modal, minigames, sound triggers |
 | `src/features/memorial/MemorialScreen.tsx` | 76 | Final score beside days, meals and cause |
 | `src/components/events/EventModal.tsx` | 79 | The modal: presentation only, no state           |
 | `src/components/ui/Screen.tsx`      | 13    | Full-screen layout wrapper                      |
@@ -312,6 +313,7 @@ Lines counted at settings (2026-11-20): **7 516 total** — 5 388 in `src/`,
 | `src/components/hamster/SkinSprite.tsx` | 64 | Grid → SVG renderer                            |
 | `src/components/hamster/skinSprites.ts` | 526 | 21 × 16×16 sprite grids                    |
 | `src/index.css`                     | 101   | Theme tokens, frames, animations                |
+| `tests/audio.test.ts`               | 50    | Patch table completeness and master gain        |
 | `tests/rules.test.ts`               | 184   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |
@@ -350,8 +352,7 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Settings, audio, sprite art, credits, packaged build | M4 | New screens, services, sprites and artifacts in the file map |
-| Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
+| Sprite art, credits, packaged build, balance | M4 | New sprites, a credits screen, release artifacts and tuned numbers |
 
 When any of these lands, **this document must be updated in the same PR** —
 that is part of the Definition of Done

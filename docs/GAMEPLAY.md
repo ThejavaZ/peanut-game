@@ -456,7 +456,29 @@ Neither destructive action is a single click: the first press arms it, the
 second confirms it. Preferences live in their own storage key, apart from the
 run and the graves, so resetting a run never touches the others.
 
-## 14. Not implemented yet
+## 14. Sound
+
+Everything you hear is **generated, not loaded**: eight short synthesised
+effects built from oscillators, so the build ships no audio file at all.
+
+| Moment | Sound |
+| ------ | ----- |
+| Feeding, watering, cleaning, playing, napping | One distinct blip per action |
+| An event arrives | A two-note chime |
+| A critical warning | A short buzz |
+| Death | A long descending tone, once |
+
+Rules worth knowing:
+
+- **Nothing plays before your first click or key press** — browsers require a
+  gesture, and the game waits for it instead of fighting it.
+- **Mute and volume live in Settings** and apply immediately.
+- The ambient pad — two low oscillators with a slow tremolo — **stops when you
+  hide the tab** and returns when you come back.
+- The engine stays silent: sound is triggered from the interface, never from the
+  rules, so every test still runs with no audio at all.
+
+## 15. Not implemented yet
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
