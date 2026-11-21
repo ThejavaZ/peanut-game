@@ -58,8 +58,15 @@ export const EVENT_MIN_INTERVAL_SECONDS = 45
 /** Chance per eligible check that an event fires at all. */
 export const EVENT_CHANCE = 0.3
 
-/** `hamster.ageDays` at which Peanut dies of old age, whatever its needs are. */
-export const MAX_AGE_DAYS = 8
+/**
+ * `hamster.ageDays` at which Peanut dies of old age, whatever its needs are.
+ *
+ * Measured, not guessed: 8 days was 16:00 — a minute past the 5–15 minute
+ * target. 7 days is 14:00, which still sits *after* total neglect (13:12), so
+ * negligence remains the fastest way to end a run and the inevitable ending
+ * never steals the player's own mistakes.
+ */
+export const MAX_AGE_DAYS = 7
 /** The last full day before that, when the HUD starts warning about age. */
 export const AGE_WARNING_DAYS = MAX_AGE_DAYS - 1
 
