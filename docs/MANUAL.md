@@ -33,7 +33,7 @@ Install it, bookmark it, open it. Nothing else is required.
 | 5 | Feed, water, clean, play, nap | The matching bar rises; the button rests for a few seconds |
 | 6 | Wait around 45 seconds | An **event** may interrupt you: the clock stops until you choose |
 | 7 | Play a minigame | Sleep advances half a day, the wheel pays happiness, the maze clears your cooldowns |
-| 8 | Keep going | At day 8 you are warned; at day 9 the life ends — or sooner, if you neglect it |
+| 8 | Keep going | At day 7 you are warned; at day 8 the life ends — or sooner, if you neglect it |
 | 9 | Read the memorial | Name, days, meals, play, **score**, **cause of death** and an epitaph |
 | 10 | Open the **Cemetery** from the menu | Every hamster you have lost, with its cause, date and score |
 
@@ -60,7 +60,7 @@ red, and only recovers once **all four** are above 55.
 | ------- | ------- |
 | Yellow bar (≤ 35) and a **Worried** badge | Nothing is wrong yet. Fix it before it gets serious |
 | Red bar (≤ 20), **Critical** badge and a red alert | Health has started to fall. This is the last comfortable moment |
-| A separate line saying it *is getting on in years* | Day 8: the natural end arrives on day 9 |
+| A separate line saying it *is getting on in years* | Day 7: the natural end arrives on day 8 |
 | A modal with two options | An event. **The clock is stopped** while you read it |
 
 Every warning appears **before** the damage. Nothing in Peanut surprises you

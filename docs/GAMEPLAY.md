@@ -88,17 +88,22 @@ second:**
 | Happiness | `0.02`             |
 | **All four at once** | **`0.19`**  |
 
-Two numbers matter, measured on the engine from a fresh hamster with total
-neglect:
+Two numbers matter, measured on the engine with events active and the worst
+option taken at every one of them:
 
 | Moment | Elapsed |
 | ------ | ------- |
-| First need goes critical → **the alert banner appears** | **3 min 56 s** |
-| Health reaches zero → **death** | **13 min 53 s** |
+| First need goes critical → **the alert banner appears** | **3 min 26 s** |
+| Health reaches zero → **death** | **13 min 12 s** |
+| A well cared run → **old age** | **14 min 00 s** |
+
+All three sit inside the **5 to 15 minute** target of the roadmap, and
+`tests/balance.test.ts` holds them there: neglect must stay between 10 and 15
+minutes, and the inevitable ending must never arrive before the neglect one.
 
 The `0.19/s` rate alone would drain health in **8 min 46 s**, but it only starts
 once every core need is critical — hunger empties at ~5 min, hygiene not until
-~10 min 25 s. That gap is what makes the run last almost fourteen minutes.
+~10 min 25 s. That gap is what puts total neglect at thirteen minutes.
 
 > Under *total* neglect all four needs hit zero before health does, so the cause
 > is always **systemic failure**. The specific causes — starvation, dehydration,
@@ -137,7 +142,7 @@ so the player always makes a small trade-off.
 | ------------------- | ------------ | ---------------------------------------- |
 | `SECONDS_PER_DAY`   | `120`        | One in-game day every two real minutes   |
 | `DAY_START_HOUR`    | `08:00`      | Every in-game day starts in the morning  |
-| `MAX_AGE_DAYS`      | `8`          | Old age ends the run on Day 9            |
+| `MAX_AGE_DAYS`      | `7`          | Old age ends the run on Day 8            |
 
 The HUD reads `Day N · HH:MM`. Day number and age both derive from
 `elapsedSeconds`, so pausing, reloading or closing the tab never corrupts them.
@@ -183,7 +188,7 @@ Death is real now, and it is never instant.
 ### Rules
 
 - Health reaching `0` ends the run.
-- Reaching `ageDays = 8` (**Day 9**, ~16 real minutes) ends the run — **but only
+- Reaching `ageDays = 7` (**Day 8**, ~14 real minutes) ends the run — **but only
   while health is still above zero**. A neglected hamster dies of neglect even
   on its last day; old age is for hamsters that are otherwise fine.
 - Once dead, everything freezes: needs, cooldowns, the clock and the care
@@ -199,7 +204,7 @@ Death is real now, and it is never instant.
 | Despair | Happiness is the single lowest core need | Critical banner |
 | Systemic failure | Two or more core needs equally bad | Critical banner |
 | The wheel flew off | Health empty **while every need stays comfortable** and at least 5 play sessions | Health banner once the bar drops under 20 |
-| Old age | `ageDays ≥ 8` while health > 0 | Age banner, one full day earlier |
+| Old age | `ageDays ≥ 7` while health > 0 | Age banner, one full day earlier |
 
 Three things decide which cause you get:
 
@@ -220,7 +225,7 @@ Three things decide which cause you get:
 | ------ | ------------- | ----- |
 | Neglect | ~**3 min 56 s** into total neglect (first need critical) | ~**13 min 53 s** |
 | The wheel flew off | Health banner when the bar drops under 20 | When the bar empties |
-| Old age | Whole of **Day 8** (`ageDays = 7`) | Start of **Day 9** (`ageDays = 8`) |
+| Old age | Whole of **Day 7** (`ageDays = 6`) | Start of **Day 8** (`ageDays = 7`) |
 
 No death happens without one of those having been visible first.
 

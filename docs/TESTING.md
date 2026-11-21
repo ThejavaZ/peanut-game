@@ -4,7 +4,7 @@
 | ----- | ----- |
 | Applies to | v0.3.0 beta, `main` at the M3 milestone |
 | Last updated | 2026-11-20 |
-| Suite | 179 tests across 14 files, `bun test` |
+| Suite | 182 tests across 15 files, `bun test` |
 | Related | [`DEVELOPMENT.md`](DEVELOPMENT.md) §6 · [`ARCHITECTURE.md`](ARCHITECTURE.md) |
 
 ---
@@ -52,7 +52,8 @@ bun run build         # types + production build, also enforced by CI
 | `tests/audio.test.ts` | 6 | Patch table completeness and the master gain |
 | `tests/settings.test.ts` | 5 | Preference repair and volume clamping |
 | `tests/team.test.ts` | 5 | Credits data, roles and initials |
-| **Total** | **179** | |
+| `tests/balance.test.ts` | 3 | The 5–15 minute target, and neglect dying before old age |
+| **Total** | **182** | |
 
 **Gates on every pull request** (`.github/workflows/ci.yml`):
 

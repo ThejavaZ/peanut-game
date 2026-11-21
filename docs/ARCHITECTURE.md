@@ -265,15 +265,15 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the accessibility pass (2026-11-20): **8 135 total** — 5 787
-in `src/`, 2 348 in `tests/`.
+Lines counted at the balance pass (2026-11-20): **8 211 total** — 5 794 in
+`src/`, 2 417 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
 | `src/App.tsx`                       | 225   | Screen state machine, preferences, sound triggers |
 | `src/types/game.ts`                 | 219   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
-| `src/game/config.ts`                | 127   | All balance numbers, including the score rules  |
+| `src/game/config.ts`                | 134   | All balance numbers, including the score rules  |
 | `src/game/rules.ts`                 | 321   | Pure engine: decay, health, actions, clock, critical-time tracking |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 97    | The only place a run can end, and the record it writes |
@@ -319,6 +319,7 @@ in `src/`, 2 348 in `tests/`.
 | `tests/audio.test.ts`               | 50    | Patch table completeness and master gain        |
 | `tests/team.test.ts`                | 42    | Credits data and initials                       |
 | `tests/contrast.test.ts`            | 128   | WCAG ratios parsed from the stylesheet          |
+| `tests/balance.test.ts`             | 69    | The 5–15 minute target and the order of endings |
 | `tests/rules.test.ts`               | 184   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |
