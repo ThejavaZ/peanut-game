@@ -109,14 +109,18 @@ interactive element gets it for free from the base layer.
 | Name | Timing | Effect |
 | ---- | ------ | ------ |
 | `hamster-idle` | 2.4s, `steps(2, end)`, infinite | Hops 3px up and back |
-| `blink` | 5s, `steps(1, end)`, infinite | Drops opacity to `0.2` for 3 frames |
 
 `steps()` is deliberate: smooth easing would break the pixel look.
 
 - The idle animation is applied **conditionally** — it stops while the game is
-  paused or the hamster has vanished (`HamsterRoom` decides).
-- `blink` is **defined but not referenced by any component yet** (see §11).
-- Both are switched off under `@media (prefers-reduced-motion: reduce)`.
+  paused or the hamster has vanished (`HamsterRoom` decides), and `play` poses
+  borrow it so a running hamster visibly runs.
+- The **`blink` keyframes were removed**: they faded the whole sprite, which
+  reads as a flicker bug rather than a blink, and no component ever used them.
+  A convincing blink needs closed-eye frames — a sprite job, not a CSS one.
+- Both switches turn motion off: `@media (prefers-reduced-motion: reduce)` for
+  the operating system, and `:root[data-motion='reduced']` for the Settings
+  toggle.
 
 ---
 
@@ -138,13 +142,14 @@ interface SkinSpriteData {
 - A soft ground shadow is a single `<ellipse>` under the grid.
 - The `crown` accessory is a separate `<g>` drawn only when requested.
 
-### Structure of `skinSprites.ts` (526 lines)
+### Structure of `skinSprites.ts` (602 lines)
 
 | Group | Entries | Contents |
 | ----- | ------- | -------- |
 | `ANIMAL_SPRITES` | 12 | Non-secret skins |
 | `SECRET_SPRITES` | 9 | Secret-name skins |
-| **Total** | **21** | One per `SkinId` |
+| `HAMSTER_STATE_SPRITES` | 2 | The classic hamster's `eat` and `sleep` poses |
+| **Total** | **21 + 2** | One per `SkinId`, plus two poses |
 
 **Rows are shared.** `HAMSTER_ROWS` backs more than one skin by swapping the
 palette, and `CHICK_ROWS` backs four chick variants. Editing one row changes
@@ -161,20 +166,37 @@ partial object casts cleanly). So coverage does not come from the compiler:
 
 Add a skin without its sprite and CI goes red.
 
+### Poses: five states, two new grids
+
+| State | How it is drawn | Where you see it |
+| ----- | --------------- | ----------------- |
+| `idle` | The base grid | The room, the menu, adoption |
+| `eat` | Its own grid — cheeks full, a crumb on the floor | The room when hunger is 90 or above |
+| `sleep` | Its own grid — one eye row instead of two | Nap Time, with `z z z` |
+| `play` | The base grid plus the hop animation | The maze token |
+| `dead` | The base grid rotated 180° inside a `<g>`, shadow left in place | The memorial |
+
+`spriteFor(skinId, state)` decides, and it only lends poses to the **classic
+hamster**: a crab sleeping would need its own grid, so every other skin simply
+keeps its art. `tests/sprites.test.ts` checks the grids, the shared palette and
+that no pose is ever given to another skin.
+
 ---
 
 ## 8. The room
 
 `HamsterRoom.tsx` composes the cage from absolutely positioned Tailwind boxes —
-water bottle, floor, food bowl, and the hamster on top. No image, no canvas.
+water bottle, floor, bedding, food bowl, the wheel, and the hamster on top. No
+image, no canvas.
 
 | Prop | Effect |
 | ---- | ------ |
 | `hamsterName` | Used only for `aria-label` |
 | `skinId` / `accessoryId` | Which sprite to draw |
+| `state` | Which pose: `idle`, `eat`, `sleep`, `play`, `dead` |
 | `paused` | Stops the idle animation |
 | `vanished` | Fades the hamster out (the `404` easter egg) |
-| `serverDecor` | Adds a three-rack server with LEDs (the `localhost` egg) |
+| `serverDecor` | Swaps the wheel for a three-rack server with LEDs (the `localhost` egg) — the two share the same corner |
 
 The container is `role="img"` with a readable label, so screen readers announce
 *"Peanut's cage"* rather than a pile of anonymous `div`s.
@@ -186,27 +208,34 @@ The container is `role="img"` with a readable label, so screen readers announce
 | Asset | Type | Path |
 | ----- | ---- | ---- |
 | Favicon | Hand-written SVG, 16×16, `crispEdges` | `public/favicon.svg` |
-| 21 skin sprites | Data → SVG at runtime | `src/components/hamster/skinSprites.ts` |
-| Cage and props | CSS boxes | `src/components/room/HamsterRoom.tsx` |
+| 21 skin sprites + 2 poses | Data → SVG at runtime | `src/components/hamster/skinSprites.ts` |
+| Cage, wheel and bedding | CSS boxes | `src/components/room/HamsterRoom.tsx` |
 | Frames, grid, motion | CSS | `src/index.css` |
 | **Bitmap images** | **none** | — |
 | **Audio files** | **none** | — |
 
 ---
 
-## 10. Audio (planned — M4)
+## 10. Audio
 
-Nothing is implemented. The roadmap's plan:
+Shipped, and **generated rather than loaded**: eight synthesised effects and an
+ambient pad, with no audio file anywhere in the repository.
 
-- `src/services/AudioService.ts` using the **Web Audio API**.
-- **Synthesised SFX first** (no asset files in the first build): feed, water,
-  clean, play, nap, warning, death.
-- Optional ambient music loop — quiet and adorable.
-- Mute and volume persisted with the rest of the settings.
-- Optional files only after synthesis proves insufficient.
+| Moment | Sound |
+| ------ | ----- |
+| Feeding, watering, cleaning, playing, napping | One distinct blip per action |
+| An event arrives | A two-note chime |
+| A critical warning | A short buzz |
+| Death | A long descending tone, once |
 
-Because it will live in `src/services/`, audio inherits the same rule as
-persistence: the pure engine in `src/game/` must never import it.
+- `src/services/AudioService.ts` uses the **Web Audio API**: one oscillator per
+  effect, shaped by an envelope, driven by a patch table the tests read.
+- The context is created **after the first gesture**, which browsers require.
+- The ambient pad — two low oscillators with a slow tremolo — stops when the tab
+  is hidden and returns when it is not.
+- **Mute and volume live in Settings** and apply immediately; mute wins.
+- The engine never imports the service: sound is triggered from the interface,
+  so every test still runs in silence.
 
 ---
 
@@ -214,8 +243,6 @@ persistence: the pure engine in `src/game/` must never import it.
 
 | Planned | Milestone | Notes |
 | ------- | --------- | ----- |
-| State sprites (idle, eat, sleep, play, dead) | M4 | Currently one pose per skin |
-| Room background art | M4 | Replaces CSS boxes with authored art |
-| `blink` wiring | M4 | The keyframes exist, no component uses them |
-| Audio: SFX, music, settings | M4 | §10 |
-| Responsive and reduced-motion audit | M4 | Reduced motion is done; full audit pending |
+| Authored room background | M4 | The cage is CSS boxes on purpose (ADR 6); replacing it needs real art |
+| State poses for the other 20 skins | M5 | Only the classic hamster has its own grids |
+| Photos in the credits | M4 | Initials stand in until the team sends theirs |

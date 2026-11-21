@@ -265,14 +265,14 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the balance pass (2026-11-20): **8 211 total** — 5 794 in
-`src/`, 2 417 in `tests/`.
+Lines counted at the pixel art pass (2026-11-20): **8 549 total** — 5 942 in
+`src/`, 2 607 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
-| `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 225   | Screen state machine, preferences, sound triggers |
-| `src/types/game.ts`                 | 219   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
+| `src/main.tsx`                      | 26    | React entry point, service worker registration  |
+| `src/App.tsx`                       | 232   | Screen state machine, preferences, sound triggers |
+| `src/types/game.ts`                 | 220   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
 | `src/game/config.ts`                | 134   | All balance numbers, including the score rules  |
 | `src/game/rules.ts`                 | 321   | Pure engine: decay, health, actions, clock, critical-time tracking |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
@@ -301,27 +301,28 @@ Lines counted at the balance pass (2026-11-20): **8 211 total** — 5 794 in
 | `src/features/credits/team.ts`      | 38    | The team, roles and initials (Act 1 §17)         |
 | `src/features/credits/CreditsScreen.tsx` | 64 | The credits screen, read-only                |
 | `src/features/minigames/MinigameScreen.tsx` | 66 | The shell every minigame runs inside       |
-| `src/features/minigames/NapTime.tsx` | 20   | One press, one reward                            |
+| `src/features/minigames/NapTime.tsx` | 32   | The sleeping pose, one press, one reward         |
 | `src/features/minigames/WheelGame.tsx` | 125 | Rotating marker, three swings, capped reward |
-| `src/features/minigames/MazeGame.tsx` | 137 | Walls, keyboard and pointer, one exit        |
+| `src/features/minigames/MazeGame.tsx` | 139 | Walls, keyboard and pointer, the play pose  |
 | `src/features/minigames/SeedsGame.tsx` | 121 | Twelve buttons, five seeds, twenty seconds   |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
-| `src/features/game/GameScreen.tsx`  | 299   | Live HUD, warnings, modal, minigames, sound triggers |
-| `src/features/memorial/MemorialScreen.tsx` | 76 | Final score beside days, meals and cause |
+| `src/features/game/GameScreen.tsx`  | 304   | Live HUD, warnings, modal, minigames, sound triggers |
+| `src/features/memorial/MemorialScreen.tsx` | 77 | Final score and the upside-down pose |
 | `src/components/events/EventModal.tsx` | 79 | The modal: presentation only, no state           |
 | `src/components/ui/Screen.tsx`      | 13    | Full-screen layout wrapper                      |
-| `src/components/ui/Button.tsx`      | 33    | Shared button variants                          |
+| `src/components/ui/Button.tsx`      | 33    | Shared button variants, 44 px touch target      |
 | `src/components/ui/NeedBar.tsx`     | 48    | Single need bar with warning states             |
-| `src/components/room/HamsterRoom.tsx` | 77  | Cage scene                                       |
-| `src/components/hamster/SkinSprite.tsx` | 64 | Grid → SVG renderer                            |
-| `src/components/hamster/skinSprites.ts` | 526 | 21 × 16×16 sprite grids                    |
-| `src/index.css`                     | 110   | Theme tokens, frames, animations, text-grade red |
+| `src/components/room/HamsterRoom.tsx` | 102 | Cage scene: bottle, bowl, wheel, bedding         |
+| `src/components/hamster/SkinSprite.tsx` | 85 | State-aware grid → SVG renderer                 |
+| `src/components/hamster/skinSprites.ts` | 602 | 21 base sprites plus two poses                  |
+| `src/index.css`                     | 93    | Theme tokens, frames, animations, text-grade red |
 | `tests/audio.test.ts`               | 50    | Patch table completeness and master gain        |
 | `tests/team.test.ts`                | 42    | Credits data and initials                       |
 | `tests/contrast.test.ts`            | 128   | WCAG ratios parsed from the stylesheet          |
 | `tests/balance.test.ts`             | 69    | The 5–15 minute target and the order of endings |
 | `tests/rules.test.ts`               | 184   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
+| `tests/sprites.test.ts`             | 75    | Pose grids, palette reuse, skin isolation       |
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |
 | `tests/events.test.ts`              | 527   | Interval, once-per-run, conditions, weights     |
 | `tests/cemetery.test.ts`            | 132   | Grave validation, cap, duplicates               |
@@ -331,6 +332,7 @@ Lines counted at the balance pass (2026-11-20): **8 211 total** — 5 794 in
 | `tests/maze.test.ts`                | 182   | Collisions, solvability, gap, schema v6         |
 | `tests/seeds.test.ts`               | 85    | Board generation, partial rewards, registry     |
 | `tests/settings.test.ts`            | 44    | Preference repair and clamping                  |
+| `tests/pwa.test.ts`                 | 115   | Manifest, icons, cache version, registration    |
 
 ---
 
