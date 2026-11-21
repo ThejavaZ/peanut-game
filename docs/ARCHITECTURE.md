@@ -211,7 +211,7 @@ cannot touch it, which is what lets *Adopt another* start over without erasing
 the hamsters that already died. It is capped at `CEMETERY_MAX_ENTRIES` graves,
 newest first, so a long-lived save cannot fill the storage quota.
 
-The run key name says `v1`; the payload carries `schemaVersion: 5`. The key is
+The run key name says `v1`; the payload carries `schemaVersion: 6`. The key is
 the *storage slot*, the version is *inside the payload* — they move at different
 speeds on purpose.
 
@@ -228,7 +228,8 @@ JSON.parse → migrateSave() → isGameState() → engine
 - `migrateSave()` upgrades older payloads **step by step** instead of discarding
   a run the player cares about: v1 → v2 adds cosmetic skins, v2 → v3 adds
   `death` (null while Peanut is alive), v3 → v4 adds the event scheduler,
-  v4 → v5 adds the score counters. Each step writes **its own** version — never
+  v4 → v5 adds the score counters, v5 → v6 adds the gap between minigames. Each
+  step writes **its own** version — never
   `SAVE_SCHEMA_VERSION` — so the next step in the chain still matches. Using the
   constant inside an early step would silently skip the rest.
 - If validation fails, `loadRun()` returns `null` — the game starts clean rather
@@ -262,39 +263,41 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the hamster wheel (2026-11-20): **6 405 total** — 4 588 in
-`src/`, 1 817 in `tests/`.
+Lines counted at the tiny maze (2026-11-20): **6 900 total** — 4 901 in
+`src/`, 1 999 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 158   | Screen state machine, bodies per minigame       |
-| `src/types/game.ts`                 | 216   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
-| `src/game/config.ts`                | 114   | All balance numbers, including the score rules  |
-| `src/game/rules.ts`                 | 320   | Pure engine: decay, health, actions, clock, critical-time tracking |
+| `src/App.tsx`                       | 161   | Screen state machine, bodies per minigame       |
+| `src/types/game.ts`                 | 218   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
+| `src/game/config.ts`                | 119   | All balance numbers, including the score rules  |
+| `src/game/rules.ts`                 | 321   | Pure engine: decay, health, actions, clock, critical-time tracking |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 97    | The only place a run can end, and the record it writes |
 | `src/game/score.ts`                 | 40    | Score from Act 1 §10: pure, never affects survival |
 | `src/game/wheel.ts`                 | 60    | Angles, swing scoring and the happiness cap     |
-| `src/game/minigames.ts`             | 86    | Reward contract: apply once, preview, advance   |
+| `src/game/maze.ts`                  | 111   | Grid, collisions and a breadth-first solvability check |
+| `src/game/minigames.ts`             | 99    | Reward contract: apply once, preview, gap       |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
 | `src/game/data/deathCauses.ts`      | 98    | The seven causes of death and their epitaphs    |
 | `src/game/data/events.ts`           | 228   | The nine events: conditions, weights, choices    |
-| `src/game/data/minigames.ts`        | 55    | The two minigames, their attempts and rewards    |
+| `src/game/data/minigames.ts`        | 68    | The three minigames, their attempts and rewards  |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 24    | Memorial data built from the `DeathRecord`      |
 | `src/hooks/useGameRun.ts`           | 285   | Reducer, clock effects, saves, suspension       |
 | `src/services/CemeteryService.ts`   | 115   | Graves: validation, cap, append, score          |
-| `src/services/SaveService.ts`       | 358   | Run persistence, validation, v1→v2→v3→v4→v5 migration |
+| `src/services/SaveService.ts`       | 378   | Run persistence, validation, v1→v6 migration    |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 88    | Menu screen with the cemetery entry point        |
 | `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
 | `src/features/minigames/MinigameScreen.tsx` | 66 | The shell every minigame runs inside       |
 | `src/features/minigames/NapTime.tsx` | 20   | One press, one reward                            |
 | `src/features/minigames/WheelGame.tsx` | 125 | Rotating marker, three swings, capped reward |
+| `src/features/minigames/MazeGame.tsx` | 137 | Walls, keyboard and pointer, one exit        |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
-| `src/features/game/GameScreen.tsx`  | 272   | Live HUD with score, warnings, modal, minigames  |
+| `src/features/game/GameScreen.tsx`  | 280   | Live HUD with score, warnings, modal, minigames  |
 | `src/features/memorial/MemorialScreen.tsx` | 76 | Final score beside days, meals and cause |
 | `src/components/events/EventModal.tsx` | 79 | The modal: presentation only, no state           |
 | `src/components/ui/Screen.tsx`      | 13    | Full-screen layout wrapper                      |
@@ -312,6 +315,7 @@ Lines counted at the hamster wheel (2026-11-20): **6 405 total** — 4 588 in
 | `tests/minigames.test.ts`           | 196   | Reward contract, frozen clock, registry         |
 | `tests/score.test.ts`               | 218   | The Act 1 formula, penalties, schema v5         |
 | `tests/wheel.test.ts`               | 101   | Angles, swing scoring and the cap              |
+| `tests/maze.test.ts`                | 182   | Collisions, solvability, gap, schema v6         |
 
 ---
 
@@ -339,7 +343,7 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Seeds and maze | M3        | They reuse the shell, the contract and the attempts the wheel just exercised — the maze adds wall collisions |
+| Seeds only | M3        | The last minigame, reusing the shell, contract, attempts and gap |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
 
 When any of these lands, **this document must be updated in the same PR** —
