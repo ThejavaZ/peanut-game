@@ -254,7 +254,33 @@ existing ones in `tests/rules.test.ts` when they cover the same module.
 
 ---
 
-## 10. Not implemented yet
+## 10. Installing as an app (PWA)
+
+Three files make the game installable and offline-capable — with no
+dependencies:
+
+| Piece | File | What it does |
+| ----- | ---- | ------------ |
+| Manifest | `public/manifest.webmanifest` | Identity: name, `display: standalone`, theme colours, icons. This is what makes Chrome offer *Install* |
+| Icons | `public/icon-192.png`, `icon-512.png`, `icon-maskable-512.png` | Generated from `favicon.svg` with ImageMagick and `-filter point`, so the pixels stay crisp. The maskable one keeps the art inside the 80 % safe zone Android crops |
+| Service worker | `public/sw.js` | Caches the shell: **network-first for navigations**, cache-first for hashed assets |
+| Registration | `src/main.tsx` | Only under `import.meta.env.PROD`, at `import.meta.env.BASE_URL + 'sw.js'` |
+
+**Three traps worth remembering**
+
+1. **Stale cache.** The cache name (`peanut-v<version>`) must change with every
+   release, and old caches are deleted on `activate`. A test ties that name to
+   `package.json`, so bumping the version is not optional.
+2. **Base path.** On GitHub Pages the game lives in `/peanut-game/`; a
+   hard-coded `/sw.js` would 404 in silence. Registration uses `BASE_URL`, and
+   the manifest uses *relative* URLs so one file works in both places.
+3. **Dev server.** Registering in development caches the dev build and confuses
+   everyone — hence the `PROD` guard.
+
+To verify: `dist/index.html` must link the manifest under the base path, and
+`tests/pwa.test.ts` fails if any of these pieces drift.
+
+## 11. Not implemented yet
 
 | Planned | Milestone | What it changes for developers |
 | ------- | --------- | ------------------------------ |

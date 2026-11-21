@@ -96,6 +96,19 @@ The game is deployed to GitHub Pages through the workflow in `.github/workflows/
 
 **Live Demo:** <https://thejavaz.github.io/peanut-game/> _(deployed from `main`; verified 2026-11-18)_
 
+## 📲 Play and install
+
+**Online** — open <https://thejavaz.github.io/peanut-game/>.
+
+**Install it (PWA)** — open that same link in Chrome, Edge or Android and press
+*Install* (or the install icon in the address bar); on iPhone and iPad use
+Safari → *Share* → *Add to Home Screen*. Peanut then opens **without a browser
+bar** and keeps working **offline** — your run lives in the device anyway.
+
+**From the archive** — the `v1.0.0` release will attach the built game as a
+zip: unzip it and serve the folder with any static server (for example
+`python3 -m http.server`) and open the address it prints.
+
 ## 🧑‍💻 Run Locally
 
 ```bash
