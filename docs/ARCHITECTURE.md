@@ -265,8 +265,8 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the credits (2026-11-20): **8 004 total** — 5 784 in `src/`,
-2 220 in `tests/`.
+Lines counted at the accessibility pass (2026-11-20): **8 135 total** — 5 787
+in `src/`, 2 348 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
@@ -315,9 +315,10 @@ Lines counted at the credits (2026-11-20): **8 004 total** — 5 784 in `src/`,
 | `src/components/room/HamsterRoom.tsx` | 77  | Cage scene                                       |
 | `src/components/hamster/SkinSprite.tsx` | 64 | Grid → SVG renderer                            |
 | `src/components/hamster/skinSprites.ts` | 526 | 21 × 16×16 sprite grids                    |
-| `src/index.css`                     | 101   | Theme tokens, frames, animations                |
+| `src/index.css`                     | 110   | Theme tokens, frames, animations, text-grade red |
 | `tests/audio.test.ts`               | 50    | Patch table completeness and master gain        |
 | `tests/team.test.ts`                | 42    | Credits data and initials                       |
+| `tests/contrast.test.ts`            | 128   | WCAG ratios parsed from the stylesheet          |
 | `tests/rules.test.ts`               | 184   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |

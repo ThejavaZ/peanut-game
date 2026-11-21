@@ -4,7 +4,7 @@
 | ----- | ----- |
 | Applies to | v0.3.0 beta, `main` at the M3 milestone |
 | Last updated | 2026-11-20 |
-| Suite | 148 tests across 9 files, `bun test` |
+| Suite | 179 tests across 14 files, `bun test` |
 | Related | [`DEVELOPMENT.md`](DEVELOPMENT.md) §6 · [`ARCHITECTURE.md`](ARCHITECTURE.md) |
 
 ---
@@ -47,7 +47,12 @@ bun run build         # types + production build, also enforced by CI
 | `tests/wheel.test.ts` | 11 | Angle wrap-around, three scoring bands, happiness cap, registry |
 | `tests/cemetery.test.ts` | 10 | Grave validation, cap of 50, newest-first order, duplicates, freezing |
 | `tests/skins.test.ts` | 9 | 16×16 sprite grids, secret triggers, save migration |
-| **Total** | **148** | |
+| `tests/seeds.test.ts` | 8 | Board generation, partial rewards, registry |
+| `tests/contrast.test.ts` | 7 | **WCAG ratios parsed from `index.css`**, forbidden text colours, 44 px touch target, reduced motion selectors |
+| `tests/audio.test.ts` | 6 | Patch table completeness and the master gain |
+| `tests/settings.test.ts` | 5 | Preference repair and volume clamping |
+| `tests/team.test.ts` | 5 | Credits data, roles and initials |
+| **Total** | **179** | |
 
 **Gates on every pull request** (`.github/workflows/ci.yml`):
 
@@ -105,6 +110,12 @@ These were caught by the suite or in review **before** delivery:
    never a hang.
 5. **A test that proved nothing.** An assertion hid the real state behind a
    cast. It was rewritten to assert the behaviour it claimed to cover.
+6. **Two colours failed WCAG AA as text.** The audit computed real ratios from
+   the palette: `shell-dark` on paper was 3.23:1 and `danger` 3.69:1 — both
+   below the 4.5:1 that small text needs. Fixed with a text-grade red
+   (`danger-ink`, 5.59:1) and by drawing that small text in cocoa, then locked
+   by a test that parses `src/index.css` and fails if any component reaches for
+   a failing colour again.
 
 ---
 
