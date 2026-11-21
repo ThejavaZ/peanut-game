@@ -87,6 +87,7 @@ game ──▶ minigame ──▶ game                        (exit or reward)
 | `memorial` | `features/memorial/MemorialScreen.tsx`| Carries a `RunSummary`, not the live `GameState`  |
 | `cemetery` | `features/cemetery/CemeteryScreen.tsx`| Read-only list of every grave                     |
 | `settings` | `features/settings/SettingsScreen.tsx`| Motion, sound preferences and the destructive actions |
+| `credits` | `features/credits/CreditsScreen.tsx`| The team and the project, read-only              |
 | `minigame` | `features/minigames/MinigameScreen.tsx`| Shell: frozen clock, reward preview, always-on skip |
 
 The union lives in `src/types/game.ts`. Because the game stays on one URL,
@@ -264,13 +265,13 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the audio (2026-11-20): **7 842 total** — 5 664 in `src/`,
-2 178 in `tests/`.
+Lines counted at the credits (2026-11-20): **8 004 total** — 5 784 in `src/`,
+2 220 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 218   | Screen state machine, bodies per minigame, preferences and sound triggers |
+| `src/App.tsx`                       | 225   | Screen state machine, preferences, sound triggers |
 | `src/types/game.ts`                 | 219   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
 | `src/game/config.ts`                | 127   | All balance numbers, including the score rules  |
 | `src/game/rules.ts`                 | 321   | Pure engine: decay, health, actions, clock, critical-time tracking |
@@ -294,9 +295,11 @@ Lines counted at the audio (2026-11-20): **7 842 total** — 5 664 in `src/`,
 | `src/services/SaveService.ts`       | 378   | Run persistence, validation, v1→v6 migration    |
 | `src/services/SettingsService.ts`   | 65    | Preferences: motion, sound, per-field repair    |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
-| `src/features/menu/MainMenu.tsx`    | 98    | Menu with the cemetery and settings entrances    |
+| `src/features/menu/MainMenu.tsx`    | 108   | Menu with cemetery, settings and credits entrances |
 | `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
 | `src/features/settings/SettingsScreen.tsx` | 171 | Preferences behind explicit confirmations |
+| `src/features/credits/team.ts`      | 38    | The team, roles and initials (Act 1 §17)         |
+| `src/features/credits/CreditsScreen.tsx` | 64 | The credits screen, read-only                |
 | `src/features/minigames/MinigameScreen.tsx` | 66 | The shell every minigame runs inside       |
 | `src/features/minigames/NapTime.tsx` | 20   | One press, one reward                            |
 | `src/features/minigames/WheelGame.tsx` | 125 | Rotating marker, three swings, capped reward |
@@ -314,6 +317,7 @@ Lines counted at the audio (2026-11-20): **7 842 total** — 5 664 in `src/`,
 | `src/components/hamster/skinSprites.ts` | 526 | 21 × 16×16 sprite grids                    |
 | `src/index.css`                     | 101   | Theme tokens, frames, animations                |
 | `tests/audio.test.ts`               | 50    | Patch table completeness and master gain        |
+| `tests/team.test.ts`                | 42    | Credits data and initials                       |
 | `tests/rules.test.ts`               | 184   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 114   | Skins, easter eggs, migration                   |
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |

@@ -26,7 +26,7 @@ Install it, bookmark it, open it. Nothing else is required.
 
 | # | What you do | What you get |
 | - | ----------- | ------------ |
-| 1 | Open the address | The menu: **Adopt a hamster**, **Cemetery**, and **Continue** if a life is already in progress |
+| 1 | Open the address | The menu: **Adopt a hamster**, **Cemetery**, **Settings** and **Credits**, plus **Continue** if a life is already in progress |
 | 2 | Press **Adopt a hamster** | A name field (24 characters) and a shelf of skins |
 | 3 | Name it and press **Adopt** | The room: clock, five bars, score, care actions, minigames |
 | 4 | Watch the bars fall | They drop in real time, always |
