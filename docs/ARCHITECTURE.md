@@ -262,24 +262,25 @@ of rendering a hole.
 
 ## 9. File map
 
-Lines counted at the score (2026-11-19): **6 047 total** — 4 334 in `src/`,
-1 713 in `tests/`.
+Lines counted at the hamster wheel (2026-11-20): **6 405 total** — 4 588 in
+`src/`, 1 817 in `tests/`.
 
 | Path                                | Lines | Responsibility                                  |
 | ----------------------------------- | ----- | ----------------------------------------------- |
 | `src/main.tsx`                      | 10    | React entry point                               |
-| `src/App.tsx`                       | 150   | Screen state machine, adoption side effects, minigame suspension |
+| `src/App.tsx`                       | 158   | Screen state machine, bodies per minigame       |
 | `src/types/game.ts`                 | 216   | Every shared type: `DeathRecord`, `GameEvent`, score counters |
-| `src/game/config.ts`                | 105   | All balance numbers, including the score rules  |
+| `src/game/config.ts`                | 114   | All balance numbers, including the score rules  |
 | `src/game/rules.ts`                 | 320   | Pure engine: decay, health, actions, clock, critical-time tracking |
 | `src/game/events.ts`                | 140   | Scheduler: eligibility, weighted pick, queueing  |
 | `src/game/death.ts`                 | 97    | The only place a run can end, and the record it writes |
 | `src/game/score.ts`                 | 40    | Score from Act 1 §10: pure, never affects survival |
+| `src/game/wheel.ts`                 | 60    | Angles, swing scoring and the happiness cap     |
 | `src/game/minigames.ts`             | 86    | Reward contract: apply once, preview, advance   |
 | `src/game/data/careActions.ts`      | 61    | The five care action definitions                |
 | `src/game/data/deathCauses.ts`      | 98    | The seven causes of death and their epitaphs    |
 | `src/game/data/events.ts`           | 228   | The nine events: conditions, weights, choices    |
-| `src/game/data/minigames.ts`        | 36    | Minigame registry and their rewards             |
+| `src/game/data/minigames.ts`        | 55    | The two minigames, their attempts and rewards    |
 | `src/game/skins.ts`                 | 185   | Skin registry and secret-name lookup            |
 | `src/game/easterEggs.ts`            | 44    | Name easter eggs and display names              |
 | `src/game/runSummary.ts`            | 24    | Memorial data built from the `DeathRecord`      |
@@ -289,7 +290,9 @@ Lines counted at the score (2026-11-19): **6 047 total** — 4 334 in `src/`,
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 88    | Menu screen with the cemetery entry point        |
 | `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
-| `src/features/minigames/MinigameScreen.tsx` | 53 | The shell every minigame runs inside       |
+| `src/features/minigames/MinigameScreen.tsx` | 66 | The shell every minigame runs inside       |
+| `src/features/minigames/NapTime.tsx` | 20   | One press, one reward                            |
+| `src/features/minigames/WheelGame.tsx` | 125 | Rotating marker, three swings, capped reward |
 | `src/features/naming/NamingScreen.tsx` | 188 | Adoption form and skin picker                  |
 | `src/features/game/GameScreen.tsx`  | 272   | Live HUD with score, warnings, modal, minigames  |
 | `src/features/memorial/MemorialScreen.tsx` | 76 | Final score beside days, meals and cause |
@@ -306,8 +309,9 @@ Lines counted at the score (2026-11-19): **6 047 total** — 4 334 in `src/`,
 | `tests/death.test.ts`               | 345   | Causes, record immutability, warnings           |
 | `tests/events.test.ts`              | 527   | Interval, once-per-run, conditions, weights     |
 | `tests/cemetery.test.ts`            | 132   | Grave validation, cap, duplicates               |
-| `tests/minigames.test.ts`           | 193   | Reward contract, frozen clock, registry         |
+| `tests/minigames.test.ts`           | 196   | Reward contract, frozen clock, registry         |
 | `tests/score.test.ts`               | 218   | The Act 1 formula, penalties, schema v5         |
+| `tests/wheel.test.ts`               | 101   | Angles, swing scoring and the cap              |
 
 ---
 
@@ -335,7 +339,7 @@ Documented here so this guide does not pretend features exist. See
 
 | Planned              | Milestone | Expected impact on this document                    |
 | -------------------- | --------- | --------------------------------------------------- |
-| Wheel, seeds and maze | M3      | They reuse the shell in `src/features/minigames/` and the same reward contract |
+| Seeds and maze | M3        | They reuse the shell, the contract and the attempts the wheel just exercised — the maze adds wall collisions |
 | Audio                | M4        | New `src/services/AudioService.ts` (Web Audio API)  |
 
 When any of these lands, **this document must be updated in the same PR** —

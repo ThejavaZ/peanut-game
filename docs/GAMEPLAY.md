@@ -342,8 +342,32 @@ Spamming it is self-limiting — each nap drains the bars more than the health i
 returns. Keeping minigames from being spammed *anyway* (a gap between runs) is
 owned by the tuning issue.
 
-> The wheel, the seeds and the maze reuse this shell unchanged: they bring
-> their own `reward` and their own screen body, nothing else.
+### Hamster Wheel
+
+The second minigame, and the first that needs attempts.
+
+| | |
+| --- | --- |
+| Play | A marker rotates around the wheel; one button stops it — mouse, Space or Enter |
+| Attempts | **3 per session**, shown as `Swings 2/3` |
+| Target | Moves every swing, deterministically |
+| Perfect / good / miss | within 12° → **+12** · within 26° → **+6** · beyond → **+0** |
+| Cap | **+25 happiness** — three perfect swings would earn 36 and still pay 25 |
+| Partial reward | Granted on the last swing, according to what was actually earned |
+| Exit | Always available, and it applies nothing |
+
+Every completed minigame also pays **+10 to the general score** (§12), so a
+good run on the wheel moves the run's total too.
+
+### Attempts
+
+`maxAttempts` belongs to the minigame definition: the shell announces it, the
+body counts it down, and entering again restores it — reloading simply starts
+a new session, which is exactly what the rule asks for. Nap Time declares none
+because it is a single press by design.
+
+> The seeds and the maze reuse this shell unchanged: they bring their own
+> `reward`, their own `maxAttempts` and their own screen body, nothing else.
 
 ## 12. Score
 
@@ -387,7 +411,7 @@ the state — the state itself only follows the rules in §2 and §4.
 
 | Planned                       | Milestone | Expected effect on gameplay                                 |
 | ----------------------------- | --------- | ----------------------------------------------------------- |
-| Wheel, seeds and maze          | M3        | Three more minigames on the shell that Nap Time proved    |
+| Seeds and maze                | M3        | The remaining minigames, on the shell the wheel just proved   |
 | Audio                         | M4        | Synthesised SFX and ambient loop                             |
 | Balance pass                  | M4        | Target run length: **5–15 minutes** (target, not tuned)      |
 

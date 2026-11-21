@@ -63,6 +63,15 @@ export const WHEEL_DEATH_SESSIONS = 5
 export const NAP_TIME_SECONDS = 60
 export const NAP_TIME_HEALTH = 15
 
+/** Hamster Wheel: three swings, a hard cap, and angles in degrees. */
+export const WHEEL_ATTEMPTS = 3
+export const WHEEL_PERFECT_POINTS = 12
+export const WHEEL_GOOD_POINTS = 6
+export const WHEEL_HAPPINESS_CAP = 25
+export const WHEEL_PERFECT_TOLERANCE = 12
+export const WHEEL_GOOD_TOLERANCE = 26
+export const WHEEL_SPEED_DEG_PER_SECOND = 180
+
 /** Points lost per real second. Full → empty takes 4–10 minutes. */
 export const NEED_RATES: Record<CoreNeedKey, number> = {
   hunger: 0.28,

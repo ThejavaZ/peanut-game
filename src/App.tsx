@@ -4,6 +4,8 @@ import { GameScreen } from './features/game/GameScreen'
 import { MemorialScreen } from './features/memorial/MemorialScreen'
 import { MainMenu } from './features/menu/MainMenu'
 import { MinigameScreen } from './features/minigames/MinigameScreen'
+import { NapTime } from './features/minigames/NapTime'
+import { WheelGame } from './features/minigames/WheelGame'
 import { NamingScreen } from './features/naming/NamingScreen'
 import { MINIGAMES } from './game/data/minigames'
 import { findEasterEgg, getDisplayName } from './game/easterEggs'
@@ -12,7 +14,7 @@ import { findSecretSkin } from './game/skins'
 import { useGameRun } from './hooks/useGameRun'
 import { loadCemetery } from './services/CemeteryService'
 import { loadUnlockedSkins, unlockSkin } from './services/SkinService'
-import type { Screen, SkinId } from './types/game'
+import type { MinigameReward, Screen, SkinId } from './types/game'
 
 function App() {
   const { run, adopt, care, resolveEvent, togglePause, resetRun, suspend, resume, applyReward } =
@@ -133,15 +135,21 @@ function App() {
 
     case 'minigame': {
       const game = MINIGAMES[activeScreen.id]
+      const finish = (reward: MinigameReward) => {
+        applyReward(reward)
+        goToGame()
+      }
+      const body =
+        activeScreen.id === 'wheel' ? (
+          <WheelGame onComplete={finish} />
+        ) : (
+          <NapTime game={game} onComplete={finish} />
+        )
+
       return (
-        <MinigameScreen
-          game={game}
-          onPlay={() => {
-            applyReward(game.reward)
-            goToGame()
-          }}
-          onExit={goToGame}
-        />
+        <MinigameScreen game={game} onExit={goToGame}>
+          {body}
+        </MinigameScreen>
       )
     }
   }
