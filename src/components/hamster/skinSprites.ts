@@ -524,3 +524,79 @@ export const SKIN_SPRITES = {
   ...SECRET_SPRITES,
 } as Record<SkinId, SkinSpriteData>
 
+/**
+ * Poses of the classic hamster, keyed by state.
+ *
+ * Only the hamster gets its own poses: a crab or a duck sleeping would need
+ * their own grids, and `spriteFor` falls back to the base sprite for every
+ * other skin instead of drawing the wrong creature.
+ *
+ * `idle` and `play` are the base grid — play is conveyed by the hop animation,
+ * and `dead` by turning upside down, which works for all twenty-one skins.
+ */
+export const HAMSTER_STATE_SPRITES = {
+  eat: {
+    palette: ANIMAL_SPRITES.hamster.palette,
+    rows: [
+      '................',
+      '..eee......eee..',
+      '..eiehhhhhheie..',
+      '..eehlllhhhhee..',
+      '..ehhhhhhhhhhe..',
+      '..hhhhhhhhhhhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhhbbbbbbhhh..',
+      '..kkkbbnnbbkkk..',
+      '.dhhhbbbbbbhhhd.',
+      '..hhhbbmmbbhhh..',
+      '....hhhhhhhh....',
+      '....dd....dd....',
+      '........dd......',
+      '................',
+    ],
+  },
+  sleep: {
+    palette: ANIMAL_SPRITES.hamster.palette,
+    rows: [
+      '................',
+      '................',
+      '..eee......eee..',
+      '..eiehhhhhheie..',
+      '..eehlllhhhhee..',
+      '..ehhhhhhhhhhe..',
+      '..hhhhhhhhhhhh..',
+      '..hhEEhhhhEEhh..',
+      '..hhhbbbbbbhhh..',
+      '.dhhhbbbbbbhhhd.',
+      '..hhhbbmmbbhhh..',
+      '....hhhhhhhh....',
+      '....dd....dd....',
+      '................',
+      '................',
+      '................',
+    ],
+  },
+} as const satisfies Record<string, SkinSpriteData>
+
+export type HamsterState = 'idle' | 'eat' | 'sleep' | 'play' | 'dead'
+
+/**
+ * Pure selection, so the component stays a renderer and the rules are testable:
+ * the classic hamster changes pose, every other skin keeps its own art.
+ */
+export function spriteFor(
+  skinId: SkinId,
+  state: HamsterState = 'idle',
+): SkinSpriteData {
+  const base = SKIN_SPRITES[skinId] ?? SKIN_SPRITES.hamster
+
+  if (skinId !== 'hamster') {
+    return base
+  }
+  if (state === 'eat' || state === 'sleep') {
+    return HAMSTER_STATE_SPRITES[state] ?? base
+  }
+  return base
+}
+

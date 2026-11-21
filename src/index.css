@@ -77,34 +77,17 @@
   }
 }
 
-@keyframes blink {
-  0%,
-  92%,
-  100% {
-    opacity: 1;
-  }
-  95% {
-    opacity: 0.2;
-  }
-}
-
 .animate-hamster-idle {
   animation: hamster-idle 2.4s steps(2, end) infinite;
 }
 
-.animate-blink {
-  animation: blink 5s steps(1, end) infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .animate-hamster-idle,
-  .animate-blink {
+  .animate-hamster-idle {
     animation: none;
   }
 }
 
 /* Manual switch from Settings, mirroring the media query above. */
-:root[data-motion='reduced'] .animate-hamster-idle,
-:root[data-motion='reduced'] .animate-blink {
+:root[data-motion='reduced'] .animate-hamster-idle {
   animation: none;
 }

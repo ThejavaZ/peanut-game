@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { EventModal } from '../../components/events/EventModal'
+import type { HamsterState } from '../../components/hamster/skinSprites'
 import { HamsterRoom } from '../../components/room/HamsterRoom'
 import { Button } from '../../components/ui/Button'
 import { NeedBar } from '../../components/ui/NeedBar'
@@ -62,6 +63,9 @@ export function GameScreen({
   const warning = getCriticalWarning(run.hamster.needs)
   const ageWarning = getAgeWarning(run.hamster.ageDays)
   const gapSeconds = minigameGap(run)
+  // A full belly after feeding: the one pose the state itself can tell us.
+  const hamsterState: HamsterState =
+    run.hamster.needs.hunger >= 90 ? 'eat' : 'idle'
   const displayName = getDisplayName(run.hamster.name)
   const skin = SKINS[run.hamster.skinId]
   const egg = findEasterEgg(run.hamster.name)
@@ -181,6 +185,7 @@ export function GameScreen({
             hamsterName={displayName}
             skinId={run.hamster.skinId}
             accessoryId={run.hamster.accessoryId}
+            state={hamsterState}
             paused={run.paused}
             vanished={vanished}
             serverDecor={egg?.id === 'localhost'}

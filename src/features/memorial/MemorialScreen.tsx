@@ -29,6 +29,7 @@ export function MemorialScreen({ run, onAdoptAnother, onMainMenu }: MemorialScre
           <SkinSprite
             skinId={run.skinId}
             accessoryId={run.accessoryId}
+            state="dead"
             className="h-24 w-24 opacity-60 grayscale"
           />
           <p className="font-pixel text-[7px] uppercase tracking-widest text-cocoa-soft">

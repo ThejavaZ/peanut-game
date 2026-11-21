@@ -9,11 +9,13 @@ import {
   move,
 } from '../../game/maze'
 import type { Direction, MazePosition } from '../../game/maze'
-import type { MinigameReward } from '../../types/game'
+import type { MinigameReward, SkinId } from '../../types/game'
 import { SkinSprite } from '../../components/hamster/SkinSprite'
 import { Button } from '../../components/ui/Button'
 
 interface MazeGameProps {
+  /** The player's own skin shows as the token — a crab walks the maze too. */
+  skinId: SkinId
   onComplete: (reward: MinigameReward) => void
 }
 
@@ -42,7 +44,7 @@ const PAD: { direction: Direction; label: string }[] = [
  * The reward comes from the registry, never from here, so the preview the
  * shell showed is exactly what completion applies.
  */
-export function MazeGame({ onComplete }: MazeGameProps) {
+export function MazeGame({ skinId, onComplete }: MazeGameProps) {
   const [position, setPosition] = useState<MazePosition>(MAZE_START)
   const [blocked, setBlocked] = useState(false)
   const [steps, setSteps] = useState(0)
@@ -106,7 +108,7 @@ export function MazeGame({ onComplete }: MazeGameProps) {
                 }`}
               >
                 {isPlayer ? (
-                  <SkinSprite skinId="hamster" className="h-7 w-7" />
+                  <SkinSprite skinId={skinId} state="play" className="h-7 w-7" />
                 ) : null}
               </div>
             )

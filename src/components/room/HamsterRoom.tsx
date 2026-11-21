@@ -1,10 +1,13 @@
 import { SkinSprite } from '../hamster/SkinSprite'
+import type { HamsterState } from '../hamster/skinSprites'
 import type { AccessoryId, SkinId } from '../../types/game'
 
 interface HamsterRoomProps {
   hamsterName: string
   skinId: SkinId
   accessoryId?: AccessoryId
+  /** Which pose Peanut is in right now. */
+  state?: HamsterState
   paused?: boolean
   vanished?: boolean
   serverDecor?: boolean
@@ -14,6 +17,7 @@ export function HamsterRoom({
   hamsterName,
   skinId,
   accessoryId = 'none',
+  state = 'idle',
   paused = false,
   vanished = false,
   serverDecor = false,
@@ -34,6 +38,16 @@ export function HamsterRoom({
       {/* floor */}
       <div className="absolute inset-x-0 bottom-0 h-[26%] border-t-4 border-cocoa bg-shell/45" />
       <div className="absolute inset-x-0 bottom-[26%] h-2 bg-paper-deep" />
+
+      {/* bedding: pale shavings scattered on the floor */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-[4%] h-[9%] opacity-70"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(135deg, transparent 0 9px, rgba(255,246,229,0.55) 9px 13px)',
+        }}
+      />
 
       {/* food bowl */}
       <div className="absolute bottom-[16%] left-[12%] flex h-7 w-16 items-end justify-center rounded-b-md border-2 border-cocoa bg-blush">
@@ -60,13 +74,24 @@ export function HamsterRoom({
             </div>
           ))}
         </div>
-      ) : null}
+      ) : (
+        // The wheel belongs to the room; the server rack only appears for the
+        // localhost easter egg, and the two share the same corner.
+        <div
+          aria-hidden="true"
+          className="absolute right-[10%] bottom-[24%] h-16 w-16 rounded-full border-4 border-cocoa bg-paper/40"
+        >
+          <div className="absolute left-1/2 top-1/2 h-1 w-full -translate-x-1/2 -translate-y-1/2 bg-cocoa/70" />
+          <div className="absolute left-1/2 top-1/2 h-full w-1 -translate-x-1/2 -translate-y-1/2 bg-cocoa/70" />
+        </div>
+      )}
 
       {/* hamster */}
       <div className="absolute bottom-[25%] left-1/2 -translate-x-1/2">
         <SkinSprite
           skinId={skinId}
           accessoryId={accessoryId}
+          state={state}
           className={`h-24 w-24 transition-opacity duration-500 sm:h-32 sm:w-32 ${
             paused || vanished ? '' : 'animate-hamster-idle'
           } ${vanished ? 'opacity-0' : 'opacity-100'}`}

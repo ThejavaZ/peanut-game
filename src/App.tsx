@@ -206,11 +206,18 @@ function App() {
         activeScreen.id === 'wheel' ? (
           <WheelGame onComplete={finish} />
         ) : activeScreen.id === 'maze' ? (
-          <MazeGame onComplete={finish} />
+          <MazeGame
+            skinId={run?.hamster.skinId ?? 'hamster'}
+            onComplete={finish}
+          />
         ) : activeScreen.id === 'seeds' ? (
           <SeedsGame onComplete={finish} />
         ) : (
-          <NapTime game={game} onComplete={finish} />
+          <NapTime
+            game={game}
+            skinId={run?.hamster.skinId ?? 'hamster'}
+            onComplete={finish}
+          />
         )
 
       return (
