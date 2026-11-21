@@ -5,7 +5,7 @@
 | Field        | Value                                                  |
 | ------------ | ------------------------------------------------------ |
 | Scope        | How the game actually plays, in numbers                |
-| Applies to   | v0.9.0 (M0–M3 complete)                       |
+| Applies to   | v1.0.0 (M0–M4 complete)                       |
 | Last updated | 2026-11-18                                             |
 | Source of truth | `src/game/config.ts`, `src/game/data/careActions.ts` |
 | Related docs | [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`skins.md`](skins.md) |

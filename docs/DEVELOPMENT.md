@@ -5,7 +5,7 @@
 | Field          | Value                                                 |
 | -------------- | ----------------------------------------------------- |
 | Scope          | How to set up, work on and ship Peanut                |
-| Applies to     | v0.9.0 (M0–M3 complete)                      |
+| Applies to     | v1.0.0 (M0–M4 complete)                      |
 | Last updated   | 2026-11-18                                            |
 | Related docs   | [`roadmap/v1.md`](roadmap/v1.md) §8 · [`ARCHITECTURE.md`](ARCHITECTURE.md) |
 

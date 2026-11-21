@@ -2,7 +2,7 @@
 
 | Field | Value |
 | ----- | ----- |
-| Applies to | v0.9.0 beta, `main` at the M4 milestone |
+| Applies to | v1.0.0, published 2026-11-20 |
 | Last updated | 2026-11-20 |
 | Suite | 182 tests across 15 files, `bun test` |
 | Related | [`DEVELOPMENT.md`](DEVELOPMENT.md) §6 · [`ARCHITECTURE.md`](ARCHITECTURE.md) |

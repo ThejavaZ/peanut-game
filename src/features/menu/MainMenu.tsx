@@ -100,7 +100,7 @@ export function MainMenu({
         </div>
 
         <p className="mt-8 font-pixel text-[8px] uppercase tracking-widest text-cocoa-soft">
-          v0.9.0 · death, events &amp; minigames
+          v1.0.0 · death, events &amp; minigames
         </p>
       </div>
     </Screen>

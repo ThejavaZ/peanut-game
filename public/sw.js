@@ -13,7 +13,7 @@
  * would break the other.
  */
 
-const CACHE = 'peanut-v0.9.0'
+const CACHE = 'peanut-v1.0.0'
 
 const SHELL = [
   './',
