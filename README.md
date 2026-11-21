@@ -112,6 +112,8 @@ bun run preview  # preview the production build
 - [Gameplay rules](docs/GAMEPLAY.md) — needs, thresholds, care actions and timing, in numbers.
 - [Development guide](docs/DEVELOPMENT.md) — setup, conventions, CI and how to add things.
 - [Art and audio](docs/ART_AND_AUDIO.md) — palette, sprites, animation and the audio plan.
+- [User manual](docs/MANUAL.md) — everything a player needs, written for players.
+- [Beta test report](docs/TESTING.md) — what is tested, what failed and what is not covered.
 - [Skins & secret characters](docs/skins.md) — cosmetic skins, unlock names and easter eggs (spoilers).
 
 ## 📚 Project Status
