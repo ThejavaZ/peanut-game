@@ -14,7 +14,10 @@ import { findEasterEgg, getDisplayName } from './game/easterEggs'
 import { buildRunSummary } from './game/runSummary'
 import { findSecretSkin } from './game/skins'
 import { useGameRun } from './hooks/useGameRun'
-import { loadCemetery } from './services/CemeteryService'
+import { SettingsScreen } from './features/settings/SettingsScreen'
+import { clearCemetery, loadCemetery } from './services/CemeteryService'
+import { loadSettings, saveSettings } from './services/SettingsService'
+import type { Settings } from './services/SettingsService'
 import { loadUnlockedSkins, unlockSkin } from './services/SkinService'
 import type { MinigameReward, Screen, SkinId } from './types/game'
 
@@ -25,11 +28,27 @@ function App() {
   const [unlockedSkins, setUnlockedSkins] = useState<SkinId[]>(() =>
     loadUnlockedSkins(),
   )
+  const [settings, setSettings] = useState<Settings>(() => loadSettings())
+
+  const updateSettings = (patch: Partial<Settings>) => {
+    const next = { ...settings, ...patch }
+    setSettings(next)
+    saveSettings(next)
+  }
+
+  // Reduced motion mirrors the preference: applied on load and on every change,
+  // the same way the media query below applies it for the operating system.
+  useEffect(() => {
+    document.documentElement.dataset.motion = settings.motionReduced
+      ? 'reduced'
+      : ''
+  }, [settings.motionReduced])
 
   const goToMenu = () => setScreen({ name: 'menu' })
   const goToNaming = () => setScreen({ name: 'naming' })
   const goToCemetery = () => setScreen({ name: 'cemetery' })
   const goToGame = () => setScreen({ name: 'game' })
+  const goToSettings = () => setScreen({ name: 'settings' })
 
   /**
    * The single place that owns the freeze. Whatever path leaves a minigame
@@ -86,6 +105,7 @@ function App() {
           onStart={goToNaming}
           onContinue={() => setScreen({ name: 'game' })}
           onOpenCemetery={goToCemetery}
+          onOpenSettings={goToSettings}
         />
       )
 
@@ -109,6 +129,7 @@ function App() {
             onStart={goToNaming}
             onContinue={goToMenu}
             onOpenCemetery={goToCemetery}
+            onOpenSettings={goToSettings}
           />
         )
       }
@@ -134,6 +155,21 @@ function App() {
 
     case 'cemetery':
       return <CemeteryScreen entries={loadCemetery()} onBack={goToMenu} />
+
+    case 'settings':
+      return (
+        <SettingsScreen
+          settings={settings}
+          hasRun={run !== null}
+          onChange={updateSettings}
+          onResetRun={() => {
+            resetRun()
+            goToMenu()
+          }}
+          onClearCemetery={clearCemetery}
+          onBack={goToMenu}
+        />
+      )
 
     case 'minigame': {
       const game = MINIGAMES[activeScreen.id]

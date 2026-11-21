@@ -99,3 +99,9 @@
     animation: none;
   }
 }
+
+/* Manual switch from Settings, mirroring the media query above. */
+:root[data-motion='reduced'] .animate-hamster-idle,
+:root[data-motion='reduced'] .animate-blink {
+  animation: none;
+}

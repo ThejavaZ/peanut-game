@@ -113,3 +113,12 @@ export function appendEntry(entry: CemeteryEntry): CemeteryEntry[] {
   }
   return entries
 }
+
+/** Called only from the settings screen, behind an explicit confirmation. */
+export function clearCemetery(): void {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // Nothing to do if storage is unavailable.
+  }
+}

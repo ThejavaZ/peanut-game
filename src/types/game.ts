@@ -215,4 +215,5 @@ export type Screen =
   | { name: 'game' }
   | { name: 'memorial'; run: RunSummary }
   | { name: 'cemetery' }
+  | { name: 'settings' }
   | { name: 'minigame'; id: MinigameId }

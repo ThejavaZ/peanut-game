@@ -13,6 +13,7 @@ interface MainMenuProps {
   onStart: () => void
   onContinue: () => void
   onOpenCemetery: () => void
+  onOpenSettings: () => void
 }
 
 export function MainMenu({
@@ -25,6 +26,7 @@ export function MainMenu({
   onStart,
   onContinue,
   onOpenCemetery,
+  onOpenSettings,
 }: MainMenuProps) {
   return (
     <Screen>
@@ -76,6 +78,14 @@ export function MainMenu({
             className="mt-3 w-full"
           >
             Cemetery{cemeteryCount > 0 ? ` · ${cemeteryCount}` : ''}
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={onOpenSettings}
+            className="mt-3 w-full"
+          >
+            Settings
           </Button>
         </div>
 
