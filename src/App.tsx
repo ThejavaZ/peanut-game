@@ -15,6 +15,7 @@ import { buildRunSummary } from './game/runSummary'
 import { findSecretSkin } from './game/skins'
 import { useGameRun } from './hooks/useGameRun'
 import { SettingsScreen } from './features/settings/SettingsScreen'
+import { applySettings, init, play } from './services/AudioService'
 import { clearCemetery, loadCemetery } from './services/CemeteryService'
 import { loadSettings, saveSettings } from './services/SettingsService'
 import type { Settings } from './services/SettingsService'
@@ -43,6 +44,23 @@ function App() {
       ? 'reduced'
       : ''
   }, [settings.motionReduced])
+
+  // Audio waits for the first gesture (the service listens for it), mirrors the
+  // preferences, and plays the death once — the record never changes, so the
+  // effect never repeats.
+  useEffect(() => {
+    init()
+  }, [])
+
+  useEffect(() => {
+    applySettings(settings)
+  }, [settings])
+
+  useEffect(() => {
+    if (run?.death) {
+      play('death')
+    }
+  }, [run?.death])
 
   const goToMenu = () => setScreen({ name: 'menu' })
   const goToNaming = () => setScreen({ name: 'naming' })

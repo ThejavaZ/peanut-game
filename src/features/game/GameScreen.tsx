@@ -8,6 +8,7 @@ import { CARE_ACTION_LIST } from '../../game/data/careActions'
 import { MINIGAME_LIST } from '../../game/data/minigames'
 import { findEasterEgg, getDisplayName } from '../../game/easterEggs'
 import { minigameGap } from '../../game/minigames'
+import { play as playSound } from '../../services/AudioService'
 import {
   formatGameClock,
   getAgeWarning,
@@ -88,6 +89,21 @@ export function GameScreen({
       window.clearTimeout(showId)
     }
   }, [egg?.id])
+
+  // Sound lives at the edges of the screen: an event chimes when it arrives,
+  // the warning buzzes only when there is a warning to hear. Both references
+  // come from frozen state, so neither repeats on its own.
+  useEffect(() => {
+    if (run.events.pending) {
+      playSound('event')
+    }
+  }, [run.events.pending])
+
+  useEffect(() => {
+    if (warning) {
+      playSound('warning')
+    }
+  }, [warning])
 
   return (
     <Screen>
@@ -213,7 +229,10 @@ export function GameScreen({
                       run.paused ||
                       run.events.pending !== null
                     }
-                    onClick={() => onCare(action.id)}
+                    onClick={() => {
+                      onCare(action.id)
+                      playSound(action.id)
+                    }}
                     title={action.hint}
                     className={`px-2 text-[8px] ${action.id === 'sleep' ? 'col-span-2' : ''}`}
                   >
