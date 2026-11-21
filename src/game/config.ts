@@ -18,6 +18,14 @@ export const MAZE_HAPPINESS = 10
 /** No two minigames can be played back to back — the bars stay necessary. */
 export const MINIGAME_GAP_SECONDS = 60
 
+/** Find the Seeds: five seeds hidden among twelve cells, twenty seconds. */
+export const SEEDS_GRID_COLS = 4
+export const SEEDS_GRID_ROWS = 3
+export const SEEDS_TOTAL = 5
+export const SEEDS_SECONDS = 20
+export const SEED_HUNGER_POINTS = 10
+export const SEEDS_HUNGER_CAP = 35
+
 /**
  * Score rules from Act 1 §10. The score never decides whether Peanut lives
  * or dies — it only summarises the life.

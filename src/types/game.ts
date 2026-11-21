@@ -189,7 +189,7 @@ export interface CemeteryEntry {
   readonly score: number
 }
 
-export type MinigameId = 'nap-time' | 'wheel' | 'maze'
+export type MinigameId = 'nap-time' | 'wheel' | 'maze' | 'seeds'
 
 /**
  * The contract every minigame reports back. Applied exactly once when the game

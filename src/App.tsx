@@ -6,6 +6,7 @@ import { MainMenu } from './features/menu/MainMenu'
 import { MinigameScreen } from './features/minigames/MinigameScreen'
 import { MazeGame } from './features/minigames/MazeGame'
 import { NapTime } from './features/minigames/NapTime'
+import { SeedsGame } from './features/minigames/SeedsGame'
 import { WheelGame } from './features/minigames/WheelGame'
 import { NamingScreen } from './features/naming/NamingScreen'
 import { MINIGAMES } from './game/data/minigames'
@@ -145,6 +146,8 @@ function App() {
           <WheelGame onComplete={finish} />
         ) : activeScreen.id === 'maze' ? (
           <MazeGame onComplete={finish} />
+        ) : activeScreen.id === 'seeds' ? (
+          <SeedsGame onComplete={finish} />
         ) : (
           <NapTime game={game} onComplete={finish} />
         )

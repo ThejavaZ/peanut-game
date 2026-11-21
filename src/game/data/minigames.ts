@@ -2,6 +2,8 @@ import {
   MAZE_HAPPINESS,
   NAP_TIME_HEALTH,
   NAP_TIME_SECONDS,
+  SEEDS_HUNGER_CAP,
+  SEEDS_SECONDS,
   WHEEL_ATTEMPTS,
   WHEEL_HAPPINESS_CAP,
 } from '../config'
@@ -61,6 +63,15 @@ export const MINIGAMES: Record<MinigameId, MinigameDefinition> = {
       clearsCooldowns: true,
     },
     rewardPreview: `+${MAZE_HAPPINESS} happiness · clears every care cooldown`,
+  },
+  seeds: {
+    id: 'seeds',
+    title: 'Find the Seeds',
+    description:
+      'Five seeds hide among twelve cells. Uncover them before the twenty seconds run out — every seed you find feeds Peanut.',
+    actionLabel: 'Look for seeds',
+    rewardPreview: `Up to +${SEEDS_HUNGER_CAP} hunger · ${SEEDS_SECONDS} seconds`,
+    reward: { effects: { hunger: SEEDS_HUNGER_CAP } },
   },
 }
 
