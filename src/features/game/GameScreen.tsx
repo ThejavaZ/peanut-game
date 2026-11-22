@@ -29,7 +29,7 @@ const MOOD_BADGES: Record<HamsterMood, { label: string; className: string }> = {
   happy: { label: 'Happy', className: 'bg-mint' },
   ok: { label: 'Doing okay', className: 'bg-sky' },
   worried: { label: 'Worried', className: 'bg-shell' },
-  critical: { label: 'Critical', className: 'bg-danger text-paper' },
+  critical: { label: 'Critical', className: 'bg-danger-ink text-paper' },
 }
 
 const NEED_LABELS = {

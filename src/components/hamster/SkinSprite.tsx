@@ -56,7 +56,7 @@ export function SkinSprite({
         cy="14.6"
         rx="5.2"
         ry="0.8"
-        fill="#4a3228"
+        style={{ fill: 'var(--color-scrim)' }}
         opacity="0.18"
       />
       <g transform={pose}>

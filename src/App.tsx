@@ -18,7 +18,7 @@ import { SettingsScreen } from './features/settings/SettingsScreen'
 import { CreditsScreen } from './features/credits/CreditsScreen'
 import { applySettings, init, play } from './services/AudioService'
 import { clearCemetery, loadCemetery } from './services/CemeteryService'
-import { loadSettings, saveSettings } from './services/SettingsService'
+import { loadSettings, saveSettings, applyTheme } from './services/SettingsService'
 import type { Settings } from './services/SettingsService'
 import { loadUnlockedSkins, unlockSkin } from './services/SkinService'
 import type { MinigameReward, Screen, SkinId } from './types/game'
@@ -40,11 +40,14 @@ function App() {
 
   // Reduced motion mirrors the preference: applied on load and on every change,
   // the same way the media query below applies it for the operating system.
+  // The theme was already set by main.tsx before the first paint; this keeps
+  // it in step when the player flips it in Settings.
   useEffect(() => {
     document.documentElement.dataset.motion = settings.motionReduced
       ? 'reduced'
       : ''
-  }, [settings.motionReduced])
+    applyTheme(settings.theme)
+  }, [settings.motionReduced, settings.theme])
 
   // Audio waits for the first gesture (the service listens for it), mirrors the
   // preferences, and plays the death once — the record never changes, so the

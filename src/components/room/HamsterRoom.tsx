@@ -24,7 +24,7 @@ export function HamsterRoom({
 }: HamsterRoomProps) {
   return (
     <div
-      className="pixel-grid relative aspect-[16/9] w-full overflow-hidden border-4 border-cocoa bg-[#fdf1d8]"
+      className="pixel-grid relative aspect-[16/9] w-full overflow-hidden border-4 border-cocoa bg-cage"
       role="img"
       aria-label={`${hamsterName}'s cage`}
     >
@@ -39,7 +39,9 @@ export function HamsterRoom({
       <div className="absolute inset-x-0 bottom-0 h-[26%] border-t-4 border-cocoa bg-shell/45" />
       <div className="absolute inset-x-0 bottom-[26%] h-2 bg-paper-deep" />
 
-      {/* bedding: pale shavings scattered on the floor */}
+      {/* bedding: pale shavings scattered on the floor. A material colour,
+          like the sprite palettes: wood shavings stay pale in both themes,
+          and paper-tinted shavings would vanish against the dark floor. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-[4%] h-[9%] opacity-70"

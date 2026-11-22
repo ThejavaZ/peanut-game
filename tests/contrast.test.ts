@@ -4,13 +4,30 @@ import { describe, expect, test } from 'bun:test'
  * The accessibility gate for the palette: ratios are computed from
  * `src/index.css` itself, so editing a colour in the stylesheet — not in this
  * file — is what can break these tests.
+ *
+ * The stylesheet carries two palettes: the light one inside `@theme`, and the
+ * night one inside `:root[data-theme='dark']`. They are parsed block by block
+ * (a single regex over the whole file would let the dark values overwrite the
+ * light ones and audit the wrong colours), checked to declare exactly the same
+ * tokens, and then audited against the same WCAG pairs.
  */
 
 const css = await Bun.file('src/index.css').text()
 
-function palette(): Record<string, string> {
+/** The body of the first block that opens with `opening`. */
+function blockBody(opening: string): string {
+  const start = css.indexOf(opening)
+  if (start < 0) {
+    return ''
+  }
+  const open = css.indexOf('{', start)
+  const close = css.indexOf('}', open)
+  return open < 0 || close < 0 ? '' : css.slice(open + 1, close)
+}
+
+function paletteIn(body: string): Record<string, string> {
   const colors: Record<string, string> = {}
-  for (const match of css.matchAll(
+  for (const match of body.matchAll(
     /--color-([a-z0-9-]+):\s*(#[0-9a-fA-F]{6})/g,
   )) {
     colors[match[1]] = match[2]
@@ -33,44 +50,79 @@ function contrast(a: string, b: string): number {
   return (lighter + 0.05) / (darker + 0.05)
 }
 
-const colors = palette()
+const PALETTES: [string, Record<string, string>][] = [
+  ['light', paletteIn(blockBody('@theme {'))],
+  ['dark', paletteIn(blockBody(":root[data-theme='dark'] {"))],
+]
+
+/**
+ * Each pair names the two tokens a component actually puts together. The
+ * ratio is symmetric, so `cocoa on mint` also covers mint text on a cocoa
+ * fill (the segfault banner).
+ */
+const TEXT_PAIRS: [string, string, string][] = [
+  ['cocoa', 'paper', 'body text'],
+  ['cocoa', 'paper-deep', 'text on panels'],
+  ['cocoa-soft', 'paper', 'secondary text'],
+  ['cocoa-soft', 'paper-deep', 'badges and epitaphs'],
+  ['danger-ink', 'paper', 'critical alert'],
+  ['danger-ink', 'paper-deep', 'danger zone labels'],
+  ['cocoa', 'mint', 'happy badge, maze exit, segfault banner'],
+  ['cocoa', 'shell', 'worried badge, primary button'],
+  ['cocoa', 'shell-hover', 'primary button hover'],
+  ['cocoa', 'sand', 'revealed seed, score badge'],
+  ['cocoa', 'sky', 'okay badge'],
+  ['cocoa', 'blush', '::selection text'],
+  ['paper', 'danger-ink', 'critical badge'],
+]
 
 describe('the palette', () => {
   test('is parsed from the stylesheet, tokens intact', () => {
-    expect(Object.keys(colors).length).toBeGreaterThanOrEqual(11)
-    for (const token of [
-      'paper',
-      'paper-deep',
-      'cocoa',
-      'cocoa-soft',
-      'shell',
-      'shell-dark',
-      'mint',
-      'sand',
-      'danger',
-      'danger-ink',
-    ]) {
-      expect(colors[token]).toMatch(/^#[0-9a-fA-F]{6}$/)
+    for (const [name, colors] of PALETTES) {
+      expect(Object.keys(colors).length).toBeGreaterThanOrEqual(11)
+      for (const token of [
+        'paper',
+        'paper-deep',
+        'cocoa',
+        'cocoa-soft',
+        'shell',
+        'shell-dark',
+        'mint',
+        'sand',
+        'danger',
+        'danger-ink',
+      ]) {
+        expect(`${name}.${token}:${colors[token]}`).toMatch(
+          /^(light|dark)\.[a-z-]+:#[0-9a-fA-F]{6}$/,
+        )
+      }
     }
   })
 
-  test('every pair used for text clears WCAG AA (4.5:1)', () => {
-    const textPairs: [string, string, string][] = [
-      ['cocoa', 'paper', 'body text'],
-      ['cocoa', 'paper-deep', 'text on panels'],
-      ['cocoa-soft', 'paper', 'secondary text'],
-      ['cocoa-soft', 'paper-deep', 'badges and epitaphs'],
-      ['danger-ink', 'paper', 'critical alert'],
-      ['danger-ink', 'paper-deep', 'danger zone labels'],
-      ['cocoa', 'mint', 'happy badge, maze exit'],
-      ['cocoa', 'shell', 'worried badge'],
-      ['cocoa', 'sand', 'revealed seed, credit initials'],
-    ]
+  test('the night palette mirrors the light one, token for token', () => {
+    // A token added to one block and forgotten in the other would leave that
+    // theme silently using the wrong colour — usually a light rectangle in
+    // the middle of the dark game.
+    const [light, dark] = PALETTES.map(
+      ([, colors]) => Object.keys(colors).sort(),
+    )
+    expect(dark).toEqual(light)
+    expect(light.length).toBeGreaterThanOrEqual(15)
+  })
 
-    for (const [foreground, background] of textPairs) {
-      const ratio = contrast(colors[foreground], colors[background])
-      expect(ratio).toBeGreaterThanOrEqual(4.5)
+  test('every pair used for text clears WCAG AA (4.5:1)', () => {
+    const failures: string[] = []
+    for (const [name, colors] of PALETTES) {
+      for (const [foreground, background, label] of TEXT_PAIRS) {
+        const ratio = contrast(colors[foreground], colors[background])
+        if (ratio < 4.5) {
+          failures.push(
+            `${name}: ${label} (${foreground} on ${background}) = ${ratio.toFixed(2)}`,
+          )
+        }
+      }
     }
+    expect(failures).toEqual([])
   })
 
   test('outlines carrying meaning clear 3:1, and text on fills stays at 4.5:1', () => {
@@ -78,9 +130,23 @@ describe('the palette', () => {
     // fine precisely because everything drawn on top of it is cocoa (tested
     // above at 5.13:1) and because the warning bar also prints its value and
     // exposes it through aria-valuenow — colour is never the only signal.
-    expect(contrast(colors.danger, colors.paper)).toBeGreaterThanOrEqual(3)
-    expect(contrast(colors.cocoa, colors.paper)).toBeGreaterThanOrEqual(3)
-    expect(contrast(colors.cocoa, colors.shell)).toBeGreaterThanOrEqual(4.5)
+    const failures: string[] = []
+    const checks: [string, string, number][] = [
+      ['danger', 'paper', 3],
+      ['cocoa', 'paper', 3],
+      ['cocoa', 'shell', 4.5],
+    ]
+    for (const [name, colors] of PALETTES) {
+      for (const [foreground, background, minimum] of checks) {
+        const ratio = contrast(colors[foreground], colors[background])
+        if (ratio < minimum) {
+          failures.push(
+            `${name}: ${foreground} on ${background} needs ${minimum}, got ${ratio.toFixed(2)}`,
+          )
+        }
+      }
+    }
+    expect(failures).toEqual([])
   })
 })
 
@@ -124,5 +190,18 @@ describe('the components follow the palette rules', () => {
   test('reduced motion exists for the system and for the settings switch', () => {
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
     expect(css).toContain("[data-motion='reduced']")
+  })
+
+  test('the night palette hangs off data-theme', () => {
+    expect(css).toContain(":root[data-theme='dark']")
+  })
+
+  test('the theme reaches the page before the first paint', async () => {
+    // A useEffect would apply the theme after the first paint, so a dark-mode
+    // player would get a flash of light paper on every load. The initial
+    // application therefore lives in main.tsx, before createRoot.
+    const main = await Bun.file('src/main.tsx').text()
+    expect(main).toContain('applyTheme(loadSettings().theme)')
+    expect(main.indexOf('applyTheme(')).toBeLessThan(main.indexOf('createRoot('))
   })
 })

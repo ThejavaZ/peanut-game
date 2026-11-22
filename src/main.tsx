@@ -2,6 +2,14 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { applyTheme, loadSettings } from './services/SettingsService'
+
+/**
+ * The theme lands on <html> before React renders: a useEffect would apply it
+ * after the first paint, and a dark-mode player would get a flash of light
+ * paper on every load. Settings own this attribute, App keeps it in sync.
+ */
+applyTheme(loadSettings().theme)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

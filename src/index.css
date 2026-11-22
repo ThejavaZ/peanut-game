@@ -8,9 +8,12 @@
   /* Peanut palette — warm pastels with a cocoa ink */
   --color-paper: #fff6e5;
   --color-paper-deep: #f6e7c9;
+  /* The cage interior: a shade deeper than the panel it sits inside. */
+  --color-cage: #fdf1d8;
   --color-sand: #efd9b4;
   --color-shell: #d9a05b;
   --color-shell-dark: #b97d3d;
+  --color-shell-hover: #e3ad6b;
   --color-cocoa: #4a3228;
   --color-cocoa-soft: #7a5b4a;
   --color-blush: #f2a7a0;
@@ -20,6 +23,31 @@
   /* Text-grade red: 5.59:1 on paper. The fill above is only 3.69:1, fine for
      borders and backgrounds but never for type (WCAG AA needs 4.5:1). */
   --color-danger-ink: #b03a35;
+  /* The dimming layer: the event backdrop and the sprite's ground shadow. */
+  --color-scrim: #4a3228;
+}
+
+/* Night palette — the same tokens, warm dark values. Every utility compiles
+   to var(--color-*), so this one block repaints the whole game; no component
+   knows which theme is active. Every token here must also exist above (and
+   vice versa): `tests/contrast.test.ts` compares the two lists and audits
+   both palettes against the same WCAG pairs. */
+:root[data-theme='dark'] {
+  --color-paper: #2e241d;
+  --color-paper-deep: #211a15;
+  --color-cage: #271e18;
+  --color-sand: #4f3d2b;
+  --color-shell: #7a4e26;
+  --color-shell-dark: #5a3a1d;
+  --color-shell-hover: #8f5c2e;
+  --color-cocoa: #f4e7d7;
+  --color-cocoa-soft: #c9b29c;
+  --color-blush: #6e3d3a;
+  --color-mint: #276248;
+  --color-sky: #2f4f6b;
+  --color-danger: #d9534f;
+  --color-danger-ink: #ff9b93;
+  --color-scrim: #0d0906;
 }
 
 @layer base {
@@ -48,21 +76,34 @@
 }
 
 @layer components {
-  /* Chunky pixel border + hard shadow used by panels and buttons */
+  /* Chunky pixel border + hard shadow used by panels and buttons. The border
+     is the ink (bright in the dark theme, so panels stay crisp); the shadow
+     uses the scrim so it is always darker than whatever it falls on — in the
+     light theme the scrim is the ink itself, so nothing changes there. */
   .pixel-frame {
     border: 4px solid var(--color-cocoa);
-    box-shadow: 6px 6px 0 0 var(--color-cocoa);
+    box-shadow: 6px 6px 0 0 var(--color-scrim);
   }
 
   .pixel-frame-sm {
     border: 3px solid var(--color-cocoa);
-    box-shadow: 4px 4px 0 0 var(--color-cocoa);
+    box-shadow: 4px 4px 0 0 var(--color-scrim);
   }
 
+  /* Grid lines follow the ink: cocoa at 6% in either theme. In srgb the mix
+     resolves to exactly the rgba() this used to hardcode. */
   .pixel-grid {
     background-image:
-      linear-gradient(to right, rgba(74, 50, 40, 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(74, 50, 40, 0.06) 1px, transparent 1px);
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-cocoa) 6%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-cocoa) 6%, transparent) 1px,
+        transparent 1px
+      );
     background-size: 16px 16px;
   }
 }

@@ -59,6 +59,26 @@ export function SettingsScreen({
         <section className="mt-3 border-2 border-cocoa/30 p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
+              <p className="font-pixel text-[9px] uppercase">Theme</p>
+              <p className="mt-1 text-base text-cocoa-soft">
+                Swaps the whole game to night colours.
+              </p>
+            </div>
+            <Button
+              variant="secondary"
+              aria-pressed={settings.theme === 'dark'}
+              onClick={() =>
+                onChange({ theme: settings.theme === 'dark' ? 'light' : 'dark' })
+              }
+            >
+              {settings.theme === 'dark' ? 'Dark · on' : 'Dark · off'}
+            </Button>
+          </div>
+        </section>
+
+        <section className="mt-3 border-2 border-cocoa/30 p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
               <p className="font-pixel text-[9px] uppercase">Sound</p>
               <p className="mt-1 text-base text-cocoa-soft">
                 Stored now; the audio service reads it when sound lands in this

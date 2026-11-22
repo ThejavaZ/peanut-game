@@ -26,7 +26,7 @@ export function EventModal({
   onChoose,
 }: EventModalProps) {
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-cocoa/45 p-4">
+    <div className="fixed inset-0 z-20 flex items-center justify-center bg-scrim/45 p-4">
       <div
         role="dialog"
         aria-modal="true"
