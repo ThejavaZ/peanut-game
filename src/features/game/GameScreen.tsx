@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { EventModal } from '../../components/events/EventModal'
 import type { HamsterState } from '../../components/hamster/skinSprites'
 import { HamsterRoom } from '../../components/room/HamsterRoom'
@@ -71,6 +71,46 @@ export function GameScreen({
   const egg = findEasterEgg(run.hamster.name)
   const showSkinName = skin.name.toLowerCase() !== displayName.toLowerCase()
   const [vanished, setVanished] = useState(false)
+  const [feeding, setFeeding] = useState(false)
+  const [watering, setWatering] = useState(false)
+  const [cleaning, setCleaning] = useState(false)
+  const [playing, setPlaying] = useState(false)
+  const feedTimeout = useRef<number | null>(null)
+  const waterTimeout = useRef<number | null>(null)
+  const cleanTimeout = useRef<number | null>(null)
+  const playTimeout = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (feedTimeout.current !== null) {
+        window.clearTimeout(feedTimeout.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (waterTimeout.current !== null) {
+        window.clearTimeout(waterTimeout.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (cleanTimeout.current !== null) {
+        window.clearTimeout(cleanTimeout.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (playTimeout.current !== null) {
+        window.clearTimeout(playTimeout.current)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (egg?.id !== '404') {
@@ -188,6 +228,10 @@ export function GameScreen({
             state={hamsterState}
             paused={run.paused}
             vanished={vanished}
+            feeding={feeding}
+            watering={watering}
+            cleaning={cleaning}
+            playing={playing}
             serverDecor={egg?.id === 'localhost'}
           />
           {run.paused ? (
@@ -237,6 +281,46 @@ export function GameScreen({
                     onClick={() => {
                       onCare(action.id)
                       playSound(action.id)
+                      if (action.id === 'feed') {
+                        if (feedTimeout.current !== null) {
+                          window.clearTimeout(feedTimeout.current)
+                        }
+                        setFeeding(true)
+                        feedTimeout.current = window.setTimeout(() => {
+                          setFeeding(false)
+                          feedTimeout.current = null
+                        }, 1800)
+                      }
+                      if (action.id === 'water') {
+                        if (waterTimeout.current !== null) {
+                          window.clearTimeout(waterTimeout.current)
+                        }
+                        setWatering(true)
+                        waterTimeout.current = window.setTimeout(() => {
+                          setWatering(false)
+                          waterTimeout.current = null
+                        }, 2000)
+                      }
+                      if (action.id === 'clean') {
+                        if (cleanTimeout.current !== null) {
+                          window.clearTimeout(cleanTimeout.current)
+                        }
+                        setCleaning(true)
+                        cleanTimeout.current = window.setTimeout(() => {
+                          setCleaning(false)
+                          cleanTimeout.current = null
+                        }, 2000)
+                      }
+                      if (action.id === 'play') {
+                        if (playTimeout.current !== null) {
+                          window.clearTimeout(playTimeout.current)
+                        }
+                        setPlaying(true)
+                        playTimeout.current = window.setTimeout(() => {
+                          setPlaying(false)
+                          playTimeout.current = null
+                        }, 3200)
+                      }
                     }}
                     title={action.hint}
                     className={`px-2 text-[8px] ${action.id === 'sleep' ? 'col-span-2' : ''}`}
