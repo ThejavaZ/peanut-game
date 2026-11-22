@@ -42,28 +42,45 @@ How those translate into code:
 
 ## 3. Palette
 
-Defined once as Tailwind v4 `@theme` tokens in `src/index.css`.
+Defined once as Tailwind v4 `@theme` tokens in `src/index.css`. There are
+**two palettes with the same token names**: the light one inside `@theme`, and
+the night one inside `:root[data-theme='dark']`, chosen in Settings and stored
+on `<html data-theme>`. Because every utility compiles to `var(--color-*)`,
+switching the attribute repaints the whole game — no component knows which
+theme is active.
 
-| Token | Hex | Role |
-| ----- | --- | ---- |
-| `--color-paper` | `#fff6e5` | Panel background, sprite canvas |
-| `--color-paper-deep` | `#f6e7c9` | Page background, input background |
-| `--color-sand` | `#efd9b4` | Selected skin tile |
-| `--color-shell` | `#d9a05b` | Cage floor, warning state, *Worried* badge |
-| `--color-shell-dark` | `#b97d3d` | Warning text, dark accents |
-| `--color-cocoa` | `#4a3228` | **The ink** — borders, shadows, body text |
-| `--color-cocoa-soft` | `#7a5b4a` | Secondary text |
-| `--color-blush` | `#f2a7a0` | Text selection, food bowl |
-| `--color-mint` | `#9ed9c4` | *Happy* badge, sprite highlights |
-| `--color-sky` | `#a9c9e8` | Water bottle, *Doing okay* badge |
-| `--color-danger` | `#d9534f` | *Critical* badge, alerts, error text |
+| Token | Light | Night | Role |
+| ----- | ----- | ----- | ---- |
+| `--color-paper` | `#fff6e5` | `#2e241d` | Panel background, sprite canvas |
+| `--color-paper-deep` | `#f6e7c9` | `#211a15` | Page background, input background |
+| `--color-cage` | `#fdf1d8` | `#271e18` | Cage interior, one shade deeper than its panel |
+| `--color-sand` | `#efd9b4` | `#4f3d2b` | Selected skin tile |
+| `--color-shell` | `#d9a05b` | `#7a4e26` | Cage floor, warning state, *Worried* badge |
+| `--color-shell-dark` | `#b97d3d` | `#5a3a1d` | Warning text, dark accents |
+| `--color-shell-hover` | `#e3ad6b` | `#8f5c2e` | Primary button hover |
+| `--color-cocoa` | `#4a3228` | `#f4e7d7` | **The ink** — borders, body text (inverts) |
+| `--color-cocoa-soft` | `#7a5b4a` | `#c9b29c` | Secondary text |
+| `--color-blush` | `#f2a7a0` | `#6e3d3a` | Text selection, food bowl |
+| `--color-mint` | `#9ed9c4` | `#276248` | *Happy* badge, sprite highlights |
+| `--color-sky` | `#a9c9e8` | `#2f4f6b` | Water bottle, *Doing okay* badge |
+| `--color-danger` | `#d9534f` | `#d9534f` | Fills, borders, alerts (both themes) |
+| `--color-danger-ink` | `#b03a35` | `#ff9b93` | Text-grade red — never a background for other text |
+| `--color-scrim` | `#4a3228` | `#0d0906` | The dimming layer: event backdrop, hard shadows |
 
 Rules that keep the look coherent:
 
-- **Every border, shadow and outline is `--color-cocoa`.** No element uses a
-  different outline colour.
+- **Every border and outline is `--color-cocoa`.** In the night palette cocoa
+  becomes the light ink, so panels stay crisp on a dark page.
+- **Hard shadows use `--color-scrim`,** which is always darker than the
+  surface it falls on. In the light palette the scrim *is* the ink, so nothing
+  changes there; using the ink directly in the night palette would make the
+  shadow merge with the border.
+- **Both palettes are audited against the same WCAG pairs** by
+  `tests/contrast.test.ts`, which parses each block separately and fails if
+  one palette gains a token the other is missing.
 - Sprites declare their **own** hex colours in their palette and are not bound
-  to the theme tokens — they only *happen* to match.
+  to the theme tokens — they only *happen* to match. The same holds for
+  material colours that must survive both themes, like the cage shavings.
 - Status colours carry meaning: `mint` ok → `shell` warning → `danger`
   critical. The same three appear in need bars, badges and alerts.
 
@@ -90,11 +107,11 @@ the recurring typographic motif across every screen.
 
 ## 5. Frames, grid and focus
 
-| Utility        | Definition                                | Used for           |
-| -------------- | ----------------------------------------- | ------------------ |
-| `.pixel-frame`    | 4px border + 6px hard shadow, `cocoa`  | Panels, room, cards |
-| `.pixel-frame-sm` | 3px border + 4px hard shadow           | Buttons, sub-panels |
-| `.pixel-grid`     | 16px line grid at 6% cocoa opacity     | Page and cage backdrop |
+| Utility        | Definition                                     | Used for           |
+| -------------- | ---------------------------------------------- | ------------------ |
+| `.pixel-frame`    | 4px `cocoa` border + 6px hard `scrim` shadow | Panels, room, cards |
+| `.pixel-frame-sm` | 3px `cocoa` border + 4px hard `scrim` shadow | Buttons, sub-panels |
+| `.pixel-grid`     | 16px line grid, `cocoa` at 6% via `color-mix`  | Page and cage backdrop |
 
 Buttons add a **press effect**: `active:translate-x/y` of 2px with the shadow
 removed, so the button physically pushes in.

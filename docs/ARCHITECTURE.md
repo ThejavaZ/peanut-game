@@ -254,9 +254,12 @@ No canvas engine. Pixel art is SVG built from data:
   Tailwind boxes — pure presentational, every visual cue is a prop
   (`paused`, `vanished`, `serverDecor`).
 
-Theme tokens (`@theme` in `src/index.css`) define the palette, the two pixel
-fonts and the `pixel-frame` utilities used by every panel. Animations live in
-the same file and are disabled under `prefers-reduced-motion`.
+Theme tokens define two palettes with the same names — the light one in
+`@theme`, the night one in `:root[data-theme='dark']` — plus the two pixel
+fonts and the `pixel-frame` utilities used by every panel. Settings chooses the
+palette and stores it on `<html data-theme>`; `main.tsx` applies it before the
+first paint so a dark-mode player never sees a flash of light paper.
+Animations live in the same file and are disabled under `prefers-reduced-motion`.
 
 A test validates every sprite grid, so a typo in the 16×16 art fails CI instead
 of rendering a hole.
@@ -293,7 +296,7 @@ Lines counted at the pixel art pass (2026-11-20): **8 549 total** — 5 942 in
 | `src/services/AudioService.ts`      | 239   | Synthesised effects and the ambient pad         |
 | `src/services/CemeteryService.ts`   | 124   | Graves: validation, cap, append, score, clear   |
 | `src/services/SaveService.ts`       | 378   | Run persistence, validation, v1→v6 migration    |
-| `src/services/SettingsService.ts`   | 65    | Preferences: motion, sound, per-field repair    |
+| `src/services/SettingsService.ts`   | 93    | Preferences: motion, theme, sound, per-field repair |
 | `src/services/SkinService.ts`       | 43    | Skin unlock persistence                          |
 | `src/features/menu/MainMenu.tsx`    | 108   | Menu with cemetery, settings and credits entrances |
 | `src/features/cemetery/CemeteryScreen.tsx` | 75 | Read-only list of every grave               |
@@ -315,10 +318,10 @@ Lines counted at the pixel art pass (2026-11-20): **8 549 total** — 5 942 in
 | `src/components/room/HamsterRoom.tsx` | 102 | Cage scene: bottle, bowl, wheel, bedding         |
 | `src/components/hamster/SkinSprite.tsx` | 85 | State-aware grid → SVG renderer                 |
 | `src/components/hamster/skinSprites.ts` | 787 | 29 base sprites plus two poses                  |
-| `src/index.css`                     | 93    | Theme tokens, frames, animations, text-grade red |
+| `src/index.css`                     | 134   | Light and night palettes, frames, animations     |
 | `tests/audio.test.ts`               | 50    | Patch table completeness and master gain        |
 | `tests/team.test.ts`                | 42    | Credits data and initials                       |
-| `tests/contrast.test.ts`            | 128   | WCAG ratios parsed from the stylesheet          |
+| `tests/contrast.test.ts`            | 207   | WCAG ratios for both palettes, parsed from the stylesheet |
 | `tests/balance.test.ts`             | 69    | The 5–15 minute target and the order of endings |
 | `tests/rules.test.ts`               | 184   | Engine and save validation                      |
 | `tests/skins.test.ts`               | 125   | Skins, easter eggs, migration                   |
@@ -331,7 +334,7 @@ Lines counted at the pixel art pass (2026-11-20): **8 549 total** — 5 942 in
 | `tests/wheel.test.ts`               | 101   | Angles, swing scoring and the cap              |
 | `tests/maze.test.ts`                | 182   | Collisions, solvability, gap, schema v6         |
 | `tests/seeds.test.ts`               | 85    | Board generation, partial rewards, registry     |
-| `tests/settings.test.ts`            | 44    | Preference repair and clamping                  |
+| `tests/settings.test.ts`            | 63    | Preference repair, theme validation, clamping    |
 | `tests/pwa.test.ts`                 | 115   | Manifest, icons, cache version, registration    |
 
 ---

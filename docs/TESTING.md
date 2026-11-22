@@ -4,7 +4,7 @@
 | ----- | ----- |
 | Applies to | v1.0.0, published 2026-11-20 |
 | Last updated | 2026-11-21 |
-| Suite | 198 tests across 17 files, `bun test` |
+| Suite | 202 tests across 17 files, `bun test` |
 | Related | [`DEVELOPMENT.md`](DEVELOPMENT.md) §6 · [`ARCHITECTURE.md`](ARCHITECTURE.md) |
 
 ---
@@ -49,13 +49,13 @@ bun run build         # types + production build, also enforced by CI
 | `tests/skins.test.ts` | 10 | 16×16 sprite grids, secret triggers (incl. the M5 culture skins), save migration |
 | `tests/seeds.test.ts` | 8 | Board generation, partial rewards, registry |
 | `tests/pwa.test.ts` | 8 | Manifest, icons, service worker cache name tied to `package.json` |
-| `tests/contrast.test.ts` | 7 | **WCAG ratios parsed from `index.css`**, forbidden text colours, 44 px touch target, reduced motion selectors |
+| `tests/contrast.test.ts` | 10 | **WCAG ratios parsed from `index.css` — light and night palettes**, token parity between them, forbidden text colours, 44 px touch target, reduced motion, theme applied before first paint |
 | `tests/sprites.test.ts` | 7 | Pose grids, shared palettes, poses never lent to another skin |
 | `tests/audio.test.ts` | 6 | Patch table completeness and the master gain |
-| `tests/settings.test.ts` | 5 | Preference repair and volume clamping |
+| `tests/settings.test.ts` | 6 | Preference repair, theme validation and volume clamping |
 | `tests/team.test.ts` | 5 | Credits data, roles and initials |
 | `tests/balance.test.ts` | 3 | The 5–15 minute target, and neglect dying before old age |
-| **Total** | **198** | |
+| **Total** | **202** | |
 
 **Gates on every pull request** (`.github/workflows/ci.yml`):
 

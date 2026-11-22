@@ -453,6 +453,7 @@ Reachable from the main menu, next to the cemetery.
 | Setting | What it does |
 | ------- | ------------ |
 | **Reduced motion** | Applied immediately: every animation stops, the same way the system's `prefers-reduced-motion` does |
+| **Theme** | Light or night colours, applied immediately to the whole game and remembered across visits |
 | **Volume and mute** | Stored now, so the audio service inherits a decision the player already made |
 | **Reset the current run** | Asks twice, then ends the run and clears its save |
 | **Clear the cemetery** | Asks twice, then erases every grave |

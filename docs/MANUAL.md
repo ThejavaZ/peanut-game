@@ -15,6 +15,7 @@ it went.
 | **Address** | <https://thejavaz.github.io/peanut-game/> |
 | **Needs** | Any current browser. No account, no download, no server |
 | **Sound** | Generated on the fly — it starts after your first click, and **Settings** holds mute and volume |
+| **Theme** | Light or night colours — flip it in **Settings**, it applies at once and stays that way |
 | **Installing** | Optional: open the game in Chrome or Android and choose *Install*, or in Safari → *Share* → *Add to Home Screen*. The installed game opens full screen and works **offline** |
 | **Where progress lives** | In your own browser. Closing the tab is safe |
 | **A full life** | Roughly 5 to 15 minutes if you look after it well |

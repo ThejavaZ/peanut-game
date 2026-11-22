@@ -119,7 +119,7 @@ through ESLint. It changes how components memoise, not how they behave.
 ## 6. Testing
 
 - Runner: **`bun test`** (no Jest, no Vitest, no config file).
-- Location: `tests/`, 17 files, **198 tests**.
+- Location: `tests/`, 17 files, **202 tests**.
 - Coverage focus: the pure engine (`rules.test.ts`), the minigames, and the
   cosmetic registries (`skins.test.ts`, `sprites.test.ts`).
 - **There is no DOM environment.** No `jsdom`/`happy-dom` is installed, so tests
