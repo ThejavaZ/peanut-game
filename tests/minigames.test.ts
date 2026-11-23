@@ -100,6 +100,17 @@ describe('the reward contract', () => {
 
     expect(applyMinigameReward(dead, { effects: { health: 50 } })).toBe(dead)
   })
+
+  test('records an outside hazard as the run-ending cause', () => {
+    const dead = applyMinigameReward(makeRun(), {
+      effects: {},
+      deathCauseId: 'outside-snake',
+    })
+
+    expect(dead.death?.causeId).toBe('outside-snake')
+    expect(dead.hamster.isAlive).toBe(false)
+    expect(dead.stats.minigamesCompleted).toBe(1)
+  })
 })
 
 describe('describeReward', () => {
@@ -131,9 +142,9 @@ describe('describeReward', () => {
 })
 
 describe('the minigame registry', () => {
-  test('ships four minigames with unique ids', () => {
+  test('ships five minigames with unique ids', () => {
     const nap = MINIGAMES['nap-time']
-    expect(MINIGAME_LIST).toHaveLength(4)
+    expect(MINIGAME_LIST).toHaveLength(5)
     expect(new Set(MINIGAME_LIST.map((game) => game.id)).size).toBe(
       MINIGAME_LIST.length,
     )

@@ -6,6 +6,7 @@ import type {
 } from '../types/game'
 import { MINIGAME_GAP_SECONDS } from './config'
 import { CARE_ACTIONS } from './data/careActions'
+import { buildDeathRecord } from './death'
 import { advanceRun, applyEffects } from './rules'
 
 const NEED_LABELS: Record<NeedKey, string> = {
@@ -77,6 +78,15 @@ export function applyMinigameReward(
 
   if (reward.clearsCooldowns) {
     next = { ...next, cooldowns: clearedCooldowns() }
+  }
+
+  if (reward.deathCauseId) {
+    return {
+      ...next,
+      hamster: { ...next.hamster, isAlive: false },
+      death: buildDeathRecord(next, reward.deathCauseId),
+      lastMinigameAt: next.elapsedSeconds,
+    }
   }
 
   if (reward.advanceSeconds && reward.advanceSeconds > 0) {

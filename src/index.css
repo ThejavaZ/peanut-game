@@ -122,6 +122,138 @@
   animation: hamster-idle 2.4s steps(2, end) infinite;
 }
 
+
+@keyframes outside-player-bob {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-3px);
+  }
+}
+
+@keyframes outside-hamster-shake {
+  from {
+    transform: translate(-50%, -50%) rotate(-8deg) scale(1.05);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(8deg) scale(1.05);
+  }
+}
+
+@keyframes outside-snake-attack {
+  from {
+    transform: translate(120%, -70%) scale(0.7);
+  }
+  to {
+    transform: translate(-20%, 10%) scale(1.15);
+  }
+}
+
+@keyframes outside-truck-approach {
+  from {
+    transform: translateX(150%) scale(0.7);
+  }
+  to {
+    transform: translateX(-25%) scale(1.1);
+  }
+}
+
+.outside-board {
+  background: #b9dff0;
+}
+
+.outside-board-danger {
+  animation: outside-danger-flash 0.35s steps(2, end) infinite alternate;
+}
+
+.outside-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--color-cocoa) 18%, transparent);
+  background: #9ed9c4;
+  font-size: 0.75rem;
+}
+
+.outside-tile:nth-child(odd) {
+  background: #a9dfbf;
+}
+
+.outside-tile-snake {
+  background: #b7c98a !important;
+}
+
+.outside-tile-road {
+  background: #7a6659 !important;
+}
+
+.outside-token {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  transition:
+    left 180ms ease-out,
+    top 180ms ease-out;
+}
+
+.outside-player-token {
+  z-index: 3;
+  font-size: 1.5rem;
+  animation: outside-player-bob 0.5s steps(2, end) infinite;
+}
+
+.outside-hamster-token {
+  background: var(--color-paper);
+  border: 2px solid var(--color-cocoa);
+  image-rendering: pixelated;
+}
+
+.outside-hamster-threat {
+  animation: outside-hamster-shake 0.12s steps(2, end) infinite alternate;
+}
+
+.outside-event {
+  position: absolute;
+  z-index: 4;
+  font-size: 2rem;
+}
+
+.outside-event-snake {
+  top: 0;
+  right: 0;
+  animation: outside-snake-attack 0.5s steps(3, end) infinite alternate;
+}
+
+.outside-event-truck {
+  right: 0;
+  bottom: 0;
+  animation: outside-truck-approach 0.7s steps(3, end) infinite alternate;
+}
+
+@keyframes outside-danger-flash {
+  from {
+    background-color: #b9dff0;
+  }
+  to {
+    background-color: #f3c7b5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hamster-idle,
+  .outside-board-danger,
+  .outside-player-token,
+  .outside-hamster-threat,
+  .outside-event {
+    animation: none;
+  }
+}
+
 @keyframes hamster-feed {
   0%,
   100% {
@@ -425,5 +557,13 @@
 :root[data-motion='reduced'] .animate-hamster-play,
 :root[data-motion='reduced'] .animate-hamster-play-in-place,
 :root[data-motion='reduced'] .animate-exercise-wheel {
+  animation: none;
+}
+
+:root[data-motion='reduced'] .animate-hamster-idle,
+:root[data-motion='reduced'] .outside-board-danger,
+:root[data-motion='reduced'] .outside-player-token,
+:root[data-motion='reduced'] .outside-hamster-threat,
+:root[data-motion='reduced'] .outside-event {
   animation: none;
 }

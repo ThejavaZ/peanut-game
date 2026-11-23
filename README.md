@@ -53,6 +53,7 @@ The main objectives are:
 - Hamster Wheel.
 - Find the Seeds.
 - Tiny Maze.
+- Play Outside.
 
 ### The End
 

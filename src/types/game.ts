@@ -84,6 +84,8 @@ export type DeathCauseId =
   | 'despair'
   | 'systemic'
   | 'wheel-accident'
+  | 'outside-snake'
+  | 'outside-truck'
   | 'old-age'
 
 /**
@@ -197,7 +199,7 @@ export interface CemeteryEntry {
   readonly score: number
 }
 
-export type MinigameId = 'nap-time' | 'wheel' | 'maze' | 'seeds'
+export type MinigameId = 'nap-time' | 'wheel' | 'maze' | 'seeds' | 'outside'
 
 /**
  * The contract every minigame reports back. Applied exactly once when the game
@@ -211,6 +213,8 @@ export interface MinigameReward {
   readonly effects: Partial<Needs>
   readonly advanceSeconds?: number
   readonly clearsCooldowns?: boolean
+  /** A direct minigame accident, recorded as the run's cause of death. */
+  readonly deathCauseId?: DeathCauseId
 }
 
 /**

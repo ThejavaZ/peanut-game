@@ -80,6 +80,6 @@ describe('the seeds registration', () => {
   })
 
   test('is the fourth minigame of the milestone', () => {
-    expect(Object.keys(MINIGAMES)).toHaveLength(4)
+    expect(Object.keys(MINIGAMES)).toHaveLength(5)
   })
 })
