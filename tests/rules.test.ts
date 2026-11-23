@@ -1,5 +1,8 @@
 import { describe, expect, test } from 'bun:test'
-import { SECONDS_PER_DAY } from '../src/game/config'
+import {
+  EVENT_MIN_INTERVAL_SECONDS,
+  SECONDS_PER_DAY,
+} from '../src/game/config'
 import {
   advanceRun,
   applyCareAction,
@@ -110,6 +113,48 @@ describe('applyCareAction', () => {
     expect(next).toBe(run)
     expect(next.stats.drinks).toBe(1)
   })
+
+
+
+  test('ignores the action while the game is paused', () => {
+    const run = {
+      ...createRun('Mochi', NOW),
+      paused: true,
+    }
+
+    const next = applyCareAction(run, 'feed')
+
+    expect(next).toBe(run)
+    expect(next.stats.meals).toBe(0)
+  })
+
+  test('ignores the action while an event is pending', () => {
+    const base = createRun('Mochi', NOW)
+
+    const ready = {
+      ...base,
+      elapsedSeconds: EVENT_MIN_INTERVAL_SECONDS,
+      hamster: {
+        ...base.hamster,
+        needs: needs({ hunger: 30 }),
+      },
+    }
+
+    const run = advanceRun(ready, 1, () => 0)
+
+    expect(run.events.pending).not.toBeNull()
+
+    const next = applyCareAction(run, 'feed')
+
+    expect(next).toBe(run)
+    expect(next.stats.meals).toBe(0)
+  })
+
+
+
+
+
+
 })
 
 describe('advanceRun', () => {

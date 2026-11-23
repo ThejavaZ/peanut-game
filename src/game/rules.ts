@@ -185,7 +185,13 @@ export function applyEffects(needs: Needs, effects: Partial<Needs>): Needs {
 }
 
 export function applyCareAction(state: GameState, action: CareAction): GameState {
-  if (state.death || state.cooldowns[action] > 0) {
+  if (
+    state.death ||
+    !state.hamster.isAlive ||
+    state.paused ||
+    state.events.pending !== null ||
+    state.cooldowns[action] > 0
+  ) {
     return state
   }
 
