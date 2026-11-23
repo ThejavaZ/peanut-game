@@ -188,13 +188,14 @@ Death is real now, and it is never instant.
 ### Rules
 
 - Health reaching `0` ends the run.
+- A fatal snake or truck accident during Play Outside also ends the run.
 - Reaching `ageDays = 7` (**Day 8**, ~14 real minutes) ends the run — **but only
   while health is still above zero**. A neglected hamster dies of neglect even
   on its last day; old age is for hamsters that are otherwise fine.
 - Once dead, everything freezes: needs, cooldowns, the clock and the care
   buttons. The record is written once and never rewritten.
 
-### The seven causes
+### The nine causes
 
 | Cause | Trigger | Warning before it |
 | ----- | ------- | ----------------- |
@@ -204,6 +205,8 @@ Death is real now, and it is never instant.
 | Despair | Happiness is the single lowest core need | Critical banner |
 | Systemic failure | Two or more core needs equally bad | Critical banner |
 | The wheel flew off | Health empty **while every need stays comfortable** and at least 5 play sessions | Health banner once the bar drops under 20 |
+| Snake encounter | Peanut wanders into snake grass while far from the player and cannot be reached | The snake appears in the map |
+| Traffic accident | Peanut wanders onto the road while far from the player and cannot be reached | The truck appears in the map |
 | Old age | `ageDays ≥ 7` while health > 0 | Age banner, one full day earlier |
 
 Three things decide which cause you get:
@@ -225,9 +228,12 @@ Three things decide which cause you get:
 | ------ | ------------- | ----- |
 | Neglect | ~**3 min 56 s** into total neglect (first need critical) | ~**13 min 53 s** |
 | The wheel flew off | Health banner when the bar drops under 20 | When the bar empties |
+| Snake encounter / traffic accident | The hazard is animated on the map | **2.5 seconds** after the hazard appears |
 | Old age | Whole of **Day 7** (`ageDays = 6`) | Start of **Day 8** (`ageDays = 7`) |
 
-No death happens without one of those having been visible first.
+No death happens without one of those having been visible first. Outside
+hazards are fatal only if the player cannot reach Peanut during the reaction
+window.
 
 ### After death
 
@@ -326,7 +332,7 @@ reward is, and you may always walk away with nothing.
 Every minigame reports the same contract:
 
 ```
-{ effects, advanceSeconds?, clearsCooldowns? }
+{ effects, advanceSeconds?, clearsCooldowns?, deathCauseId? }
 ```
 
 Need deltas, an optional slice of real time, and an optional cooldown wipe.
@@ -404,7 +410,19 @@ The fourth minigame, and the one that pays in food.
 | Partial | Running out of time pays for the seeds you actually found |
 | Attempts | The board itself is the set of tries; leaving pays nothing |
 
-> All four minigames — nap, wheel, maze and seeds — run through the same shell:
+### Play Outside
+
+| | |
+| --- | --- |
+| Play | Move freely with WASD, arrow keys or touch controls while Peanut wanders at random |
+| Danger zones | Snake grass is in the upper-right; the road runs along the bottom |
+| Hazards | Risk rises near danger zones and when Peanut is far away; snake/truck events are animated |
+| Rescue | Move within one tile of Peanut, or use the rescue button, within **2.5 seconds** |
+| Consequence | Rescuing Peanut costs 6 happiness; failing to reach it ends the run |
+| Reward | Up to **+18 happiness**, reduced by rescues |
+| Animations | The player and Peanut move around the map and hazards attack; reduced-motion settings are respected |
+
+> All five minigames — nap, wheel, maze, seeds and outside — run through the same shell:
 > frozen clock, reward preview, a Skip that applies nothing, and the 60 second
 > gap afterwards.
 

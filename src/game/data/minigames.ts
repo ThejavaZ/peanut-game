@@ -7,6 +7,7 @@ import {
   WHEEL_ATTEMPTS,
   WHEEL_HAPPINESS_CAP,
 } from '../config'
+import { OUTSIDE_HAPPINESS } from '../outside'
 import type { MinigameId, MinigameReward } from '../../types/game'
 
 export interface MinigameDefinition {
@@ -23,9 +24,7 @@ export interface MinigameDefinition {
 }
 
 /**
- * The minigames that exist today. `Nap Time` is the shell's first consumer;
- * #11, #12 and #13 add the wheel, the seeds and the maze to the same record
- * and the same contract.
+ * The minigames all use the same registry and reward contract.
  *
  * Every reward is bounded on purpose: minigames are a help, never a
  * replacement for the five bars.
@@ -72,6 +71,15 @@ export const MINIGAMES: Record<MinigameId, MinigameDefinition> = {
     actionLabel: 'Look for seeds',
     rewardPreview: `Up to +${SEEDS_HUNGER_CAP} hunger · ${SEEDS_SECONDS} seconds`,
     reward: { effects: { hunger: SEEDS_HUNGER_CAP } },
+  },
+  outside: {
+    id: 'outside',
+    title: 'Play Outside',
+    description:
+      'Run together and keep Peanut close. The farther away it gets, the more likely an unexpected danger will appear.',
+    actionLabel: 'Play outside',
+    rewardPreview: `Up to +${OUTSIDE_HAPPINESS} happiness · keep Peanut close`,
+    reward: { effects: { happiness: OUTSIDE_HAPPINESS } },
   },
 }
 

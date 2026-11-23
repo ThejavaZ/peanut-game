@@ -9,7 +9,7 @@ export interface DeathCauseDefinition {
 }
 
 /**
- * The six ways a run can end before events arrive. Negligence needs a visible
+ * The ways a run can end before events arrive. Negligence needs a visible
  * warning first — every cause of that kind can only fire once a need is already
  * critical. `old-age` has its own warning one full day earlier.
  */
@@ -67,6 +67,24 @@ export const DEATH_CAUSES: Record<DeathCauseId, DeathCauseDefinition> = {
     epitaphs: [
       'He outran the wheel. Eventually the wheel disagreed.',
       'One last lap, badly measured.',
+    ],
+  },
+  'outside-snake': {
+    id: 'outside-snake',
+    label: 'Snake encounter',
+    detail: 'Peanut wandered too far outside and a snake got to it first.',
+    epitaphs: [
+      'The grass was not as empty as it looked.',
+      'Peanut found the one thing smaller than the garden.',
+    ],
+  },
+  'outside-truck': {
+    id: 'outside-truck',
+    label: 'Traffic accident',
+    detail: 'Peanut wandered into the road before anyone could catch it.',
+    epitaphs: [
+      'The road was much bigger than Peanut.',
+      'A little too much freedom, a little too much traffic.',
     ],
   },
   'old-age': {

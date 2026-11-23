@@ -6,6 +6,7 @@ import { MainMenu } from './features/menu/MainMenu'
 import { MinigameScreen } from './features/minigames/MinigameScreen'
 import { MazeGame } from './features/minigames/MazeGame'
 import { NapTime } from './features/minigames/NapTime'
+import { OutsideGame } from './features/minigames/OutsideGame'
 import { SeedsGame } from './features/minigames/SeedsGame'
 import { WheelGame } from './features/minigames/WheelGame'
 import { NamingScreen } from './features/naming/NamingScreen'
@@ -206,7 +207,14 @@ function App() {
         goToGame()
       }
       const body =
-        activeScreen.id === 'wheel' ? (
+        activeScreen.id === 'outside' ? (
+          <OutsideGame
+            hamsterName={run?.hamster.name ?? 'Peanut'}
+            skinId={run?.hamster.skinId ?? 'hamster'}
+            accessoryId={run?.hamster.accessoryId ?? 'none'}
+            onComplete={finish}
+          />
+        ) : activeScreen.id === 'wheel' ? (
           <WheelGame onComplete={finish} />
         ) : activeScreen.id === 'maze' ? (
           <MazeGame
