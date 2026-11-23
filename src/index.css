@@ -122,13 +122,308 @@
   animation: hamster-idle 2.4s steps(2, end) infinite;
 }
 
+@keyframes hamster-feed {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25%,
+  50%,
+  75% {
+    transform: translateY(3px);
+  }
+}
+
+.animate-hamster-feed {
+  animation: hamster-feed 0.3s steps(2, end) 6;
+}
+
+@keyframes feed-food-disappear {
+  0%,
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-feed-food {
+  animation: feed-food-disappear 1.5s steps(3, end) forwards;
+}
+
+.feed-food-delay-1 {
+  animation-delay: 0s;
+}
+
+.feed-food-delay-2 {
+  animation-delay: 0.15s;
+}
+
+.feed-food-delay-3 {
+  animation-delay: 0.3s;
+}
+
+@keyframes feed-particle {
+  0% {
+    opacity: 0;
+    transform: translate(0, 3px);
+  }
+  20%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, -12px);
+  }
+}
+
+.animate-feed-particle {
+  animation: feed-particle 0.8s steps(3, end) forwards;
+}
+
+.feed-particle-1 {
+  animation-delay: 0s;
+}
+
+.feed-particle-2 {
+  animation-delay: 0.2s;
+}
+
+.feed-particle-3 {
+  animation-delay: 0.4s;
+}
+
+@keyframes hamster-water {
+  0%,
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+  35%,
+  75% {
+    transform: translateX(75%) translateY(0);
+  }
+  45%,
+  60% {
+    transform: translateX(75%) translateY(2px);
+  }
+}
+
+.animate-hamster-water {
+  animation: hamster-water 2s steps(6, end) forwards;
+}
+
+@keyframes water-level {
+  0%,
+  20% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0.55);
+  }
+}
+
+.animate-water-level {
+  transform-origin: bottom;
+  animation: water-level 1.7s steps(4, end) forwards;
+}
+
+@keyframes water-bubble {
+  0% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  25%,
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.animate-water-bubble {
+  animation: water-bubble 0.7s steps(3, end) forwards;
+}
+
+.water-bubble-delay-1 {
+  animation-delay: 0s;
+}
+
+.water-bubble-delay-2 {
+  animation-delay: 0.25s;
+}
+
+.water-bubble-delay-3 {
+  animation-delay: 0.5s;
+}
+
+@keyframes clean-sponge {
+  0%,
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+  25%,
+  75% {
+    transform: translateX(4px) translateY(-1px);
+  }
+  50% {
+    transform: translateX(2px) translateY(0);
+  }
+}
+
+.animate-clean-sponge {
+  animation: clean-sponge 0.5s steps(2, end) 4;
+}
+
+@keyframes clean-bubble {
+  0% {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  25%,
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+.animate-clean-bubble {
+  animation: clean-bubble 0.9s steps(4, end) forwards;
+}
+
+.clean-bubble-delay-1 {
+  animation-delay: 0s;
+}
+
+.clean-bubble-delay-2 {
+  animation-delay: 0.3s;
+}
+
+.clean-bubble-delay-3 {
+  animation-delay: 0.6s;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-hamster-idle {
+  .animate-hamster-idle,
+  .animate-hamster-feed,
+  .animate-hamster-water,
+  .animate-water-level,
+  .animate-water-bubble,
+  .animate-clean-sponge,
+  .animate-clean-bubble {
     animation: none;
+  }
+
+  .animate-feed-food {
+    animation: none;
+    opacity: 0;
+  }
+
+  .animate-feed-particle {
+    animation: none;
+    display: none;
+  }
+
+  .animate-water-bubble {
+    display: none;
+  }
+
+  .animate-clean-bubble {
+    display: none;
   }
 }
 
 /* Manual switch from Settings, mirroring the media query above. */
-:root[data-motion='reduced'] .animate-hamster-idle {
+:root[data-motion='reduced'] .animate-hamster-idle,
+:root[data-motion='reduced'] .animate-hamster-feed,
+:root[data-motion='reduced'] .animate-hamster-water,
+:root[data-motion='reduced'] .animate-water-level,
+:root[data-motion='reduced'] .animate-water-bubble,
+:root[data-motion='reduced'] .animate-clean-sponge,
+:root[data-motion='reduced'] .animate-clean-bubble {
+  animation: none;
+}
+
+:root[data-motion='reduced'] .animate-feed-food {
+  animation: none;
+  opacity: 0;
+}
+
+:root[data-motion='reduced'] .animate-feed-particle {
+  animation: none;
+  display: none;
+}
+
+:root[data-motion='reduced'] .animate-water-bubble {
+  display: none;
+}
+
+:root[data-motion='reduced'] .animate-clean-bubble {
+  display: none;
+}
+
+@keyframes hamster-play {
+  0%,
+  15% {
+    transform: translateX(0);
+  }
+  45%,
+  70% {
+    transform: translateX(clamp(3.5rem, 16vw, 9rem));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-hamster-play {
+  animation: hamster-play 3.2s ease-in-out forwards;
+}
+
+@keyframes hamster-play-in-place {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25%,
+  75% {
+    transform: translate(-3px, -2px);
+  }
+  50% {
+    transform: translate(3px, 0);
+  }
+}
+
+.animate-hamster-play-in-place {
+  animation: hamster-play-in-place 0.64s steps(4, end) 5;
+}
+
+@keyframes exercise-wheel-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-exercise-wheel {
+  animation: exercise-wheel-spin 0.6s steps(8, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hamster-play,
+  .animate-hamster-play-in-place,
+  .animate-exercise-wheel {
+    animation: none;
+  }
+}
+
+:root[data-motion='reduced'] .animate-hamster-play,
+:root[data-motion='reduced'] .animate-hamster-play-in-place,
+:root[data-motion='reduced'] .animate-exercise-wheel {
   animation: none;
 }
